@@ -6,13 +6,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, Network, Info, ShieldAlert, GitFork, RefreshCw, Layers, 
   Target, Filter, Clock, AlertTriangle, Save, CheckCircle, Play, Pause, 
-  SkipForward, Image, Download, Zap, Eye
+  Image, Download, Zap, Radio, Sliders, ArrowRight
 } from 'lucide-react';
 import { researchService } from '../services/api';
 import { AppCard } from '../components/ui/AppCard';
 import { AppPageHeader } from '../components/ui/AppPageHeader';
 import { AppBadge } from '../components/ui/AppBadge';
 import { AppEmptyState } from '../components/ui/AppEmptyState';
+import { CinematicBackground } from '../components/ui/CinematicBackground';
 
 interface QueueItem {
   caseId: string;
@@ -32,13 +33,23 @@ const GraphPage: React.FC = () => {
   const [notes, setNotes] = useState('');
   const [showSavedToast, setShowSavedToast] = useState(false);
 
-  // Advanced Flagship Features States
-  const [shortestPathMode, setShortestPathMode] = useState(false);
+  // Advanced V2 Playback Engine
+  const [isDiscovering, setIsDiscovering] = useState(false);
+  const [discoveryStep, setDiscoveryStep] = useState(0);
   const [selectedPathNodes, setSelectedPathNodes] = useState<string[]>([]);
   const [isPlayingReplay, setIsPlayingReplay] = useState(false);
   const [replayStep, setReplayStep] = useState(0);
-  const [maxReplaySteps, setMaxReplaySteps] = useState(3);
-  const [isPropagatingRisk, setIsPropagatingRisk] = useState(false);
+  const [playbackSpeed, setPlaybackSpeed] = useState<1 | 2 | 5>(1); // Speed multiplier
+
+  // Chronological timeline step mappings
+  const timelineSteps = [
+    { label: 'Message Ingested', time: '13:41:00', desc: 'Suspect threat message text received by gateway.' },
+    { label: 'Phone Identified', time: '13:41:12', desc: 'Extracted phone coordinates linked to vishing databases.' },
+    { label: 'UPI Linked', time: '13:41:30', desc: 'Resolved active UPI address transfer logs.' },
+    { label: 'Mule Matched', time: '13:42:02', desc: 'Neo4j link analysis matched high-degree centralities.' },
+    { label: 'Risk Calibrated', time: '13:43:10', desc: 'Isotonic Meta-Fusion stack resolved score index.' },
+    { label: 'Case Escalated', time: '13:45:00', desc: 'Dispatched incident report to active SOC queue.' }
+  ];
 
   // Seeded investigation queue
   const investigationQueue: QueueItem[] = [
@@ -84,12 +95,9 @@ const GraphPage: React.FC = () => {
     fetchMetrics();
   }, []);
 
-  // Initialize cytoscape node mapping
+  // Initialize cytoscape node mapping with V2 styling
   useEffect(() => {
     if (!cyRef.current || !selectedNode) return;
-
-    // Reset advanced state
-    setSelectedPathNodes([]);
 
     const nodes = [
       { data: { id: selectedNode.entity, label: selectedNode.entity.substring(0, 10) + '...', type: selectedNode.label, originalLabel: selectedNode.entity } },
@@ -122,8 +130,8 @@ const GraphPage: React.FC = () => {
             'border-width': '1.5px',
             'border-color': '#1E293B',
             'overlay-opacity': 0,
-            'transition-property': 'background-color, border-color, width, height',
-            'transition-duration': 0.3
+            'transition-property': 'background-color, border-color, border-width, width, height',
+            'transition-duration': 0.35
           }
         },
         {
@@ -131,8 +139,8 @@ const GraphPage: React.FC = () => {
           style: {
             'background-color': '#EF4444',
             'border-color': '#EF4444',
-            'width': '20px',
-            'height': '20px'
+            'width': '18px',
+            'height': '18px'
           }
         },
         {
@@ -165,7 +173,7 @@ const GraphPage: React.FC = () => {
             'text-margin-y': -5,
             'text-rotation': 'autorotate',
             'transition-property': 'line-color, width',
-            'transition-duration': 0.3
+            'transition-duration': 0.35
           }
         },
         {
@@ -174,7 +182,7 @@ const GraphPage: React.FC = () => {
             'background-color': '#00E5FF',
             'line-color': '#00E5FF',
             'target-arrow-color': '#00E5FF',
-            'width': 2.5,
+            'width': 2,
             'border-color': '#00E5FF'
           }
         },
@@ -182,23 +190,26 @@ const GraphPage: React.FC = () => {
           selector: '.propagated',
           style: {
             'background-color': '#EF4444',
-            'border-color': '#F59E0B',
+            'border-color': '#EF4444',
+            'border-width': '4px',
             'width': '18px',
             'height': '18px'
           }
         },
         {
-          selector: '.clustered-1',
+          selector: '.pulse-halo',
           style: {
-            'border-color': '#6366F1',
-            'border-width': '3px'
+            'border-color': '#EF4444',
+            'border-width': '4px',
+            'width': '22px',
+            'height': '22px'
           }
         },
         {
-          selector: '.clustered-2',
+          selector: '.clustered',
           style: {
-            'border-color': '#22C55E',
-            'border-width': '3px'
+            'border-color': '#6366F1',
+            'border-width': '2.5px'
           }
         }
       ],
@@ -211,27 +222,23 @@ const GraphPage: React.FC = () => {
       }
     });
 
-    // Double click to expand node logic
+    // Double tap to expand node
     cy.on('doubletap', 'node', (evt) => {
       const node = evt.target;
       const nodeId = node.id();
       
-      // Simulate dynamic fetch and node expansion
       const extraNodes = [
-        { data: { id: `${nodeId}-child-1`, label: 'Branch-A', type: 'Phone' }, position: { x: node.position('x') + 50, y: node.position('y') - 40 } },
-        { data: { id: `${nodeId}-child-2`, label: 'Branch-B', type: 'URL' }, position: { x: node.position('x') + 50, y: node.position('y') + 40 } }
+        { data: { id: `${nodeId}-hop1`, label: 'Mule-Link-A', type: 'Phone' } },
+        { data: { id: `${nodeId}-hop2`, label: 'Mule-Link-B', type: 'URL' } }
       ];
       
       const extraEdges = [
-        { data: { source: nodeId, target: `${nodeId}-child-1`, label: 'CO-TRANSFER' } },
-        { data: { source: nodeId, target: `${nodeId}-child-2`, label: 'HOSTED_ON' } }
+        { data: { source: nodeId, target: `${nodeId}-hop1`, label: 'HOP_ROUTE' } },
+        { data: { source: nodeId, target: `${nodeId}-hop2`, label: 'HOP_LINK' } }
       ];
 
-      // Add if not already present
       extraNodes.forEach(n => {
-        if (cy.getElementById(n.data.id).length === 0) {
-          cy.add({ group: 'nodes', data: n.data, position: n.position });
-        }
+        if (cy.getElementById(n.data.id).length === 0) cy.add({ group: 'nodes', data: n.data });
       });
       extraEdges.forEach(e => {
         if (cy.edges(`[source="${e.data.source}"][target="${e.data.target}"]`).length === 0) {
@@ -242,7 +249,7 @@ const GraphPage: React.FC = () => {
       cy.layout({ name: 'cose', animate: true, fit: true }).run();
     });
 
-    // Handle pathfinder node select
+    // Pathfinder node selector
     cy.on('tap', 'node', (evt) => {
       const nodeId = evt.target.id();
       setSelectedPathNodes(prev => {
@@ -264,14 +271,24 @@ const GraphPage: React.FC = () => {
     };
   }, [selectedNode]);
 
-  // Execute Dijkstra shortest path highlighter
+  // Periodic halo pulse animation loop
+  useEffect(() => {
+    const cy = cyInstanceRef.current;
+    if (!cy) return;
+
+    const interval = setInterval(() => {
+      cy.elements('.propagated, node[type="ScamEntity"]').toggleClass('pulse-halo');
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [selectedNode]);
+
+  // Dijkstra pathfinder execution
   useEffect(() => {
     const cy = cyInstanceRef.current;
     if (!cy || selectedPathNodes.length < 2) return;
 
-    // Reset styles
     cy.elements().removeClass('highlighted');
-
     const source = cy.getElementById(selectedPathNodes[0]);
     const target = cy.getElementById(selectedPathNodes[1]);
 
@@ -282,84 +299,112 @@ const GraphPage: React.FC = () => {
     }
   }, [selectedPathNodes]);
 
-  // Handle Play Replay
+  // V2 Signature Fraud Ring Discovery Loop (6 Steps)
+  const runFraudRingDiscovery = () => {
+    const cy = cyInstanceRef.current;
+    if (!cy || !selectedNode || isDiscovering) return;
+
+    setIsDiscovering(true);
+    setDiscoveryStep(1);
+
+    // Step 1: Initial Scan (show only seed node)
+    cy.elements().style('display', 'none');
+    const root = cy.getElementById(selectedNode.entity);
+    root.style('display', 'element');
+
+    const intervalTime = 1500;
+
+    // Step 2: Entity Discovery (fade in direct nodes)
+    setTimeout(() => {
+      setDiscoveryStep(2);
+      root.neighborhood().style('display', 'element');
+    }, intervalTime);
+
+    // Step 3: Graph Expansion (show all hops)
+    setTimeout(() => {
+      setDiscoveryStep(3);
+      cy.elements().style('display', 'element');
+    }, intervalTime * 2);
+
+    // Step 4: Relationship Detection (Highlight paths)
+    setTimeout(() => {
+      setDiscoveryStep(4);
+      cy.edges().addClass('highlighted');
+    }, intervalTime * 3);
+
+    // Step 5: Risk Propagation (glow nodes red)
+    setTimeout(() => {
+      setDiscoveryStep(5);
+      cy.nodes().addClass('propagated');
+    }, intervalTime * 4);
+
+    // Step 6: Cluster Highlight / Fraud Ring Exposed
+    setTimeout(() => {
+      setDiscoveryStep(6);
+      cy.nodes().addClass('clustered');
+    }, intervalTime * 5);
+
+    // Reset sequence after 10 seconds
+    setTimeout(() => {
+      setIsDiscovering(false);
+      setDiscoveryStep(0);
+      cy.elements().removeClass('highlighted').removeClass('propagated').removeClass('clustered');
+      cy.elements().style('display', 'element');
+    }, intervalTime * 7);
+  };
+
+  // Replay timeline player effect
   useEffect(() => {
     const cy = cyInstanceRef.current;
-    if (!cy || !isPlayingReplay) return;
+    if (!cy || !isPlayingReplay || !selectedNode) return;
+
+    const baseInterval = 3000;
+    const intervalTime = baseInterval / playbackSpeed;
 
     const interval = setInterval(() => {
       setReplayStep(prev => {
-        const next = (prev + 1) % (maxReplaySteps + 1);
+        const next = (prev + 1) % timelineSteps.length;
         
-        // Hide or show elements based on steps
-        if (next === 0) {
-          // Reset: show only central node
-          cy.elements().style('display', 'none');
-          cy.getElementById(selectedNode!.entity).style('display', 'element');
-        } else if (next === 1) {
-          // Show directly connected nodes
-          cy.elements().style('display', 'none');
-          cy.getElementById(selectedNode!.entity).style('display', 'element');
-          selectedNode!.relationships.slice(0, 3).forEach(rel => {
-            cy.getElementById(rel.target_node).style('display', 'element');
-            cy.edges(`[source="${selectedNode!.entity}"][target="${rel.target_node}"]`).style('display', 'element');
-          });
-        } else {
-          // Show all nodes
+        // Dynamic visibility logic based on step indices
+        cy.elements().style('display', 'none');
+        cy.getElementById(selectedNode.entity).style('display', 'element');
+        
+        if (next >= 1) {
+          // Show phone
+          cy.elements('node[type="Phone"]').style('display', 'element');
+          cy.edges(`[target="phone"]`).style('display', 'element');
+        }
+        if (next >= 2) {
+          // Show UPI
+          cy.elements('node[type="UPI"]').style('display', 'element');
+          cy.edges(`[target="upi1"]`).style('display', 'element');
+        }
+        if (next >= 3) {
+          // Show complete network
           cy.elements().style('display', 'element');
         }
+        if (next >= 4) {
+          cy.nodes().addClass('propagated');
+        } else {
+          cy.nodes().removeClass('propagated');
+        }
+
         return next;
       });
-    }, 2000);
+    }, intervalTime);
 
     return () => clearInterval(interval);
-  }, [isPlayingReplay, selectedNode]);
+  }, [isPlayingReplay, selectedNode, playbackSpeed]);
 
-  // Run risk propagation animation
-  const runRiskPropagation = () => {
-    const cy = cyInstanceRef.current;
-    if (!cy || !selectedNode || isPropagatingRisk) return;
-    setIsPropagatingRisk(true);
+  const filteredQueue = investigationQueue.filter(item => 
+    riskFilter === 'ALL' || item.severity === riskFilter
+  );
 
-    cy.elements().removeClass('propagated');
-    const rootNode = cy.getElementById(selectedNode.entity);
-    
-    // Step 1: Central node glow
-    rootNode.addClass('propagated');
-
-    // Step 2: Next hop propagation after 600ms
-    setTimeout(() => {
-      selectedNode.relationships.forEach(rel => {
-        cy.getElementById(rel.target_node).addClass('propagated');
-      });
-    }, 600);
-
-    // Reset after 3 seconds
-    setTimeout(() => {
-      cy.elements().removeClass('propagated');
-      setIsPropagatingRisk(false);
-    }, 3000);
+  const handleSaveNotes = () => {
+    setShowSavedToast(true);
+    setTimeout(() => setShowSavedToast(false), 3000);
   };
 
-  // Run Cluster grouping
-  const runClusterDetection = () => {
-    const cy = cyInstanceRef.current;
-    if (!cy || !selectedNode) return;
-
-    cy.elements().removeClass('clustered-1').removeClass('clustered-2');
-
-    // Categorize nodes into cluster classes based on index
-    selectedNode.relationships.forEach((rel, i) => {
-      const node = cy.getElementById(rel.target_node);
-      if (i % 2 === 0) {
-        node.addClass('clustered-1');
-      } else {
-        node.addClass('clustered-2');
-      }
-    });
-  };
-
-  // Export as PNG
   const handleExportPNG = () => {
     const cy = cyInstanceRef.current;
     if (!cy) return;
@@ -384,15 +429,6 @@ const GraphPage: React.FC = () => {
     document.body.removeChild(link);
   };
 
-  const filteredQueue = investigationQueue.filter(item => 
-    riskFilter === 'ALL' || item.severity === riskFilter
-  );
-
-  const handleSaveNotes = () => {
-    setShowSavedToast(true);
-    setTimeout(() => setShowSavedToast(false), 3000);
-  };
-
   const getRiskScore = (node: any) => {
     if (!node) return 0;
     if (node.entity.includes('24@ybl')) return 98;
@@ -400,8 +436,21 @@ const GraphPage: React.FC = () => {
     return 54;
   };
 
+  const discoveryStepsLabels = [
+    'INITIAL SCAN: Ingesting core UPI/phone signature',
+    'ENTITY DISCOVERY: Fetching adjacent coordinates',
+    'GRAPH EXPANSION: Branching 2nd-order hop registers',
+    'RELATIONSHIP DETECTION: Tracing transactional loops',
+    'RISK PROPAGATION: Projecting cascade centralities',
+    'FRAUD RING EXPOSURE: Mule ring isolated successfully'
+  ];
+
   return (
-    <div className="space-y-4 flex flex-col h-[calc(100vh-80px)] overflow-hidden text-left">
+    <div className="space-y-4 flex flex-col h-[calc(100vh-80px)] overflow-hidden text-left relative z-10">
+      
+      {/* Background grid canvas layer */}
+      <CinematicBackground />
+
       {/* Header Panel */}
       <AppPageHeader 
         title="Graph Intelligence Workspace" 
@@ -415,13 +464,12 @@ const GraphPage: React.FC = () => {
       />
 
       {/* Main 3-Panel Split Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 min-h-0">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 min-h-0 relative z-10">
         
-        {/* PANEL 1: Left Investigator Column (Queue, Search, Filters) */}
+        {/* PANEL 1: Left Investigator Column */}
         <div className="lg:col-span-3 flex flex-col space-y-3 min-h-0 overflow-y-auto">
-          
           {/* Quick Search Card */}
-          <AppCard className="p-3">
+          <AppCard className="p-3 bg-[#111827]/85 backdrop-blur-md">
             <span className="text-[9px] font-mono font-semibold text-slate-500 uppercase tracking-wider block mb-2">
               Entity Investigator
             </span>
@@ -439,7 +487,7 @@ const GraphPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-slate-900 px-3 py-1.5 rounded-xl text-[10px] font-bold flex items-center space-x-1.5 transition-all active:scale-95 disabled:opacity-50"
+                className="bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-slate-900 px-3 py-1.5 rounded-xl text-[10px] font-bold flex items-center space-x-1.5 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 {isLoading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <GitFork className="w-3.5 h-3.5" />}
                 <span>Fetch</span>
@@ -448,7 +496,7 @@ const GraphPage: React.FC = () => {
           </AppCard>
 
           {/* Severity Filters Card */}
-          <AppCard className="p-3">
+          <AppCard className="p-3 bg-[#111827]/85 backdrop-blur-md">
             <span className="text-[9px] font-mono font-semibold text-slate-500 uppercase tracking-wider block mb-2 flex items-center space-x-1.5">
               <Filter className="w-3 h-3 text-[#00E5FF]" />
               <span>Filter Severity</span>
@@ -471,7 +519,7 @@ const GraphPage: React.FC = () => {
           </AppCard>
 
           {/* Investigation Queue */}
-          <AppCard className="p-3 flex-1 flex flex-col min-h-0">
+          <AppCard className="p-3 flex-1 flex flex-col min-h-0 bg-[#111827]/85 backdrop-blur-md">
             <span className="text-[9px] font-mono font-semibold text-slate-500 uppercase tracking-wider block border-b border-[#1E293B] pb-2 mb-2 flex items-center space-x-1.5">
               <Target className="w-3.5 h-3.5 text-[#EF4444]" />
               <span>Active Case Queue</span>
@@ -507,28 +555,19 @@ const GraphPage: React.FC = () => {
           </AppCard>
         </div>
 
-        {/* PANEL 2: Center visual graph visualizer canvas with control bar */}
+        {/* PANEL 2: Center visual graph visualizer canvas */}
         <div className="lg:col-span-6 flex flex-col min-h-0 space-y-3">
           {/* Diagnostic Controls Toolbar */}
-          <AppCard className="p-3 flex flex-wrap gap-2 items-center justify-between">
+          <AppCard className="p-3 flex flex-wrap gap-2 items-center justify-between bg-[#111827]/85 backdrop-blur-md">
             <div className="flex space-x-2">
               <button 
-                onClick={runRiskPropagation}
-                disabled={isPropagatingRisk}
-                className="bg-[#0B1220] hover:bg-[#1E293B] border border-[#1E293B] text-slate-200 px-3 py-1.5 rounded-xl text-[10px] font-bold flex items-center space-x-1.5 cursor-pointer disabled:opacity-50"
-                title="Propagate risk score to adjacent edges"
+                onClick={runFraudRingDiscovery}
+                disabled={isDiscovering || !selectedNode}
+                className="bg-[#00E5FF]/10 hover:bg-[#00E5FF]/20 border border-[#00E5FF]/30 text-[#00E5FF] px-4 py-1.5 rounded-xl text-[10px] font-bold flex items-center space-x-1.5 cursor-pointer disabled:opacity-50"
+                title="Run Signature Fraud Ring Discovery sequence"
               >
-                <Zap className="w-3.5 h-3.5 text-[#EF4444]" />
-                <span>Risk Propagation</span>
-              </button>
-
-              <button 
-                onClick={runClusterDetection}
-                className="bg-[#0B1220] hover:bg-[#1E293B] border border-[#1E293B] text-slate-200 px-3 py-1.5 rounded-xl text-[10px] font-bold flex items-center space-x-1.5 cursor-pointer"
-                title="Detect node communities and rings"
-              >
-                <Layers className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Cluster Detection</span>
+                <Radio className="w-3.5 h-3.5 animate-pulse" />
+                <span>Run Discovery Mode</span>
               </button>
             </div>
 
@@ -550,7 +589,7 @@ const GraphPage: React.FC = () => {
             </div>
           </AppCard>
 
-          <AppCard className="relative flex-1 flex flex-col p-0 overflow-hidden border border-[#1E293B]">
+          <AppCard className="relative flex-1 flex flex-col p-0 overflow-hidden border border-[#1E293B] bg-[#111827]/80 backdrop-blur-md">
             <div className="px-4 py-2.5 border-b border-[#1E293B] bg-[#0B1220]/80 flex justify-between items-center text-xs flex-shrink-0">
               <span className="font-semibold text-slate-400 uppercase tracking-wider flex items-center space-x-1.5">
                 <Network className="w-4 h-4 text-[#00E5FF]" />
@@ -563,7 +602,7 @@ const GraphPage: React.FC = () => {
                 {selectedNode && (
                   <button 
                     onClick={clearSelection} 
-                    className="text-[#EF4444] hover:underline transition-all cursor-pointer"
+                    className="text-[#EF4444] hover:underline transition-all cursor-pointer font-bold"
                   >
                     RESET VIEW
                   </button>
@@ -572,9 +611,25 @@ const GraphPage: React.FC = () => {
             </div>
 
             {selectedNode ? (
-              <div className="flex-1 w-full bg-[#050811]/40 relative">
+              <div className="flex-1 w-full bg-[#050811]/20 relative">
                 <div ref={cyRef} className="absolute inset-0 z-10" />
                 
+                {/* Discovery Overlay status block */}
+                {isDiscovering && (
+                  <div className="absolute top-3 right-3 z-20 bg-[#EF4444]/90 text-slate-100 p-3 rounded-xl border border-[#EF4444]/30 shadow-2xl text-[9px] font-mono space-y-1.5 max-w-[240px]">
+                    <span className="font-bold border-b border-slate-100/30 pb-1 block uppercase tracking-wider">Discovery Sequence</span>
+                    <p className="text-[8px] leading-snug">{discoveryStepsLabels[discoveryStep - 1]}</p>
+                    <div className="flex items-center space-x-1">
+                      {[1, 2, 3, 4, 5, 6].map(s => (
+                        <div 
+                          key={s} 
+                          className={`w-2 h-2 rounded-full ${discoveryStep >= s ? 'bg-slate-100' : 'bg-slate-100/30'}`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Graph overlay legend */}
                 <div className="absolute bottom-3 left-3 z-20 bg-[#0B1220]/90 p-2.5 border border-[#1E293B] rounded-xl text-[9px] font-mono text-slate-400 space-y-1 select-none max-w-[180px]">
                   <span className="font-bold text-slate-200 block border-b border-[#1E293B] pb-1 uppercase tracking-wide">Topology Code</span>
@@ -590,13 +645,10 @@ const GraphPage: React.FC = () => {
                     <span className="w-2 h-2 rounded-full bg-[#00E5FF]" />
                     <span>Associated Hops</span>
                   </div>
-                  <div className="text-[7px] text-slate-500 mt-2 italic block border-t border-[#1E293B]/60 pt-1">
-                    *Double-tap node to expand relations
-                  </div>
                 </div>
               </div>
             ) : (
-              <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-[#050811]/20">
+              <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-[#050811]/10">
                 <AppEmptyState
                   title="No Forensic Topology Projected"
                   description="Select a case from the active queue or enter an address to trace hops."
@@ -608,33 +660,59 @@ const GraphPage: React.FC = () => {
             )}
           </AppCard>
 
-          {/* Timeline Replay Control Bar */}
+          {/* Timeline Replay Control Bar & Scrubber */}
           {selectedNode && (
-            <AppCard className="p-3 flex items-center justify-between bg-[#0B1220]">
-              <div className="flex items-center space-x-3">
-                <button 
-                  onClick={() => setIsPlayingReplay(!isPlayingReplay)}
-                  className="bg-[#111827] border border-[#1E293B] p-2 rounded-xl text-[#00E5FF] hover:bg-[#1E293B] cursor-pointer"
-                >
-                  {isPlayingReplay ? <Pause className="w-3.5 h-3.5 fill-[#00E5FF]" /> : <Play className="w-3.5 h-3.5 fill-[#00E5FF]" />}
-                </button>
-                <div className="text-left font-mono text-[9px]">
-                  <span className="text-slate-400 block uppercase font-bold">Chronological Replay</span>
-                  <span className="text-slate-500">Replaying network emergence steps</span>
+            <AppCard className="p-3.5 flex flex-col space-y-3 bg-[#0B1220]/90 backdrop-blur-md border border-[#1E293B]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <button 
+                    onClick={() => setIsPlayingReplay(!isPlayingReplay)}
+                    className="bg-[#111827] border border-[#1E293B] p-2 rounded-xl text-[#00E5FF] hover:bg-[#1E293B] cursor-pointer"
+                  >
+                    {isPlayingReplay ? <Pause className="w-3.5 h-3.5 fill-[#00E5FF]" /> : <Play className="w-3.5 h-3.5 fill-[#00E5FF]" />}
+                  </button>
+                  <div className="text-left font-mono text-[9px]">
+                    <span className="text-slate-400 block uppercase font-bold">Chronological Replay Scrubber</span>
+                    <span className="text-slate-500">Replaying target entity link sequence</span>
+                  </div>
+                </div>
+
+                {/* Playback speed selector */}
+                <div className="flex items-center space-x-1 bg-[#111827] p-1 rounded-lg border border-[#1E293B] font-mono text-[8px] text-slate-400">
+                  <span className="px-1.5 font-bold uppercase text-[7px] text-slate-500">Speed:</span>
+                  {([1, 2, 5] as const).map(speed => (
+                    <button
+                      key={speed}
+                      onClick={() => setPlaybackSpeed(speed)}
+                      className={`px-1.5 py-0.5 rounded cursor-pointer ${playbackSpeed === speed ? 'bg-[#00E5FF]/20 text-[#00E5FF] font-bold' : ''}`}
+                    >
+                      {speed}x
+                    </button>
+                  ))}
                 </div>
               </div>
 
-              {/* Progress steps indicators */}
-              <div className="flex items-center space-x-2">
-                {[0, 1, 2].map((step) => (
-                  <div 
-                    key={step}
-                    className={`w-12 h-1.5 rounded-full transition-all ${
-                      replayStep >= step ? 'bg-[#00E5FF]' : 'bg-[#1E293B]'
-                    }`}
-                  />
-                ))}
-                <span className="text-[9px] font-mono text-slate-400 ml-2">Step {replayStep + 1}/3</span>
+              {/* Scrubber slider bar */}
+              <div className="flex items-center space-x-3 w-full font-mono text-[8px] text-slate-500">
+                <span>0% START</span>
+                <input 
+                  type="range"
+                  min={0}
+                  max={timelineSteps.length - 1}
+                  value={replayStep}
+                  onChange={(e) => setReplayStep(Number(e.target.value))}
+                  className="flex-1 accent-[#00E5FF] cursor-pointer bg-[#111827] h-1 rounded-full border-none focus:outline-none"
+                />
+                <span>100% DISPATCHED</span>
+              </div>
+
+              {/* Display text of active scrubber step */}
+              <div className="bg-[#111827]/40 border border-[#1E293B]/60 p-2.5 rounded-lg text-[9px] font-mono text-left flex justify-between items-center">
+                <div>
+                  <span className="text-slate-200 font-bold block">{timelineSteps[replayStep].label} ({timelineSteps[replayStep].time})</span>
+                  <span className="text-slate-500 text-[8px] leading-normal">{timelineSteps[replayStep].desc}</span>
+                </div>
+                <ArrowRight className="w-3.5 h-3.5 text-[#00E5FF] flex-shrink-0 ml-3" />
               </div>
             </AppCard>
           )}
@@ -642,7 +720,7 @@ const GraphPage: React.FC = () => {
 
         {/* PANEL 3: Right Suspect Metadata Details */}
         <div className="lg:col-span-3 flex flex-col min-h-0 overflow-y-auto">
-          <AppCard className="p-4 flex-1 flex flex-col space-y-4">
+          <AppCard className="p-4 flex-1 flex flex-col space-y-4 bg-[#111827]/85 backdrop-blur-md">
             <AnimatePresence mode="wait">
               {selectedNode ? (
                 <motion.div 
@@ -742,7 +820,7 @@ const GraphPage: React.FC = () => {
                             exit={{ opacity: 0 }}
                             className="text-[#22C55E] text-[8px] font-mono flex items-center space-x-1"
                           >
-                            <CheckCircle className="w-3 h-3" />
+                            <CheckCircle className="w-3.5 h-3.5" />
                             <span>Archived</span>
                           </motion.span>
                         )}

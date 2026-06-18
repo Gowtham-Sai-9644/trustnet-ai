@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import cytoscape from 'cytoscape';
+import { CinematicBackground } from '../components/ui/CinematicBackground';
 import { 
   ShieldAlert, 
   ShieldCheck, 
@@ -225,6 +226,7 @@ const LandingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#050811] text-slate-100 font-sans antialiased overflow-x-hidden relative flex flex-col justify-between">
+      <CinematicBackground />
       
       {/* Top OS Header Bar */}
       <header className="sticky top-0 z-50 w-full border-b border-[#1E293B]/60 bg-[#050811]/80 backdrop-blur-md px-6 lg:px-16 py-4 flex items-center justify-between">

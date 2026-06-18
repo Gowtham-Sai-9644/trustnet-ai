@@ -109,7 +109,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
   
   fetchRagExplanation: async (scamType: string, riskScore: number) => {
-    set({ ragIsLoading: true });
+    set({ ragIsLoading: true, ragResult: null });
     try {
       const data = await ragService.explainScam({
         risk_score: riskScore,

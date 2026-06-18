@@ -249,26 +249,34 @@ const ThreatAnalysisPage: React.FC = () => {
           {/* Progressive Scanning Steps Panel */}
           {isScanning && (
             <AppCard className="p-4 space-y-3 font-mono text-[10px] border border-[#00E5FF]/20 bg-[#0B1220]/40">
-              <span className="text-slate-500 uppercase tracking-widest block border-b border-[#1E293B] pb-1.5 mb-2">Active Signal Processing Hops</span>
-              <div className="space-y-2">
+              <span className="text-[#00E5FF] uppercase tracking-widest block border-b border-[#1E293B] pb-1.5 mb-2 font-bold flex items-center space-x-2">
+                <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#00E5FF]" />
+                <span>MULTIMODAL FUSION PIPELINE</span>
+              </span>
+              <div className="space-y-3.5">
                 {[
-                  { id: 1, text: 'INGESTION: Registering target query handles...' },
-                  { id: 2, text: 'EXTRACTING: Computing lexical entropy vectors...' },
-                  { id: 3, text: 'EVALUATING: Scanning NLP semantics & embeddings...' },
-                  { id: 4, text: 'TOPOLOGY: Recalculating Neo4j PageRank paths...' },
-                  { id: 5, text: 'CALIBRATION: Mapping Stacking predictions to empirical odds...' }
+                  { id: 1, label: 'EVIDENCE DISCOVERED', text: 'Ingested threat indicator registers WHOIS paths & registry timelines.' },
+                  { id: 2, label: 'SIGNALS COLLECTED', text: 'Parsing lexical structures, entropy, NLP embeddings, and vishing reports.' },
+                  { id: 3, label: 'CONFIDENCE ASSEMBLED', text: 'Resolving multi-modal calibration models and stacking prediction weights.' },
+                  { id: 4, label: 'REASONING GENERATED', text: 'Executing SHAP attributions, explaining feature weights, and trace patterns.' },
+                  { id: 5, label: 'MITIGATION RECOMMENDATION PRODUCED', text: 'Generating response blueprints and packaging cases for dispatcher logs.' }
                 ].map((step) => {
                   const isActive = scanStep === step.id;
                   const isCompleted = scanStep > step.id;
                   return (
                     <div 
                       key={step.id} 
-                      className={`flex items-center space-x-2 transition-colors ${
+                      className={`flex items-start space-x-2.5 transition-colors ${
                         isActive ? 'text-[#00E5FF] font-bold' : isCompleted ? 'text-slate-500' : 'text-slate-600'
                       }`}
                     >
-                      <div className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-[#00E5FF] animate-ping' : isCompleted ? 'bg-slate-500' : 'bg-slate-700'}`} />
-                      <span>{step.text}</span>
+                      <div className="mt-1 flex-shrink-0">
+                        <div className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-[#00E5FF] animate-ping' : isCompleted ? 'bg-slate-500' : 'bg-slate-700'}`} />
+                      </div>
+                      <div>
+                        <span className="font-bold uppercase tracking-wider text-[9px] block mb-0.5">{step.label}</span>
+                        <span className="text-[9px] leading-relaxed">{step.text}</span>
+                      </div>
                     </div>
                   );
                 })}

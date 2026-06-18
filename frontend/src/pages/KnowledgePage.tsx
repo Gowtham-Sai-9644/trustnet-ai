@@ -27,6 +27,11 @@ const KnowledgePage: React.FC = () => {
   const [activeSources, setActiveSources] = useState<string[]>([]);
   const [checkedMitigations, setCheckedMitigations] = useState<Record<string, boolean>>({});
 
+  // Progressive scan states
+  const [ragScanStep, setRagScanStep] = useState(0);
+  const [isRagScanning, setIsRagScanning] = useState(false);
+  const [pendingAnalystMsg, setPendingAnalystMsg] = useState<Message | null>(null);
+
   // Seeded starter suggestions for SecOps
   const starterPrompts = [
     { text: "Assess risk factors for job offer scams on Telegram", icon: ShieldAlert, color: "text-red-400" },
@@ -77,17 +82,43 @@ const KnowledgePage: React.FC = () => {
     };
     setMessages(prev => [...prev, userMsg]);
 
-    // Fetch analyst response
-    await fetchRagExplanation(userText, 0.85);
+    // Trigger progressive steps
+    setIsRagScanning(true);
+    setRagScanStep(1);
+    setPendingAnalystMsg(null);
+
+    // Call store
+    fetchRagExplanation(userText, 0.85);
   };
 
-  // Listen to store changes
+  // Manage progressive timers
   useEffect(() => {
-    if (ragResult) {
+    let t2: any, t3: any, t4: any, t5: any;
+    if (isRagScanning && ragScanStep > 0) {
+      if (ragScanStep === 1) {
+        t2 = setTimeout(() => setRagScanStep(2), 500);
+      } else if (ragScanStep === 2) {
+        t3 = setTimeout(() => setRagScanStep(3), 1000);
+      } else if (ragScanStep === 3) {
+        t4 = setTimeout(() => setRagScanStep(4), 1500);
+      } else if (ragScanStep === 4) {
+        t5 = setTimeout(() => setRagScanStep(5), 2000);
+      }
+    }
+    return () => {
+      clearTimeout(t2);
+      clearTimeout(t3);
+      clearTimeout(t4);
+      clearTimeout(t5);
+    };
+  }, [isRagScanning, ragScanStep]);
+
+  // Listen to store changes and save as pending
+  useEffect(() => {
+    if (ragResult && isRagScanning) {
       const now = new Date();
       const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-      // Build structured mock analyst response if RAG returns data
       const analystMsg: Message = {
         sender: 'analyst',
         text: ragResult.explanation,
@@ -113,9 +144,23 @@ const KnowledgePage: React.FC = () => {
             ]
       };
 
-      setMessages(prev => [...prev, analystMsg]);
+      setPendingAnalystMsg(analystMsg);
     }
-  }, [ragResult]);
+  }, [ragResult, isRagScanning]);
+
+  // Commit pending message when step 5 is complete
+  useEffect(() => {
+    let commitTimer: any;
+    if (ragScanStep === 5 && pendingAnalystMsg) {
+      commitTimer = setTimeout(() => {
+        setMessages(prev => [...prev, pendingAnalystMsg]);
+        setPendingAnalystMsg(null);
+        setIsRagScanning(false);
+        setRagScanStep(0);
+      }, 600);
+    }
+    return () => clearTimeout(commitTimer);
+  }, [ragScanStep, pendingAnalystMsg]);
 
   return (
     <div className="space-y-4 flex flex-col h-[calc(100vh-80px)] overflow-hidden text-left">
@@ -300,10 +345,47 @@ const KnowledgePage: React.FC = () => {
                 </div>
               ))}
               
-              {ragIsLoading && (
-                <div className="flex items-center space-x-2 text-[10px] text-[#00E5FF] font-mono">
-                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                  <span>Synthesizing compliance datasets...</span>
+              {isRagScanning && (
+                <div className="flex flex-col items-start w-full">
+                  <div className="flex items-center space-x-2 text-[9px] text-slate-500 mb-1 font-mono">
+                    <span>ANALYST_AI</span>
+                    <span>•</span>
+                    <span>THREAT SCANNING IN PROGRESS</span>
+                  </div>
+                  <div className="w-full bg-[#111827] border border-[#1E293B] p-4 rounded-xl space-y-3 font-mono text-[10px]">
+                    <span className="text-[#00E5FF] uppercase tracking-widest block border-b border-[#1E293B] pb-1.5 mb-2 font-bold flex items-center space-x-2">
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#00E5FF]" />
+                      <span>COGNITIVE REASONING PIPELINE</span>
+                    </span>
+                    <div className="space-y-3.5">
+                      {[
+                        { id: 1, label: 'EVIDENCE DISCOVERED', text: 'Target query terms ingested & isolated.' },
+                        { id: 2, label: 'SIGNALS COLLECTED', text: 'Scanning indicator patterns against vector storage databases...' },
+                        { id: 3, label: 'CONFIDENCE ASSEMBLED', text: 'Computing semantic similarity & model weights...' },
+                        { id: 4, label: 'REASONING GENERATED', text: 'Synthesizing contextual guidelines & compliance playbooks...' },
+                        { id: 5, label: 'MITIGATION RECOMMENDATION PRODUCED', text: 'Formulating preventive checklist & response targets...' }
+                      ].map((step) => {
+                        const isActive = ragScanStep === step.id;
+                        const isCompleted = ragScanStep > step.id;
+                        return (
+                          <div 
+                            key={step.id} 
+                            className={`flex items-start space-x-2.5 transition-colors ${
+                              isActive ? 'text-[#00E5FF] font-bold' : isCompleted ? 'text-slate-500' : 'text-slate-600'
+                            }`}
+                          >
+                            <div className="mt-1 flex-shrink-0">
+                              <div className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-[#00E5FF] animate-ping' : isCompleted ? 'bg-slate-500' : 'bg-slate-700'}`} />
+                            </div>
+                            <div>
+                              <span className="font-bold uppercase tracking-wider text-[9px] block mb-0.5">{step.label}</span>
+                              <span className="text-[9px] leading-relaxed">{step.text}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -316,10 +398,11 @@ const KnowledgePage: React.FC = () => {
                 onChange={(e) => setChatInput(e.target.value)}
                 placeholder="Query compliance playbooks, fraud indicators, network rules..."
                 className="flex-1 bg-[#050811] border border-[#1E293B] rounded-xl px-3.5 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#00E5FF] focus:ring-1 focus:ring-[#00E5FF]/30 transition-all"
+                disabled={isRagScanning}
               />
               <button
                 type="submit"
-                disabled={ragIsLoading}
+                disabled={isRagScanning}
                 className="bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-slate-900 p-2.5 rounded-xl flex-shrink-0 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 <Send className="w-4 h-4" />
