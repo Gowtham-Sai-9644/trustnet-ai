@@ -1,8 +1,8 @@
 import os
 from typing import Dict, Any, List
-from backend.app.services.rag.knowledge_ingestion import ingest_knowledge_files
-from backend.app.services.rag.retriever import local_retriever
-from backend.app.services.rag.prompt_builder import prompt_builder
+from app.services.rag.knowledge_ingestion import ingest_knowledge_files
+from app.services.rag.retriever import local_retriever
+from app.services.rag.prompt_builder import prompt_builder
 
 class RAGService:
     def __init__(self):

@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional
 from neo4j import AsyncGraphDatabase, AsyncDriver
-from backend.app.core.config import settings
+from app.core.config import settings
 
 class Neo4jConnectionManager:
     def __init__(self):

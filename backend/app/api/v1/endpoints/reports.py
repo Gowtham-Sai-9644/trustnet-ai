@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 import uuid
 
-from backend.app.core.database import get_db
-from backend.app.schemas.report_schema import ReportCreateRequest, ReportResponse
-from backend.app.services.graph_service import graph_service
+from app.core.database import get_db
+from app.schemas.report_schema import ReportCreateRequest, ReportResponse
+from app.services.graph_service import graph_service
 
 router = APIRouter()
 

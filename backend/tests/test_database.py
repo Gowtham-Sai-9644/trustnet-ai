@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
-from backend.app.core.database import get_db
+from app.core.database import get_db
 
 @pytest.mark.anyio
 async def test_get_db_lifecycle_success():
@@ -11,7 +11,7 @@ async def test_get_db_lifecycle_success():
     mock_context.__aenter__ = AsyncMock(return_value=mock_session)
     mock_context.__aexit__ = AsyncMock(return_value=False)
     
-    with patch("backend.app.core.database.async_session_maker", return_value=mock_context):
+    with patch("app.core.database.async_session_maker", return_value=mock_context):
         db_gen = get_db()
         session = await anext(db_gen)
         assert session == mock_session
@@ -33,7 +33,7 @@ async def test_get_db_lifecycle_exception():
     # Return False to avoid suppressing the raised exception in the generator block
     mock_context.__aexit__ = AsyncMock(return_value=False)
     
-    with patch("backend.app.core.database.async_session_maker", return_value=mock_context):
+    with patch("app.core.database.async_session_maker", return_value=mock_context):
         db_gen = get_db()
         session = await anext(db_gen)
         assert session == mock_session

@@ -1,8 +1,8 @@
 from fastapi.testclient import TestClient
 import pytest
 from unittest.mock import AsyncMock
-from backend.app.services.graph_service import graph_service
-from backend.app.core.neo4j_conn import neo4j_client
+from app.services.graph_service import graph_service
+from app.core.neo4j_conn import neo4j_client
 
 def test_get_graph_entity_details(client: TestClient):
     response = client.get("/api/v1/research/graph/entity", params={

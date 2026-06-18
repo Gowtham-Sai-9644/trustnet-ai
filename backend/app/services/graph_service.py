@@ -1,5 +1,5 @@
 from typing import Any, Dict, List
-from backend.app.core.neo4j_conn import neo4j_client
+from app.core.neo4j_conn import neo4j_client
 
 class GraphService:
     async def create_entity_node(self, label: str, entity_id: str, properties: Dict[str, Any]) -> None:

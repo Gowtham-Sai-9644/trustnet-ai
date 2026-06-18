@@ -2,9 +2,9 @@ from fastapi import APIRouter
 from datetime import datetime
 import os
 
-from backend.app.core.database import check_postgres_health
-from backend.app.core.neo4j_conn import neo4j_client
-from backend.app.services.rag.retriever import local_retriever
+from app.core.database import check_postgres_health
+from app.core.neo4j_conn import neo4j_client
+from app.services.rag.retriever import local_retriever
 
 router = APIRouter()
 

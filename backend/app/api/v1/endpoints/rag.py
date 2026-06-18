@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict
 
-from backend.app.services.rag.rag_service import rag_service
+from app.services.rag.rag_service import rag_service
 
 router = APIRouter()
 

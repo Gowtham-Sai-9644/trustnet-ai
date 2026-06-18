@@ -1,6 +1,6 @@
 import hashlib
 from typing import Dict, Any, Tuple
-from backend.app.schemas.analyze_schema import CalibrationResult, ShapAttributions
+from app.schemas.analyze_schema import CalibrationResult, ShapAttributions
 
 class MLService:
     def predict_url(self, url: str) -> Tuple[float, Dict[str, float]]:

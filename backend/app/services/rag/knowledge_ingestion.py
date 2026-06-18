@@ -1,6 +1,6 @@
 import os
 from typing import List
-from backend.app.services.rag.retriever import local_retriever
+from app.services.rag.retriever import local_retriever
 
 def ingest_knowledge_files(kb_dir: str = "knowledge_base"):
     if not os.path.exists(kb_dir):

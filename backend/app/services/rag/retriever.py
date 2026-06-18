@@ -2,7 +2,7 @@ import numpy as np
 import os
 import json
 from typing import List, Dict, Any
-from backend.app.services.rag.embedder import local_embedder
+from app.services.rag.embedder import local_embedder
 
 class LocalDocumentRetriever:
     def __init__(self):

@@ -1,9 +1,9 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from backend.app.core.config import settings
-from backend.app.api.router import router as api_router
-from backend.app.core.neo4j_conn import neo4j_client
-from backend.app.core.logging_setup import setup_logging
+from app.core.config import settings
+from app.api.router import router as api_router
+from app.core.neo4j_conn import neo4j_client
+from app.core.logging_setup import setup_logging
 import logging
 
 app = FastAPI(

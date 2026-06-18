@@ -48,8 +48,8 @@ sys.modules["seed_data.seed_neo4j"] = MagicMock(
     seed_neo4j_graph=AsyncMock()
 )
 
-from backend.app.main import app
-from backend.app.core.database import get_db
+from app.main import app
+from app.core.database import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.testclient import TestClient
 

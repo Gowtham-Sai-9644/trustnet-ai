@@ -4,10 +4,10 @@ from typing import List, Dict, Any
 import os
 import json
 
-from backend.app.core.database import get_db
-from backend.app.schemas.experiment_schema import ExperimentRunResponse
-from backend.app.schemas.graph_schema import EntityDetailsResponse, RelationshipDetail
-from backend.app.services.graph_service import graph_service
+from app.core.database import get_db
+from app.schemas.experiment_schema import ExperimentRunResponse
+from app.schemas.graph_schema import EntityDetailsResponse, RelationshipDetail
+from app.services.graph_service import graph_service
 
 router = APIRouter()
 
@@ -106,7 +106,7 @@ async def list_experiments(category: str = Query(None, description="Filter exper
 
 @router.get("/graph/dashboard")
 async def get_graph_dashboard():
-    from backend.app.core.neo4j_conn import neo4j_client
+    from app.core.neo4j_conn import neo4j_client
     try:
         nodes_res = await neo4j_client.execute_query("MATCH (n) RETURN count(n) AS c")
         edges_res = await neo4j_client.execute_query("MATCH ()-[r]->() RETURN count(r) AS c")

@@ -3,17 +3,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime
 import uuid
 
-from backend.app.core.database import get_db
-from backend.app.schemas.analyze_schema import (
+from app.core.database import get_db
+from app.schemas.analyze_schema import (
     URLAnalysisRequest, URLAnalysisResponse,
     MessageAnalysisRequest, MessageAnalysisResponse,
     FusionAnalysisRequest, FusionAnalysisResponse,
     CalibrationResult, ShapAttributions
 )
-from backend.app.schemas.experiment_schema import ExplainabilityResponse
-from backend.app.services.ml_service import ml_pipeline
-from backend.app.services.explain_service import explain_service
-from backend.app.services.graph_service import graph_service
+from app.schemas.experiment_schema import ExplainabilityResponse
+from app.services.ml_service import ml_pipeline
+from app.services.explain_service import explain_service
+from app.services.graph_service import graph_service
 
 router = APIRouter()
 
@@ -54,7 +54,7 @@ async def analyze_fusion(payload: FusionAnalysisRequest, db: AsyncSession = Depe
     calib_prob, confidence, method = ml_pipeline.calibrate_probability(fused_raw)
     
     # Check if Neo4j is available
-    from backend.app.core.neo4j_conn import neo4j_client
+    from app.core.neo4j_conn import neo4j_client
     graph_available = await neo4j_client.check_health()
 
     # Get explanation traces

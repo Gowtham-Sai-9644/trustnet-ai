@@ -1,11 +1,11 @@
 from fastapi.testclient import TestClient
 import os
 import shutil
-from backend.app.services.rag.embedder import local_embedder
-from backend.app.services.rag.retriever import local_retriever
-from backend.app.services.rag.prompt_builder import prompt_builder
-from backend.app.services.rag.knowledge_ingestion import ingest_knowledge_files
-from backend.app.services.rag.rag_service import rag_service
+from app.services.rag.embedder import local_embedder
+from app.services.rag.retriever import local_retriever
+from app.services.rag.prompt_builder import prompt_builder
+from app.services.rag.knowledge_ingestion import ingest_knowledge_files
+from app.services.rag.rag_service import rag_service
 
 def test_rag_query_endpoint(client: TestClient):
     response = client.post("/api/v1/rag/query", json={

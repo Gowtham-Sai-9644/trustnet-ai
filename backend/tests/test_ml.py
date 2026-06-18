@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
-from backend.app.services.ml_service import ml_pipeline
-from backend.app.services.explain_service import explain_service
+from app.services.ml_service import ml_pipeline
+from app.services.explain_service import explain_service
 
 def test_url_lexical_feature_extraction():
     url = "https://win-lotto-free-rewards.cfd/verify"
