@@ -1,0 +1,56 @@
+{
+  "project": "TrustNet AI",
+  "version": "1.0.0",
+  "python_version": "3.11.5",
+  "random_seed": 42,
+  "reproducibility_settings": {
+    "numpy_seed": 42,
+    "scikit_learn_random_state": 42,
+    "xgboost_random_state": 42,
+    "train_test_split_ratio": 0.2
+  },
+  "dataset_manifest": {
+    "synthetic_url_dataset": {
+      "path": "datasets/raw/url/synthetic_url_dataset.csv",
+      "rows": 400,
+      "columns": ["url", "is_phishing"]
+    },
+    "synthetic_scam_corpus": {
+      "path": "datasets/raw/messages/synthetic_scam_corpus.csv",
+      "rows": 4000,
+      "columns": ["text", "label", "category", "language"]
+    },
+    "sms_spam_collection": {
+      "path": "datasets/raw/messages/sms_spam_collection.csv",
+      "rows": 5574,
+      "columns": ["label", "text"]
+    },
+    "graph_features": {
+      "path": "datasets/processed/graph_features.csv",
+      "rows": 5574,
+      "columns": ["upi_id", "phone_number", "pagerank", "degree_centrality", "neighbor_risk_ratio"]
+    }
+  },
+  "model_checkpoints": {
+    "url_models": "ml/models_registry/url/",
+    "nlp_models": "ml/models_registry/nlp/",
+    "fusion_models": "ml/models_registry/fusion/",
+    "calibration_models": "ml/models_registry/calibration/"
+  },
+  "dependencies": {
+    "fastapi": "0.110.0",
+    "uvicorn": "0.28.0",
+    "sqlalchemy": "2.0.28",
+    "asyncpg": "0.29.0",
+    "neo4j": "5.18.0",
+    "pydantic": "2.6.4",
+    "pydantic-settings": "2.2.1",
+    "numpy": "1.26.4",
+    "pandas": "2.2.1",
+    "scikit-learn": "1.4.1.post1",
+    "xgboost": "2.0.3",
+    "shap": "0.45.0",
+    "transformers": "4.38.2",
+    "torch": "2.2.1"
+  }
+}

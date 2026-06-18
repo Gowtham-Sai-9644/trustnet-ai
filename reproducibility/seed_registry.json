@@ -1,0 +1,10 @@
+{
+  "numpy_random_seed": 42,
+  "python_random_seed": 42,
+  "pytorch_random_seed": 42,
+  "sklearn_random_state": 42,
+  "xgboost_random_state": 42,
+  "train_test_split_seed": 42,
+  "cross_validation_seed": 42,
+  "neo4j_auto_seeding_seed": 42
+}

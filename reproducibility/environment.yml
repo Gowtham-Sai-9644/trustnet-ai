@@ -1,0 +1,28 @@
+name: trustnet_ai
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.11.5
+  - numpy=1.26.4
+  - pandas=2.2.1
+  - scikit-learn=1.4.1.post1
+  - pip
+  - pip:
+      - fastapi==0.110.0
+      - uvicorn==0.28.0
+      - sqlalchemy==2.0.28
+      - asyncpg==0.29.0
+      - neo4j==5.18.0
+      - pydantic==2.6.4
+      - pydantic-settings==2.2.1
+      - xgboost==2.0.3
+      - shap==0.45.0
+      - transformers==4.38.2
+      - torch==2.2.1
+      - chromadb==0.4.24
+      - sentence-transformers==2.5.1
+      - langchain-community==0.0.24
+      - pytest==9.1.0
+      - pytest-cov==4.1.0
+      - anyio==4.3.0
