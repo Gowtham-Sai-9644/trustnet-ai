@@ -1,0 +1,12 @@
+pipeline,model_identifier,accuracy,precision,recall,f1_score,roc_auc,pr_auc
+URL Detection,Logistic Regression,1.0,1.0,1.0,1.0,1.0,1.0
+URL Detection,Random Forest,1.0,1.0,1.0,1.0,1.0,1.0
+URL Detection,XGBoost,1.0,1.0,1.0,1.0,1.0,1.0
+NLP Lure Detection,TF-IDF + SVM,1.0,1.0,1.0,1.0,,
+Signal Fusion Ablation,URL Only,0.4625,,,0.0,,
+Signal Fusion Ablation,NLP Only,0.4625,,,0.0,,
+Signal Fusion Ablation,Graph Only,1.0,,,1.0,,
+Signal Fusion Ablation,URL + NLP,0.4625,,,0.0,,
+Signal Fusion Ablation,URL + Graph,1.0,,,1.0,,
+Signal Fusion Ablation,NLP + Graph,1.0,,,1.0,,
+Signal Fusion Ablation,Full Fusion,1.0,,,1.0,,

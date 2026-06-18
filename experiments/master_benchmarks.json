@@ -1,0 +1,86 @@
+{
+  "url_models": {
+    "Logistic Regression": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0
+    },
+    "Random Forest": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0
+    },
+    "XGBoost": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0
+    }
+  },
+  "nlp_models": {
+    "TF-IDF + SVM": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0
+    }
+  },
+  "fusion_ablation": {
+    "URL Only": {
+      "accuracy": 0.4625,
+      "f1_score": 0.0
+    },
+    "NLP Only": {
+      "accuracy": 0.4625,
+      "f1_score": 0.0
+    },
+    "Graph Only": {
+      "accuracy": 1.0,
+      "f1_score": 1.0
+    },
+    "URL + NLP": {
+      "accuracy": 0.4625,
+      "f1_score": 0.0
+    },
+    "URL + Graph": {
+      "accuracy": 1.0,
+      "f1_score": 1.0
+    },
+    "NLP + Graph": {
+      "accuracy": 1.0,
+      "f1_score": 1.0
+    },
+    "Full Fusion": {
+      "accuracy": 1.0,
+      "f1_score": 1.0
+    }
+  },
+  "calibration": {
+    "raw": {
+      "ece": 0.1663539188153319,
+      "brier_score": 0.10465944874202417
+    },
+    "platt": {
+      "ece": 0.028901958215056166,
+      "brier_score": 0.07387004143718569
+    },
+    "isotonic": {
+      "ece": 5.598299601672352e-17,
+      "brier_score": 0.06895475918350892
+    }
+  },
+  "rag_evaluation": {
+    "Precision@1": 0.92,
+    "Recall@1": 0.76,
+    "Groundedness": 0.958,
+    "Citation Coverage": 1.0
+  }
+}

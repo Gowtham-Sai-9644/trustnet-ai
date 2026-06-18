@@ -1,0 +1,23 @@
+FROM python:3.10-slim
+
+WORKDIR /workspace
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY backend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy all required modules into workspace for package imports
+COPY backend/ backend/
+COPY seed_data/ seed_data/
+COPY ml/ ml/
+COPY datasets/ datasets/
+
+EXPOSE 8000
+
+ENV PYTHONPATH=/workspace
+
+CMD ["uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,0 +1,30 @@
+{
+  "URL Only": {
+    "accuracy": 0.68125,
+    "f1_score": 0.5048543689320388
+  },
+  "NLP Only": {
+    "accuracy": 0.7775,
+    "f1_score": 0.7741116751269036
+  },
+  "Graph Only": {
+    "accuracy": 0.775,
+    "f1_score": 0.6949152542372882
+  },
+  "URL + NLP": {
+    "accuracy": 0.83,
+    "f1_score": 0.8361445783132531
+  },
+  "URL + Graph": {
+    "accuracy": 0.93,
+    "f1_score": 0.9215686274509803
+  },
+  "NLP + Graph": {
+    "accuracy": 0.86,
+    "f1_score": 0.8502673796791443
+  },
+  "Full Fusion": {
+    "accuracy": 0.93,
+    "f1_score": 0.9303482587064676
+  }
+}

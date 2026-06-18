@@ -1,0 +1,31 @@
+{
+  "url_model_xgb": {
+    "accuracy": 0.925,
+    "precision": 0.931,
+    "recall": 0.918,
+    "f1_score": 0.924,
+    "roc_auc": 0.978
+  },
+  "nlp_model_svm": {
+    "accuracy": 0.942,
+    "precision": 0.948,
+    "recall": 0.936,
+    "f1_score": 0.942,
+    "roc_auc": 0.982
+  },
+  "fusion_meta_learner": {
+    "accuracy": 0.968,
+    "precision": 0.972,
+    "recall": 0.964,
+    "f1_score": 0.968,
+    "roc_auc": 0.994
+  },
+  "calibration_metrics": {
+    "raw_brier_score": 0.1046,
+    "platt_brier_score": 0.0738,
+    "isotonic_brier_score": 0.0689,
+    "raw_ece": 0.1664,
+    "platt_ece": 0.0289,
+    "isotonic_ece": 0.0001
+  }
+}

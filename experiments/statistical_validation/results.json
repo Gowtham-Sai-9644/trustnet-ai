@@ -1,0 +1,42 @@
+{
+  "tfidf_svm_vs_muril": {
+    "wilcoxon_p": 1.3876646900177629e-132,
+    "mcnemar_p": 3.653259759235351e-153,
+    "bootstrap_ci": [
+      0.8462500000000001,
+      0.89625
+    ],
+    "mean_difference": 0.8712637500000001,
+    "statistically_significant": true
+  },
+  "url_xgb_vs_rf": {
+    "wilcoxon_p": 1.9561495849548327e-19,
+    "mcnemar_p": 1.0,
+    "bootstrap_ci": [
+      0.0,
+      0.0
+    ],
+    "mean_difference": 0.0,
+    "statistically_significant": true
+  },
+  "fusion_vs_nlp": {
+    "wilcoxon_p": 2.5036932869621162e-80,
+    "mcnemar_p": 2.7478918257365855e-63,
+    "bootstrap_ci": [
+      -0.38625,
+      -0.32125000000000004
+    ],
+    "mean_difference": -0.3546425,
+    "statistically_significant": true
+  },
+  "fusion_vs_url": {
+    "wilcoxon_p": 1.3873072387620148e-132,
+    "mcnemar_p": 0.00011053371074653496,
+    "bootstrap_ci": [
+      0.05999999999999994,
+      0.18874999999999997
+    ],
+    "mean_difference": 0.12477125,
+    "statistically_significant": true
+  }
+}
