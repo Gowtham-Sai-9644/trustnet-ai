@@ -3,6 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import cytoscape from 'cytoscape';
 import { CinematicBackground } from '../components/ui/CinematicBackground';
+import BackgroundSlideshow from '../components/ui/BackgroundSlideshow';
+import GlobalPathNetwork from '../components/ui/GlobalPathNetwork';
+
 import { 
   ShieldAlert, 
   ShieldCheck, 
@@ -58,6 +61,8 @@ const CountUp: React.FC<{ end: number; duration?: number; suffix?: string; decim
 
   return <span>{count.toFixed(decimals)}{suffix}</span>;
 };
+
+
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -371,10 +376,16 @@ const LandingPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#050811] text-slate-100 font-sans antialiased overflow-hidden relative flex flex-col justify-between select-none">
+    <div className="min-h-screen bg-transparent text-slate-100 font-sans antialiased overflow-hidden relative flex flex-col justify-between select-none">
       
+      {/* Cinematic Background Slideshow Layer */}
+      <BackgroundSlideshow activeScene={activeScene} />
+
       {/* Cinematic Background Canvas Layer */}
       <CinematicBackground />
+
+      {/* Global Network Paths & Telemetry Cards */}
+      <GlobalPathNetwork />
 
       {/* Global Transition Wipes */}
       <AnimatePresence>
@@ -444,6 +455,8 @@ const LandingPage: React.FC = () => {
         
         {/* SCENE 1: "The Problem" - Threat Landscape */}
         <section className="w-full h-screen snap-start overflow-hidden relative flex items-center justify-center px-6 lg:px-16 py-16">
+
+
           <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             {/* Headline and text */}
@@ -459,7 +472,7 @@ const LandingPage: React.FC = () => {
               </p>
               
               {/* Interactive simulator controls */}
-              <div className="bg-[#0B1220] border border-[#1E293B] rounded-xl p-4 space-y-3 max-w-md">
+              <div className="bg-[#0D182E]/95 border-2 border-slate-700/80 rounded-2xl p-6 space-y-4 max-w-lg w-full shadow-[0_0_30px_rgba(0,0,0,0.6)]">
                 <span className="text-[9px] font-mono text-slate-500 uppercase block tracking-wider">Active Threat Monitor Simulator</span>
                 <div className="flex gap-2">
                   {(['lures', 'hops', 'mules'] as const).map((type) => (
@@ -486,7 +499,7 @@ const LandingPage: React.FC = () => {
 
             {/* Visual threat telemetry map */}
             <div className="lg:col-span-6 flex justify-center">
-              <div className="w-full max-w-md aspect-video bg-[#111827] border border-[#1E293B] rounded-2xl relative overflow-hidden flex flex-col justify-between shadow-2xl p-4">
+              <div className="w-full max-w-lg aspect-video bg-[#131E35]/95 border-2 border-slate-700/80 rounded-2xl relative overflow-hidden flex flex-col justify-between shadow-[0_0_30px_rgba(0,0,0,0.6)] p-6">
                 <div className="flex justify-between items-center border-b border-[#1E293B] pb-2 text-[9px] font-mono text-slate-500">
                   <span className="flex items-center space-x-1">
                     <Terminal className="w-3.5 h-3.5 text-[#EF4444]" />
@@ -564,7 +577,7 @@ const LandingPage: React.FC = () => {
         </section>
 
         {/* SCENE 2: "The Solution" - Threat Detection in Action */}
-        <section className="w-full h-screen snap-start overflow-hidden relative flex items-center justify-center px-6 lg:px-16 py-16 bg-[#070B14]">
+        <section className="w-full h-screen snap-start overflow-hidden relative flex items-center justify-center px-6 lg:px-16 py-16 bg-transparent">
           <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             <div className="lg:col-span-6 space-y-6 text-left">
@@ -579,7 +592,7 @@ const LandingPage: React.FC = () => {
               </p>
 
               {/* Form scanner */}
-              <div className="space-y-4 bg-[#0B1220] p-5 rounded-2xl border border-[#1E293B] max-w-md">
+              <div className="space-y-5 bg-[#0D182E]/95 p-7 rounded-2xl border-2 border-slate-700/80 max-w-lg w-full shadow-[0_0_30px_rgba(0,0,0,0.6)]">
                 <div className="flex space-x-3 border-b border-[#1E293B] pb-2.5 text-[10px] font-mono">
                   <button 
                     onClick={() => {
@@ -623,7 +636,7 @@ const LandingPage: React.FC = () => {
 
             {/* Diagnostic Console display */}
             <div className="lg:col-span-6 flex justify-center">
-              <div className="w-full max-w-md h-[300px] bg-[#111827] border border-[#1E293B] rounded-2xl p-4 flex flex-col justify-between shadow-2xl relative text-left overflow-hidden">
+              <div className="w-full max-w-lg h-[340px] bg-[#131E35]/95 border-2 border-slate-700/80 rounded-2xl p-6 flex flex-col justify-between shadow-[0_0_30px_rgba(0,0,0,0.6)] relative text-left overflow-hidden">
                 <div className="flex justify-between items-center border-b border-[#1E293B] pb-2 text-[9px] font-mono text-slate-500">
                   <span>STAGE RESOLUTION CONSOLE</span>
                   <span className={isScanning ? 'text-[#00E5FF] animate-pulse' : 'text-slate-500'}>
@@ -679,7 +692,7 @@ const LandingPage: React.FC = () => {
         </section>
 
         {/* SCENE 3: "The Power" - Graph Intelligence */}
-        <section className="w-full h-screen snap-start overflow-hidden relative flex items-center justify-center px-6 lg:px-16 py-16 bg-[#050811]">
+        <section className="w-full h-screen snap-start overflow-hidden relative flex items-center justify-center px-6 lg:px-16 py-16 bg-transparent">
           <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             <div className="lg:col-span-6 space-y-6 text-left">
@@ -729,7 +742,7 @@ const LandingPage: React.FC = () => {
 
             {/* Interactive Graph Canvas */}
             <div className="lg:col-span-6 flex justify-center">
-              <div className="w-full max-w-md h-[300px] bg-[#111827] border border-[#1E293B] rounded-2xl flex flex-col justify-between shadow-2xl relative overflow-hidden text-left">
+              <div className="w-full max-w-lg h-[340px] bg-[#131E35]/95 border-2 border-slate-700/80 rounded-2xl flex flex-col justify-between shadow-[0_0_30px_rgba(0,0,0,0.6)] relative overflow-hidden text-left">
                 <div className="px-4 py-2 border-b border-[#1E293B] bg-[#0B1220]/80 flex justify-between items-center text-[9px] font-mono text-slate-500">
                   <span>MULE REGISTRY VISUALIZER</span>
                   <span>{graphExpanded ? '6 NODES LOADED' : '3 NODES LOADED'}</span>
@@ -773,7 +786,7 @@ const LandingPage: React.FC = () => {
         </section>
 
         {/* SCENE 4: "The Trust" - Explainable AI */}
-        <section className="w-full h-screen snap-start overflow-hidden relative flex items-center justify-center px-6 lg:px-16 py-16 bg-[#070B14]">
+        <section className="w-full h-screen snap-start overflow-hidden relative flex items-center justify-center px-6 lg:px-16 py-16 bg-transparent">
           <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             <div className="lg:col-span-6 space-y-6 text-left">
@@ -788,8 +801,8 @@ const LandingPage: React.FC = () => {
               </p>
 
               {/* Expandable evidence cards */}
-              <div className="space-y-2.5 max-w-md">
-                <span className="text-[9px] font-mono text-slate-500 uppercase block tracking-wider">Verify Model Reasoning Checklist</span>
+              <div className="space-y-3.5 max-w-lg w-full">
+                <span className="text-[10px] font-mono text-slate-400 uppercase block tracking-wider font-semibold">Verify Model Reasoning Checklist</span>
                 
                 {[
                   { id: 'nlp', title: 'NLP Lexical Coercion', desc: 'The DistilBERT language model flagged urgent threat keywords with 94.2% probability matching extortion parameters.' },
@@ -798,15 +811,15 @@ const LandingPage: React.FC = () => {
                 ].map((item) => (
                   <div 
                     key={item.id}
-                    className="bg-[#0B1220] border border-[#1E293B] rounded-xl overflow-hidden cursor-pointer transition-all hover:border-[#1E293B]"
+                    className="bg-[#0D182E]/95 border-2 border-slate-700/80 rounded-2xl overflow-hidden cursor-pointer transition-all hover:border-[#00E5FF]/40 shadow-md"
                     onClick={() => {
                       registerUserInteraction();
                       setExpandedEvidenceId(expandedEvidenceId === item.id ? null : item.id);
                     }}
                   >
-                    <div className="p-3 flex justify-between items-center text-xs font-semibold">
-                      <span className="text-slate-200">{item.title}</span>
-                      <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform ${expandedEvidenceId === item.id ? 'rotate-180' : ''}`} />
+                    <div className="p-4 flex justify-between items-center text-sm font-semibold">
+                      <span className="text-slate-100">{item.title}</span>
+                      <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${expandedEvidenceId === item.id ? 'rotate-180' : ''}`} />
                     </div>
                     <AnimatePresence>
                       {expandedEvidenceId === item.id && (
@@ -814,7 +827,7 @@ const LandingPage: React.FC = () => {
                           initial={{ height: 0 }}
                           animate={{ height: 'auto' }}
                           exit={{ height: 0 }}
-                          className="px-3 pb-3 overflow-hidden text-[10px] text-slate-400 leading-relaxed font-sans border-t border-[#1E293B]/40 pt-2"
+                          className="px-4 pb-4 overflow-hidden text-xs text-slate-300 leading-relaxed font-sans border-t border-[#1E293B]/45 pt-3.5"
                         >
                           {item.desc}
                         </motion.div>
@@ -827,7 +840,7 @@ const LandingPage: React.FC = () => {
 
             {/* Visual SHAP progress bars and confidence dial */}
             <div className="lg:col-span-6 flex justify-center">
-              <div className="w-full max-w-md h-[300px] bg-[#111827] border border-[#1E293B] rounded-2xl p-4 flex flex-col justify-between shadow-2xl relative text-left">
+              <div className="w-full max-w-lg h-[340px] bg-[#131E35]/95 border-2 border-slate-700/80 rounded-2xl p-6 flex flex-col justify-between shadow-[0_0_30px_rgba(0,0,0,0.6)] relative text-left">
                 <div className="flex justify-between items-center border-b border-[#1E293B] pb-2 text-[9px] font-mono text-slate-500">
                   <span>SHAPLEY VALUE ATTRIBUTION</span>
                   <span>ENSEMBLE STACK</span>
@@ -904,7 +917,7 @@ const LandingPage: React.FC = () => {
         </section>
 
         {/* SCENE 5: "The Impact" - Threat Prevention Outcomes */}
-        <section className="w-full h-screen snap-start overflow-hidden relative flex items-center justify-center px-6 lg:px-16 py-16 bg-[#050811]">
+        <section className="w-full h-screen snap-start overflow-hidden relative flex items-center justify-center px-6 lg:px-16 py-16 bg-transparent">
           <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             <div className="lg:col-span-6 space-y-6 text-left">
@@ -938,9 +951,9 @@ const LandingPage: React.FC = () => {
             </div>
 
             {/* Testimonials and Metric Grid */}
-            <div className="lg:col-span-6 space-y-5">
+            <div className="lg:col-span-6 space-y-6 w-full max-w-lg">
               {/* Testimonial slider */}
-              <div className="bg-[#111827] border border-[#1E293B] rounded-2xl p-5 relative overflow-hidden shadow-2xl text-left">
+              <div className="bg-[#131E35]/95 border-2 border-slate-700/80 rounded-2xl p-6 relative overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.6)] text-left">
                 <div className="flex justify-between items-center border-b border-[#1E293B] pb-2 text-[9px] font-mono text-slate-500 mb-3">
                   <span>SECOPS OFFICER TESTIMONIAL</span>
                   <div className="flex space-x-1.5">
@@ -974,18 +987,18 @@ const LandingPage: React.FC = () => {
               </div>
 
               {/* Mini metric counters */}
-              <div className="grid grid-cols-3 gap-3">
-                <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-3 text-left space-y-1">
-                  <span className="text-[7px] font-mono text-slate-500 uppercase block leading-none">Scans Performed</span>
-                  <h3 className="text-md font-bold font-mono text-[#00E5FF]"><CountUp end={235795} /></h3>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-[#131E35]/95 border-2 border-slate-700/80 rounded-2xl p-4 text-left space-y-2 shadow-md">
+                  <span className="text-[9px] font-mono text-slate-400 uppercase block leading-none font-semibold">Scans Performed</span>
+                  <h3 className="text-lg font-bold font-mono text-[#00E5FF]"><CountUp end={235795} /></h3>
                 </div>
-                <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-3 text-left space-y-1">
-                  <span className="text-[7px] font-mono text-slate-500 uppercase block leading-none">Scams Intercepted</span>
-                  <h3 className="text-md font-bold font-mono text-slate-200"><CountUp end={5574} /></h3>
+                <div className="bg-[#131E35]/95 border-2 border-slate-700/80 rounded-2xl p-4 text-left space-y-2 shadow-md">
+                  <span className="text-[9px] font-mono text-slate-400 uppercase block leading-none font-semibold">Scams Intercepted</span>
+                  <h3 className="text-lg font-bold font-mono text-slate-200"><CountUp end={5574} /></h3>
                 </div>
-                <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-3 text-left space-y-1">
-                  <span className="text-[7px] font-mono text-slate-500 uppercase block leading-none">AI F1 Accuracy</span>
-                  <h3 className="text-md font-bold font-mono text-[#22C55E]"><CountUp end={96.8} decimals={1} suffix="%" /></h3>
+                <div className="bg-[#131E35]/95 border-2 border-slate-700/80 rounded-2xl p-4 text-left space-y-2 shadow-md">
+                  <span className="text-[9px] font-mono text-slate-400 uppercase block leading-none font-semibold">AI F1 Accuracy</span>
+                  <h3 className="text-lg font-bold font-mono text-[#22C55E]"><CountUp end={96.8} decimals={1} suffix="%" /></h3>
                 </div>
               </div>
             </div>
