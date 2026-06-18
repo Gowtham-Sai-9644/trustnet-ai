@@ -44,11 +44,19 @@ async def startup_event():
     
     # Auto-seed Postgres and Neo4j databases asynchronously if empty
     import asyncio
-    from seed_data.seed_postgres import seed_postgres_db
-    from seed_data.seed_neo4j import seed_neo4j_graph
+    import os
     
-    asyncio.create_task(seed_postgres_db())
-    asyncio.create_task(seed_neo4j_graph())
+    if os.getenv("ENABLE_SEEDING") == "true":
+        import sys
+        parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+        if parent_dir not in sys.path:
+            sys.path.insert(0, parent_dir)
+        
+        from seed_data.seed_postgres import seed_postgres_db
+        from seed_data.seed_neo4j import seed_neo4j_graph
+        
+        asyncio.create_task(seed_postgres_db())
+        asyncio.create_task(seed_neo4j_graph())
 
 @app.on_event("shutdown")
 async def shutdown_event():
