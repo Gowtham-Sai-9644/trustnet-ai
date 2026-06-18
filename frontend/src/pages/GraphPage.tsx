@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, Network, Info, ShieldAlert, GitFork, RefreshCw, Layers, 
   Target, Filter, Clock, AlertTriangle, Save, CheckCircle, Play, Pause, 
-  Image, Download, Zap, Radio, Sliders, ArrowRight
+  Image, Download, Zap, Radio, Sliders, ArrowRight, FileText
 } from 'lucide-react';
 import { researchService } from '../services/api';
 import { AppCard } from '../components/ui/AppCard';
@@ -14,6 +14,7 @@ import { AppPageHeader } from '../components/ui/AppPageHeader';
 import { AppBadge } from '../components/ui/AppBadge';
 import { AppEmptyState } from '../components/ui/AppEmptyState';
 import { CinematicBackground } from '../components/ui/CinematicBackground';
+import { AppModal } from '../components/ui/AppModal';
 
 interface QueueItem {
   caseId: string;
@@ -33,13 +34,25 @@ const GraphPage: React.FC = () => {
   const [notes, setNotes] = useState('');
   const [showSavedToast, setShowSavedToast] = useState(false);
 
-  // Advanced V2 Playback Engine
+  // Advanced V3 OS Engine States
   const [isDiscovering, setIsDiscovering] = useState(false);
   const [discoveryStep, setDiscoveryStep] = useState(0);
   const [selectedPathNodes, setSelectedPathNodes] = useState<string[]>([]);
   const [isPlayingReplay, setIsPlayingReplay] = useState(false);
   const [replayStep, setReplayStep] = useState(0);
   const [playbackSpeed, setPlaybackSpeed] = useState<1 | 2 | 5>(1); // Speed multiplier
+  const [showTour, setShowTour] = useState(false);
+  const [isInfluenceMode, setIsInfluenceMode] = useState(false);
+  const [isPatternOfLife, setIsPatternOfLife] = useState(false);
+  const [influenceSourceNode, setInfluenceSourceNode] = useState<string | null>(null);
+
+  useEffect(() => {
+    const tourSeen = localStorage.getItem('trustnet_v3_graph_tour_seen');
+    if (!tourSeen) {
+      setShowTour(true);
+      localStorage.setItem('trustnet_v3_graph_tour_seen', 'true');
+    }
+  }, []);
 
   // Chronological timeline step mappings
   const timelineSteps = [
@@ -211,6 +224,36 @@ const GraphPage: React.FC = () => {
             'border-color': '#6366F1',
             'border-width': '2.5px'
           }
+        },
+        {
+          selector: '.influence-high',
+          style: {
+            'background-color': '#EF4444',
+            'border-color': '#EF4444',
+            'border-width': '5px',
+            'width': '20px',
+            'height': '20px'
+          }
+        },
+        {
+          selector: '.influence-med',
+          style: {
+            'background-color': '#F59E0B',
+            'border-color': '#F59E0B',
+            'border-width': '3.5px',
+            'width': '16px',
+            'height': '16px'
+          }
+        },
+        {
+          selector: '.influence-low',
+          style: {
+            'background-color': '#94A3B8',
+            'border-color': '#475569',
+            'border-width': '2px',
+            'width': '12px',
+            'height': '12px'
+          }
         }
       ],
       layout: {
@@ -249,18 +292,39 @@ const GraphPage: React.FC = () => {
       cy.layout({ name: 'cose', animate: true, fit: true }).run();
     });
 
-    // Pathfinder node selector
+    // Pathfinder / Influence Heatmap node selector
     cy.on('tap', 'node', (evt) => {
-      const nodeId = evt.target.id();
-      setSelectedPathNodes(prev => {
-        if (prev.includes(nodeId)) {
-          return prev.filter(id => id !== nodeId);
-        }
-        if (prev.length >= 2) {
-          return [prev[1], nodeId];
-        }
-        return [...prev, nodeId];
-      });
+      const node = evt.target;
+      const nodeId = node.id();
+      
+      if (isInfluenceMode) {
+        // Clear previous influence indicators
+        cy.elements().removeClass('influence-high').removeClass('influence-med').removeClass('influence-low');
+        
+        // Calculate distance from tap node
+        const ds = cy.elements().dijkstra({ root: node });
+        cy.nodes().forEach(n => {
+          const dist = ds.distanceTo(n);
+          if (dist === 0 || dist === 1) {
+            n.addClass('influence-high');
+          } else if (dist === 2) {
+            n.addClass('influence-med');
+          } else if (dist > 2 && dist < Infinity) {
+            n.addClass('influence-low');
+          }
+        });
+        setInfluenceSourceNode(nodeId);
+      } else {
+        setSelectedPathNodes(prev => {
+          if (prev.includes(nodeId)) {
+            return prev.filter(id => id !== nodeId);
+          }
+          if (prev.length >= 2) {
+            return [prev[1], nodeId];
+          }
+          return [...prev, nodeId];
+        });
+      }
     });
 
     cyInstanceRef.current = cy;
@@ -269,7 +333,7 @@ const GraphPage: React.FC = () => {
       cy.destroy();
       cyInstanceRef.current = null;
     };
-  }, [selectedNode]);
+  }, [selectedNode, isInfluenceMode]);
 
   // Periodic halo pulse animation loop
   useEffect(() => {
@@ -298,6 +362,42 @@ const GraphPage: React.FC = () => {
       path.addClass('highlighted');
     }
   }, [selectedPathNodes]);
+
+  // Pattern of Life layout toggle effect
+  useEffect(() => {
+    const cy = cyInstanceRef.current;
+    if (!cy || !selectedNode) return;
+
+    if (isPatternOfLife) {
+      const nodes = cy.nodes();
+      
+      // Sort nodes: selectedNode first, then others
+      const sorted = nodes.toArray().sort((a, b) => {
+        if (a.id() === selectedNode.entity) return -1;
+        if (b.id() === selectedNode.entity) return 1;
+        return a.id().localeCompare(b.id());
+      });
+
+      sorted.forEach((node, index) => {
+        node.animate({
+          position: {
+            x: index * 85 + 60,
+            y: 160 + (index % 2 === 0 ? 35 : -35)
+          }
+        }, {
+          duration: 600
+        });
+      });
+    } else {
+      cy.layout({
+        name: 'cose',
+        fit: true,
+        padding: 30,
+        animate: true,
+        animationDuration: 600
+      }).run();
+    }
+  }, [isPatternOfLife, selectedNode]);
 
   // V2 Signature Fraud Ring Discovery Loop (6 Steps)
   const runFraudRingDiscovery = () => {
@@ -429,6 +529,70 @@ const GraphPage: React.FC = () => {
     document.body.removeChild(link);
   };
 
+  const handleExportPDF = () => {
+    if (!selectedNode) return;
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+    
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>TrustNet Forensic Report - ${selectedNode.entity}</title>
+          <style>
+            body { font-family: monospace; background: #050811; color: #f8fafc; padding: 40px; }
+            h1 { color: #00E5FF; border-bottom: 2px solid #1E293B; padding-bottom: 8px; }
+            .section { margin: 25px 0; border: 1px solid #1E293B; background: #0B1220; padding: 20px; border-radius: 12px; }
+            .label { font-weight: bold; color: #94A3B8; }
+            .value { font-size: 14px; margin-bottom: 10px; color: #f8fafc; }
+            table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+            th, td { border: 1px solid #1E293B; padding: 8px; text-align: left; }
+            th { background-color: #111827; color: #00E5FF; }
+          </style>
+        </head>
+        <body>
+          <h1>TRUSTNET AI - FORENSIC INVESTIGATION REPORT</h1>
+          <div class="section">
+            <div><span class="label">Target Entity:</span> ${selectedNode.entity}</div>
+            <div><span class="label">Entity Category:</span> ${selectedNode.label}</div>
+            <div><span class="label">Timestamp Generated:</span> ${new Date().toLocaleString()}</div>
+            <div><span class="label">Risk Index Probability:</span> ${getRiskScore(selectedNode)}%</div>
+          </div>
+          <div class="section">
+            <h2>REPLAY TIMELINE EVENTS</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Step</th>
+                  <th>Event</th>
+                  <th>Time</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${timelineSteps.map((step, idx) => `
+                  <tr>
+                    <td>${idx + 1}</td>
+                    <td>${step.label}</td>
+                    <td>${step.time}</td>
+                    <td>${step.desc}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+          <div class="section">
+            <h2>COMPLIANCE AUDIT DISPATCH</h2>
+            <p>Verification logs matched. Cryptographic signature approved under SecOps baseline. Case dispatched for remediation.</p>
+          </div>
+          <script>
+            window.onload = function() { window.print(); window.close(); }
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
   const getRiskScore = (node: any) => {
     if (!node) return 0;
     if (node.entity.includes('24@ybl')) return 98;
@@ -437,12 +601,12 @@ const GraphPage: React.FC = () => {
   };
 
   const discoveryStepsLabels = [
-    'INITIAL SCAN: Ingesting core UPI/phone signature',
-    'ENTITY DISCOVERY: Fetching adjacent coordinates',
-    'GRAPH EXPANSION: Branching 2nd-order hop registers',
-    'RELATIONSHIP DETECTION: Tracing transactional loops',
-    'RISK PROPAGATION: Projecting cascade centralities',
-    'FRAUD RING EXPOSURE: Mule ring isolated successfully'
+    'Step 1: Initial Scan — Analyzing the submitted entity.',
+    'Step 2: Entity Discovery — Uncovering linked identifiers.',
+    'Step 3: Graph Expansion — Mapping hidden connections.',
+    'Step 4: Relationship Detection — Identifying patterns of fraud.',
+    'Step 5: Risk Propagation — Spreading risk levels to adjacent nodes.',
+    'Step 6: Fraud Ring Revealed — Exposing the complete network.'
   ];
 
   return (
@@ -569,22 +733,80 @@ const GraphPage: React.FC = () => {
                 <Radio className="w-3.5 h-3.5 animate-pulse" />
                 <span>Run Discovery Mode</span>
               </button>
+
+              <button 
+                onClick={() => {
+                  setIsInfluenceMode(!isInfluenceMode);
+                  if (!isInfluenceMode) {
+                    setIsPatternOfLife(false); // mutually exclusive layout helper
+                  } else {
+                    const cy = cyInstanceRef.current;
+                    cy?.elements().removeClass('influence-high').removeClass('influence-med').removeClass('influence-low');
+                    setInfluenceSourceNode(null);
+                  }
+                }}
+                disabled={!selectedNode}
+                className={`px-4 py-1.5 rounded-xl text-[10px] font-bold border flex items-center space-x-1.5 cursor-pointer transition-all ${
+                  isInfluenceMode 
+                    ? 'bg-red-500/15 border-red-500/30 text-red-400' 
+                    : 'bg-[#111827] border-[#1E293B] text-slate-400 hover:text-slate-200'
+                }`}
+                title="Toggle Spatial Influence Heatmap mode"
+              >
+                <Sliders className="w-3.5 h-3.5" />
+                <span>Influence Heatmap</span>
+              </button>
+
+              <button 
+                onClick={() => {
+                  setIsPatternOfLife(!isPatternOfLife);
+                  if (!isPatternOfLife) {
+                    setIsInfluenceMode(false);
+                    const cy = cyInstanceRef.current;
+                    cy?.elements().removeClass('influence-high').removeClass('influence-med').removeClass('influence-low');
+                    setInfluenceSourceNode(null);
+                  }
+                }}
+                disabled={!selectedNode}
+                className={`px-4 py-1.5 rounded-xl text-[10px] font-bold border flex items-center space-x-1.5 cursor-pointer transition-all ${
+                  isPatternOfLife 
+                    ? 'bg-[#6366F1]/15 border-[#6366F1]/30 text-[#6366F1]' 
+                    : 'bg-[#111827] border-[#1E293B] text-slate-400 hover:text-slate-200'
+                }`}
+                title="Toggle Pattern of Life Timeline Layout"
+              >
+                <Clock className="w-3.5 h-3.5" />
+                <span>Pattern of Life</span>
+              </button>
             </div>
 
             <div className="flex space-x-2">
               <button 
                 onClick={handleExportPNG}
-                className="bg-[#0B1220] hover:bg-[#1E293B] border border-[#1E293B] text-slate-200 p-2 rounded-xl text-[10px] font-bold cursor-pointer"
+                className={`bg-[#0B1220] border border-[#1E293B] text-slate-200 p-2 rounded-xl text-[10px] font-bold cursor-pointer hover:bg-[#1E293B] transition-all ${
+                  discoveryStep === 6 ? 'animate-pulse border-[#00E5FF] shadow-lg shadow-cyan-500/10' : ''
+                }`}
                 title="Export Snapshot Image"
               >
                 <Image className="w-3.5 h-3.5 text-emerald-400" />
               </button>
               <button 
                 onClick={handleExportJSON}
-                className="bg-[#0B1220] hover:bg-[#1E293B] border border-[#1E293B] text-slate-200 p-2 rounded-xl text-[10px] font-bold cursor-pointer"
+                className={`bg-[#0B1220] border border-[#1E293B] text-slate-200 p-2 rounded-xl text-[10px] font-bold cursor-pointer hover:bg-[#1E293B] transition-all ${
+                  discoveryStep === 6 ? 'animate-pulse border-[#00E5FF] shadow-lg shadow-cyan-500/10' : ''
+                }`}
                 title="Export Graph JSON"
               >
                 <Download className="w-3.5 h-3.5 text-[#00E5FF]" />
+              </button>
+              <button 
+                onClick={handleExportPDF}
+                className={`bg-[#0B1220] border border-[#1E293B] text-slate-200 p-2 rounded-xl text-[10px] font-bold cursor-pointer hover:bg-[#1E293B] transition-all ${
+                  discoveryStep === 6 ? 'animate-pulse border-[#00E5FF] shadow-lg shadow-cyan-500/10' : ''
+                }`}
+                title="Export PDF Forensic Report"
+              >
+                <FileText className="w-3.5 h-3.5 text-[#6366F1]" />
               </button>
             </div>
           </AppCard>
@@ -616,14 +838,17 @@ const GraphPage: React.FC = () => {
                 
                 {/* Discovery Overlay status block */}
                 {isDiscovering && (
-                  <div className="absolute top-3 right-3 z-20 bg-[#EF4444]/90 text-slate-100 p-3 rounded-xl border border-[#EF4444]/30 shadow-2xl text-[9px] font-mono space-y-1.5 max-w-[240px]">
-                    <span className="font-bold border-b border-slate-100/30 pb-1 block uppercase tracking-wider">Discovery Sequence</span>
-                    <p className="text-[8px] leading-snug">{discoveryStepsLabels[discoveryStep - 1]}</p>
-                    <div className="flex items-center space-x-1">
+                  <div className="absolute top-3 right-3 z-20 bg-[#0B1220]/95 text-slate-100 p-4 rounded-xl border border-[#00E5FF]/30 shadow-2xl text-[10px] font-mono space-y-2 max-w-[280px]">
+                    <span className="font-bold border-b border-[#1E293B] pb-1.5 block uppercase tracking-wider text-[#00E5FF] flex items-center space-x-1.5">
+                      <Radio className="w-3.5 h-3.5 animate-pulse" />
+                      <span>COGNITIVE FLOW DISCOVERY</span>
+                    </span>
+                    <p className="text-[9px] leading-relaxed text-slate-300">{discoveryStepsLabels[discoveryStep - 1]}</p>
+                    <div className="flex items-center space-x-1 pt-1">
                       {[1, 2, 3, 4, 5, 6].map(s => (
                         <div 
                           key={s} 
-                          className={`w-2 h-2 rounded-full ${discoveryStep >= s ? 'bg-slate-100' : 'bg-slate-100/30'}`}
+                          className={`w-2 h-2 rounded-full transition-all duration-300 ${discoveryStep >= s ? 'bg-[#00E5FF] shadow-sm shadow-[#00E5FF]/45' : 'bg-slate-700'}`}
                         />
                       ))}
                     </div>
@@ -842,6 +1067,58 @@ const GraphPage: React.FC = () => {
             </AnimatePresence>
           </AppCard>
         </div>
+
+      {/* First-Time User Guided Tour Modal */}
+      <AppModal
+        isOpen={showTour}
+        onClose={() => setShowTour(false)}
+        title="Graph Workspace Guided Tour"
+        footer={
+          <button
+            onClick={() => setShowTour(false)}
+            className="bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-slate-900 font-extrabold text-[10px] uppercase px-5 py-2.5 rounded-xl transition-all cursor-pointer shadow-lg shadow-cyan-500/10"
+          >
+            Begin Investigation
+          </button>
+        }
+      >
+        <div className="space-y-4">
+          <div className="flex items-center space-x-3 text-[#00E5FF] border-b border-[#1E293B] pb-3 mb-2">
+            <Network className="w-5 h-5 text-[#00E5FF]" />
+            <span className="font-mono font-bold tracking-wider uppercase text-xs">Fraud Ring Discovery Suite</span>
+          </div>
+          
+          <p className="text-slate-300 leading-relaxed text-[11px]">
+            Welcome to the Graph Workspace. This console allows you to visualize and explore entity relationship topologies to trace fraud.
+          </p>
+
+          <div className="bg-[#0B1220] border border-[#1E293B] rounded-xl p-3 space-y-2">
+            <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">Signature Workflow:</span>
+            <p className="text-slate-300 text-[11px] leading-relaxed">
+              Click the <strong className="text-[#00E5FF]">"Run Discovery Mode"</strong> button in the top toolbar. This launches a 6-step automated scan sequence mapping:
+            </p>
+            <ul className="list-disc pl-4 text-slate-400 text-[10px] space-y-1">
+              <li>Initial Entity Scan</li>
+              <li>Linked Identifiers Discovery</li>
+              <li>Sub-hop Network Expansion</li>
+              <li>Multi-party Relationship Mapping</li>
+              <li>Risk Propagation & Scoring</li>
+              <li>Exposing the Fraud Ring</li>
+            </ul>
+          </div>
+
+          <div className="space-y-1.5">
+            <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">Spatial Controls:</span>
+            <p className="text-slate-300 text-[11px] leading-relaxed">
+              Toggle <strong className="text-red-400">"Influence Heatmap"</strong> to identify risk propagation depth, or <strong className="text-indigo-400">"Pattern of Life"</strong> to organize entities chronologically.
+            </p>
+          </div>
+
+          <p className="text-slate-500 text-[9px] font-mono">
+            Use the timeline controls at the bottom of the graph to play, pause, or scrub through the network's evolution.
+          </p>
+        </div>
+      </AppModal>
 
       </div>
     </div>

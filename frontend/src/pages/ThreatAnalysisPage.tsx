@@ -30,6 +30,10 @@ const ThreatAnalysisPage: React.FC = () => {
   const [scanStep, setScanStep] = useState(0);
   const [showResults, setShowResults] = useState(false);
   const [animatedRisk, setAnimatedRisk] = useState(0);
+  
+  // V3 Interactive Dial and Evidence States
+  const [showDialTooltip, setShowDialTooltip] = useState(false);
+  const [expandedEvidence, setExpandedEvidence] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -301,7 +305,13 @@ const ThreatAnalysisPage: React.FC = () => {
                   <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-4">Risk Calibration Ratio</span>
                   
                   {/* SVG Risk gauge */}
-                  <div className="relative flex items-center justify-center w-32 h-32">
+                  <div 
+                    className="relative flex items-center justify-center w-32 h-32 cursor-pointer select-none"
+                    onMouseEnter={() => setShowDialTooltip(true)}
+                    onMouseLeave={() => setShowDialTooltip(false)}
+                    onClick={() => setShowDialTooltip(!showDialTooltip)}
+                    title="Click/Hover to show confidence breakdown"
+                  >
                     <svg className="w-full h-full transform -rotate-90">
                       <circle cx="64" cy="64" r="54" strokeWidth="5" stroke="#1E293B" fill="transparent" />
                       <circle 
@@ -325,6 +335,22 @@ const ThreatAnalysisPage: React.FC = () => {
                         RISK INDEX
                       </span>
                     </div>
+
+                    <AnimatePresence>
+                      {showDialTooltip && (
+                        <motion.div 
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.95 }}
+                          className="absolute inset-0 flex flex-col items-center justify-center font-mono bg-[#0B1220]/95 border border-[#1E293B] rounded-full p-2 text-[8px] leading-tight text-center shadow-xl z-20"
+                        >
+                          <span className="text-[#00E5FF] font-bold block mb-1">BREAKDOWN</span>
+                          <span className="text-slate-300">Text Analysis: 90%</span>
+                          <span className="text-slate-300">Image Analysis: 45%</span>
+                          <span className="text-slate-300">Price Anomaly: 95%</span>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
 
                   <div className="mt-4 flex items-center space-x-1.5">
@@ -386,6 +412,41 @@ const ThreatAnalysisPage: React.FC = () => {
                         </div>
                       );
                     })}
+                  </div>
+
+                  {/* V3 Expandable Evidence Cards */}
+                  <div className="space-y-2 pt-3 border-t border-[#1E293B]">
+                    <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest block mb-2">
+                      Interactive Evidence Cards
+                    </span>
+                    {[
+                      { id: 'nlp', title: 'NLP Lexical Check', short: 'DistilBERT model warning matches', detail: "The DistilBERT NLP model flagged this phrase ('lucky winner') as suspicious with 92% probability." },
+                      { id: 'scam_engine', title: 'Syndicate Connection Check', short: 'India Scam Engine matched UPI', detail: "The India Scam Engine matched this UPI ID to a known mule account." },
+                      { id: 'entropy', title: 'Shannon Entropy Anomaly', short: 'High character randomness', detail: "The domain name exhibits abnormally high entropy, typical of algorithmic domain generators." }
+                    ].map((item) => (
+                      <div 
+                        key={item.id} 
+                        className="bg-[#0B1220] border border-[#1E293B] rounded-xl overflow-hidden cursor-pointer hover:border-[#00E5FF]/30 transition-colors"
+                        onClick={() => setExpandedEvidence(expandedEvidence === item.id ? null : item.id)}
+                      >
+                        <div className="p-2.5 flex justify-between items-center text-[9px] font-mono">
+                          <span className="text-slate-300 font-semibold">{item.title}</span>
+                          <span className="text-[#00E5FF] text-[8px] uppercase tracking-wider">{expandedEvidence === item.id ? 'Collapse' : 'Expand'}</span>
+                        </div>
+                        <AnimatePresence>
+                          {expandedEvidence === item.id && (
+                            <motion.div 
+                              initial={{ height: 0 }}
+                              animate={{ height: 'auto' }}
+                              exit={{ height: 0 }}
+                              className="px-2.5 pb-2.5 text-[9px] font-mono text-slate-400 leading-normal border-t border-[#1E293B]/40 pt-1.5 overflow-hidden"
+                            >
+                              {item.detail}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    ))}
                   </div>
 
                   {/* Evidence trace path */}

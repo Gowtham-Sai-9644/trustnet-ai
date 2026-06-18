@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import NavigationSidebar from './NavigationSidebar';
 import { Search, Activity, Radio, Cpu, Network, Database, ChevronRight, ChevronLeft, Volume2, ShieldAlert } from 'lucide-react';
 import { useAppStore } from '../../stores/appStore';
 import { motion, AnimatePresence } from 'framer-motion';
+import { SearchCommandPalette } from '../ui/SearchCommandPalette';
 
 interface StreamEvent {
   id: string;
@@ -15,8 +16,11 @@ interface StreamEvent {
 
 const DashboardLayout: React.FC = () => {
   const location = useLocation();
-  const { systemHealth, fetchSystemHealth } = useAppStore();
+  const navigate = useNavigate();
+  const { systemHealth, fetchSystemHealth, setInputs } = useAppStore();
   const [showTelemetry, setShowTelemetry] = useState(true);
+  const [isPaletteOpen, setIsPaletteOpen] = useState(false);
+  const [activeFeedTab, setActiveFeedTab] = useState<'all' | 'threat' | 'investigate' | 'discover' | 'escalate' | 'evolve'>('all');
   const [streamEvents, setStreamEvents] = useState<StreamEvent[]>([]);
   const [telemetryStats, setTelemetryStats] = useState({
     scannedCount: 235795,
@@ -33,14 +37,26 @@ const DashboardLayout: React.FC = () => {
     return () => clearInterval(interval);
   }, [fetchSystemHealth]);
 
-  // Initial stream seed
+  // Key bind for Command Palette
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsPaletteOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Initial stream seed matching different feeds
   useEffect(() => {
     const seedEvents: StreamEvent[] = [
-      { id: '1', time: '13:41:02', type: 'CRITICAL', source: 'UPI-MULE', message: 'Risk score 0.98 triggered on merchant-scam-address-24@ybl' },
-      { id: '2', time: '13:41:12', type: 'WARNING', source: 'URL-LEXICAL', message: 'Redirect loop detected on suspect-upi-mule-11.com' },
-      { id: '3', time: '13:41:35', type: 'INFO', source: 'RAG-RETRIEVE', message: 'Compliance playbook loaded for query: lottery scam' },
-      { id: '4', time: '13:41:50', type: 'CRITICAL', source: 'NLP-COERCION', message: 'Urgent reward hook identified in incoming SMS payload' },
-      { id: '5', time: '13:42:01', type: 'INFO', source: 'NEO4J-CENTRAL', message: 'PageRank recalculation completed for subnet cluster-C' }
+      { id: '1', time: '13:41:02', type: 'CRITICAL', source: 'THREAT', message: 'Risk score 0.98 triggered on merchant-scam-address-24@ybl' },
+      { id: '2', time: '13:41:12', type: 'WARNING', source: 'EVOLVE', message: 'Redirect loop detected on suspect-upi-mule-11.com' },
+      { id: '3', time: '13:41:35', type: 'INFO', source: 'DISCOVER', message: 'Network expansion: Newly discovered UPI node registered payout.mule@ybl' },
+      { id: '4', time: '13:41:50', type: 'CRITICAL', source: 'ESCALATE', message: 'Urgent: Escalated UPI merchant node to risk level CRITICAL' },
+      { id: '5', time: '13:42:01', type: 'INFO', source: 'INVESTIGATE', message: 'Active case trace completed for indicator +91 99887 76655' }
     ];
     setStreamEvents(seedEvents);
   }, []);
@@ -49,18 +65,16 @@ const DashboardLayout: React.FC = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       const types: ('INFO' | 'WARNING' | 'CRITICAL')[] = ['INFO', 'WARNING', 'CRITICAL'];
-      const sources = ['UPI-MULE', 'URL-LEXICAL', 'NLP-COERCION', 'NEO4J-CENTRAL', 'RAG-RETRIEVE'];
-      const messages = [
-        'Node degree centrality exceed threshold on sub-account',
-        'Phishing redirect signature detected from new IP subnet',
-        'Calibrated risk probability model adjusted (+0.03)',
-        'Compliance check complete: HIPAA/PCI data scrub verified',
-        'Shapley value attributions calculated for suspect case TXN-72091'
+      const feeds = [
+        { source: 'THREAT', message: 'High entropy domain pattern detected: rewards-claim-web.info' },
+        { source: 'EVOLVE', message: 'Model drift check complete: IndicBERT accuracy within nominal baselines' },
+        { source: 'DISCOVER', message: 'Network expansion: Auto-mapped adjacent hop sub-ledger-88@paytm' },
+        { source: 'ESCALATE', message: 'Coercion probability exceeded threshold on threat ticket TXN-72091' },
+        { source: 'INVESTIGATE', message: 'Compliance playbook verified: PCI-DSS rules applied to suspect transfer' }
       ];
       
+      const selectedFeed = feeds[Math.floor(Math.random() * feeds.length)];
       const randomType = types[Math.floor(Math.random() * types.length)];
-      const randomSource = sources[Math.floor(Math.random() * sources.length)];
-      const randomMessage = messages[Math.floor(Math.random() * messages.length)];
       
       const now = new Date();
       const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
@@ -69,11 +83,11 @@ const DashboardLayout: React.FC = () => {
         id: String(Math.random()),
         time: timeStr,
         type: randomType,
-        source: randomSource,
-        message: randomMessage
+        source: selectedFeed.source,
+        message: selectedFeed.message
       };
 
-      setStreamEvents(prev => [newEvent, ...prev.slice(0, 7)]);
+      setStreamEvents(prev => [newEvent, ...prev.slice(0, 9)]);
       
       // Update telemetry numbers
       setTelemetryStats(prev => ({
@@ -82,10 +96,43 @@ const DashboardLayout: React.FC = () => {
         cpuLoad: Math.floor(22 + Math.random() * 15),
         dbLatency: Number((3.5 + Math.random() * 2.5).toFixed(1))
       }));
-    }, 4500);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);
+
+  const handleLogClick = (event: StreamEvent) => {
+    let type: 'url' | 'upi' | 'phone' | 'messageText' = 'url';
+    let value = '';
+
+    // Extract indicator from log message
+    if (event.message.includes('@')) {
+      type = 'upi';
+      const match = event.message.match(/[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+/);
+      value = match ? match[0] : 'merchant-scam-address-24@ybl';
+    } else if (event.message.includes('.com') || event.message.includes('.info') || event.message.includes('.cfd')) {
+      type = 'url';
+      const match = event.message.match(/[a-zA-Z0-9.-]+\.[a-z]{2,}/);
+      value = match ? 'https://' + match[0] : 'https://suspect-upi-mule-11.com';
+    } else if (event.message.includes('+91')) {
+      type = 'phone';
+      const match = event.message.match(/\+91\s*[0-9\s]{8,15}/);
+      value = match ? match[0] : '+91 9988776655';
+    } else {
+      // Fallback
+      type = 'url';
+      value = 'https://lotto-rewards-claim.cfd';
+    }
+
+    setInputs({ [type]: value });
+
+    // Navigate to respective pages
+    if (type === 'upi' || type === 'phone') {
+      navigate('/console/graph');
+    } else {
+      navigate('/console/analysis');
+    }
+  };
 
   // Ambient canvas waveform animation
   useEffect(() => {
@@ -175,14 +222,15 @@ const DashboardLayout: React.FC = () => {
               {getPageTitle(location.pathname)}
             </h2>
             
-            {/* Global Search Bar */}
-            <div className="hidden md:flex items-center relative w-72">
-              <Search className="absolute left-3 w-3.5 h-3.5 text-slate-500" />
-              <input 
-                type="text" 
-                placeholder="Search cases, indicators, networks... (⌘K)" 
-                className="w-full bg-[#050811] border border-[#1E293B] rounded-xl pl-9 pr-8 py-1.5 text-[10px] text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#00E5FF] focus:ring-1 focus:ring-[#00E5FF]/30 transition-all font-sans"
-              />
+            {/* Command Palette Trigger Search Box */}
+            <div 
+              onClick={() => setIsPaletteOpen(true)}
+              className="hidden md:flex items-center relative w-72 cursor-pointer group"
+            >
+              <Search className="absolute left-3 w-3.5 h-3.5 text-slate-500 group-hover:text-[#00E5FF] transition-colors" />
+              <div className="w-full bg-[#050811] border border-[#1E293B] group-hover:border-[#00E5FF]/40 rounded-xl pl-9 pr-8 py-2 text-[10px] text-slate-500 text-left transition-all font-sans select-none">
+                Search cases, indicators, networks...
+              </div>
               <div className="absolute right-2 px-1.5 py-0.5 rounded bg-[#1E293B] text-[8px] text-slate-500 font-mono select-none">
                 ⌘K
               </div>
@@ -192,7 +240,7 @@ const DashboardLayout: React.FC = () => {
           <div className="flex items-center space-x-4">
             {/* Health Tickers */}
             <div className="hidden sm:flex items-center space-x-3 bg-[#111827] px-3 py-1.5 rounded-xl border border-[#1E293B] font-mono text-[9px] text-slate-400 select-none">
-              <span className="text-[8px] uppercase tracking-wider text-slate-500 font-bold mr-1">Nodes:</span>
+              <span className="text-[8px] uppercase tracking-wider text-slate-500 font-bold mr-1">System Health:</span>
               <div className="flex items-center space-x-1.5">
                 <span className={`w-1.5 h-1.5 rounded-full ${systemHealth?.api ? 'bg-[#22C55E]' : 'bg-[#EF4444]'}`} />
                 <span className="text-slate-300">API</span>
@@ -202,7 +250,7 @@ const DashboardLayout: React.FC = () => {
                 <span className="text-slate-300">SQL</span>
               </div>
               <div className="flex items-center space-x-1.5">
-                <span className={`w-1.5 h-1.5 rounded-full ${systemHealth?.neo4j ? 'bg-[#22C55E]' : 'bg-[#EF4444]'}`} />
+                <span className={`w-1.5 h-1.5 rounded-full ${systemHealth?.neo4j ? 'bg-[#22C55E]' : 'bg-[#F59E0B]'}`} />
                 <span className="text-slate-300">NEO4J</span>
               </div>
             </div>
@@ -310,38 +358,79 @@ const DashboardLayout: React.FC = () => {
               </div>
             </div>
 
+            {/* Feed Selector Tabs */}
+            <div className="px-4 py-2 border-b border-[#1E293B]/60 flex space-x-1.5 overflow-x-auto no-scrollbar font-mono text-[8px] scroll-smooth">
+              {[
+                { id: 'all', label: 'ALL' },
+                { id: 'threat', label: 'THREATS' },
+                { id: 'investigate', label: 'INVEST' },
+                { id: 'discover', label: 'DISCOV' },
+                { id: 'escalate', label: 'ESCAL' },
+                { id: 'evolve', label: 'EVOLV' }
+              ].map(t => (
+                <button
+                  key={t.id}
+                  onClick={() => setActiveFeedTab(t.id as any)}
+                  className={`px-1.5 py-0.5 rounded transition-all whitespace-nowrap cursor-pointer border ${
+                    activeFeedTab === t.id 
+                      ? 'bg-[#00E5FF]/10 text-[#00E5FF] font-bold border-[#00E5FF]/30' 
+                      : 'text-slate-500 border-transparent hover:text-slate-300'
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+
             {/* Live Event Stream logs */}
             <div className="flex-1 p-4 flex flex-col min-h-0 text-left">
               <span className="text-[8px] font-sans font-bold text-slate-500 uppercase tracking-wide block mb-2">Live Activity Stream</span>
-              <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+              <div className="flex-1 overflow-y-auto space-y-2.5 pr-1">
                 <AnimatePresence initial={false}>
-                  {streamEvents.map(event => (
-                    <motion.div
-                      key={event.id}
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      className="border-b border-[#1E293B]/40 pb-2 text-[9px] font-mono leading-relaxed"
-                    >
-                      <div className="flex justify-between items-center mb-1 text-[8px]">
-                        <span className="text-slate-500">{event.time}</span>
-                        <span className={`px-1 rounded font-bold ${
-                          event.type === 'CRITICAL' ? 'bg-[#EF4444]/10 text-[#EF4444]' :
-                          event.type === 'WARNING' ? 'bg-[#F59E0B]/10 text-[#F59E0B]' :
-                          'bg-[#00E5FF]/10 text-[#00E5FF]'
-                        }`}>
-                          {event.source}
-                        </span>
-                      </div>
-                      <p className="text-slate-300 text-[9px] tracking-tight">{event.message}</p>
-                    </motion.div>
-                  ))}
+                  {streamEvents
+                    .filter(event => {
+                      if (activeFeedTab === 'all') return true;
+                      if (activeFeedTab === 'threat') return event.source === 'THREAT';
+                      if (activeFeedTab === 'investigate') return event.source === 'INVESTIGATE';
+                      if (activeFeedTab === 'discover') return event.source === 'DISCOVER';
+                      if (activeFeedTab === 'escalate') return event.source === 'ESCALATE';
+                      if (activeFeedTab === 'evolve') return event.source === 'EVOLVE';
+                      return true;
+                    })
+                    .map(event => (
+                      <motion.div
+                        key={event.id}
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => handleLogClick(event)}
+                        className="border-b border-[#1E293B]/40 pb-2 text-[9px] font-mono leading-relaxed cursor-pointer hover:bg-[#1E293B]/20 p-2 rounded-xl transition-all block"
+                      >
+                        <div className="flex justify-between items-center mb-1 text-[8px]">
+                          <span className="text-slate-500">{event.time}</span>
+                          <span className={`px-1.5 py-0.5 rounded font-bold border ${
+                            event.type === 'CRITICAL' ? 'bg-[#EF4444]/10 text-[#EF4444] border-[#EF4444]/20' :
+                            event.type === 'WARNING' ? 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/20' :
+                            'bg-[#00E5FF]/10 text-[#00E5FF] border-[#00E5FF]/20'
+                          }`}>
+                            {event.source}
+                          </span>
+                        </div>
+                        <p className="text-slate-300 text-[9px] tracking-tight">{event.message}</p>
+                      </motion.div>
+                    ))}
                 </AnimatePresence>
               </div>
             </div>
           </motion.aside>
         )}
       </AnimatePresence>
+
+      {/* Global Command Palette Search */}
+      <SearchCommandPalette 
+        isOpen={isPaletteOpen}
+        onClose={() => setIsPaletteOpen(false)}
+      />
     </div>
   );
 };

@@ -1,74 +1,173 @@
 import React, { useState, useEffect } from 'react';
 import { researchService } from '../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
-import { Database, Activity, ShieldAlert, Cpu, Award } from 'lucide-react';
+import { 
+  ResponsiveContainer, 
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  BarChart, 
+  Bar, 
+  AreaChart, 
+  Area 
+} from 'recharts';
+import { Database, Activity, ShieldAlert, Cpu, Award, RefreshCw, AlertTriangle, Play, CheckCircle } from 'lucide-react';
 import { AppCard } from '../components/ui/AppCard';
 import { AppPageHeader } from '../components/ui/AppPageHeader';
+import { AppBadge } from '../components/ui/AppBadge';
 
-const ResearchPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'url' | 'nlp' | 'calibration' | 'ablation' | 'stats' | 'rag'>('url');
+interface ModelInfo {
+  name: string;
+  status: 'ACTIVE' | 'INACTIVE';
+  f1: number;
+  sparkline: number[];
+  calibrationData: { ideal: number; actual: number }[];
+  description: string;
+  precision: number;
+  recall: number;
+  auc: number;
+  drift: number;
+}
+
+const mockModels: ModelInfo[] = [
+  {
+    name: "DistilBERT Classifier (NLP)",
+    status: 'ACTIVE',
+    f1: 94.2,
+    sparkline: [92, 93, 93.5, 94.2, 94.0, 94.2],
+    calibrationData: [
+      { ideal: 0, actual: 0.05 },
+      { ideal: 25, actual: 23 },
+      { ideal: 50, actual: 48 },
+      { ideal: 75, actual: 76 },
+      { ideal: 100, actual: 98 }
+    ],
+    description: "Evaluates conversational urgency indicators, coercion language structures, and lexical scam patterns in SMS payloads.",
+    precision: 94.5,
+    recall: 93.9,
+    auc: 0.982,
+    drift: 0.012
+  },
+  {
+    name: "India Scam Engine (UPI Link)",
+    status: 'ACTIVE',
+    f1: 96.5,
+    sparkline: [95, 95.2, 95.8, 96.0, 96.3, 96.5],
+    calibrationData: [
+      { ideal: 0, actual: 0.02 },
+      { ideal: 25, actual: 26 },
+      { ideal: 50, actual: 52 },
+      { ideal: 75, actual: 74 },
+      { ideal: 100, actual: 99 }
+    ],
+    description: "Cross-references UPI IDs, VPAs, and settlement banks against reported mule account registers and node counts.",
+    precision: 96.8,
+    recall: 96.2,
+    auc: 0.991,
+    drift: 0.008
+  },
+  {
+    name: "VirusTotal API Connector (URL)",
+    status: 'ACTIVE',
+    f1: 98.1,
+    sparkline: [97.8, 97.9, 98.0, 98.1, 98.1, 98.1],
+    calibrationData: [
+      { ideal: 0, actual: 0.01 },
+      { ideal: 25, actual: 25 },
+      { ideal: 50, actual: 50 },
+      { ideal: 75, actual: 75 },
+      { ideal: 100, actual: 100 }
+    ],
+    description: "Scans URL redirects, domain WHOIS records, and entropy values using ensembled threat intelligence aggregators.",
+    precision: 98.4,
+    recall: 97.8,
+    auc: 0.998,
+    drift: 0.002
+  },
+  {
+    name: "Google Vision AI (OCR Check)",
+    status: 'ACTIVE',
+    f1: 89.4,
+    sparkline: [88.2, 88.5, 89.0, 89.2, 89.1, 89.4],
+    calibrationData: [
+      { ideal: 0, actual: 0.08 },
+      { ideal: 25, actual: 22 },
+      { ideal: 50, actual: 45 },
+      { ideal: 75, actual: 78 },
+      { ideal: 100, actual: 92 }
+    ],
+    description: "Performs optical character recognition on uploaded screenshot attachments to parse scam messages from images.",
+    precision: 90.1,
+    recall: 88.7,
+    auc: 0.942,
+    drift: 0.024
+  },
+  {
+    name: "Platform Risk Stacker (Ensemble)",
+    status: 'ACTIVE',
+    f1: 97.6,
+    sparkline: [96.8, 97.0, 97.2, 97.5, 97.5, 97.6],
+    calibrationData: [
+      { ideal: 0, actual: 0.02 },
+      { ideal: 25, actual: 24 },
+      { ideal: 50, actual: 49 },
+      { ideal: 75, actual: 76 },
+      { ideal: 100, actual: 98 }
+    ],
+    description: "Fuses output logits from NLP, URL, and Graph PageRank models to predict overall threat levels.",
+    precision: 97.9,
+    recall: 97.3,
+    auc: 0.995,
+    drift: 0.005
+  },
+  {
+    name: "Price Anomaly Engine (Behavior)",
+    status: 'INACTIVE',
+    f1: 84.1,
+    sparkline: [85.0, 84.8, 84.5, 84.2, 84.1, 84.1],
+    calibrationData: [
+      { ideal: 0, actual: 0.12 },
+      { ideal: 25, actual: 20 },
+      { ideal: 50, actual: 42 },
+      { ideal: 75, actual: 70 },
+      { ideal: 100, actual: 85 }
+    ],
+    description: "Flags merchant transaction values that deviate significantly from average historical patterns.",
+    precision: 85.2,
+    recall: 83.0,
+    auc: 0.910,
+    drift: 0.045
+  }
+];
+
+const driftHistoryData = [
+  { day: 'Day 1', DistilBERT: 0.001, IndiaScam: 0.002, VisionAI: 0.005 },
+  { day: 'Day 5', DistilBERT: 0.003, IndiaScam: 0.003, VisionAI: 0.008 },
+  { day: 'Day 10', DistilBERT: 0.006, IndiaScam: 0.004, VisionAI: 0.012 },
+  { day: 'Day 15', DistilBERT: 0.008, IndiaScam: 0.006, VisionAI: 0.015 },
+  { day: 'Day 20', DistilBERT: 0.010, IndiaScam: 0.007, VisionAI: 0.019 },
+  { day: 'Day 25', DistilBERT: 0.011, IndiaScam: 0.008, VisionAI: 0.022 },
+  { day: 'Day 30', DistilBERT: 0.012, IndiaScam: 0.008, VisionAI: 0.024 }
+];
+
+const shapAnalysisData = [
+  { feature: 'UPI Degree', impact: 0.38 },
+  { feature: 'Lexical Entropy', impact: 0.28 },
+  { feature: 'Redirection Hops', impact: 0.18 },
+  { feature: 'Domain Age', impact: 0.11 },
+  { feature: 'Registry Match', impact: 0.05 }
+];
+
+export const ResearchPage: React.FC = () => {
+  const [selectedModelIdx, setSelectedModelIdx] = useState<number>(0);
   const [experiments, setExperiments] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [selectedModelCard, setSelectedModelCard] = useState<number>(0);
 
-  const modelCards = [
-    {
-      name: "Logistic Regression Classifier (URL)",
-      acc: "95.12%",
-      prec: "94.88%",
-      rec: "95.40%",
-      f1: "95.14%",
-      auc: "0.988",
-      latency: "0.22ms",
-      params: "L2 Penalty, C=1.0, Solv=LBFGS",
-      desc: "Lightweight baseline classifier analyzing domain length, entropy levels, and lexical keyword vectors."
-    },
-    {
-      name: "Random Forest Ensemble (URL)",
-      acc: "98.45%",
-      prec: "98.22%",
-      rec: "98.69%",
-      f1: "98.45%",
-      auc: "0.997",
-      latency: "1.45ms",
-      params: "n_estimators=100, max_depth=15",
-      desc: "Decision tree ensemble mapping splitting indices over structural patterns to prevent spoofing."
-    },
-    {
-      name: "XGBoost Threat Model (URL)",
-      acc: "99.18%",
-      prec: "99.04%",
-      rec: "99.31%",
-      f1: "99.17%",
-      auc: "0.999",
-      latency: "0.85ms",
-      params: "learning_rate=0.1, max_depth=6",
-      desc: "Gradient boosted decision structures optimizing non-linear feature splits for URL sub-directories."
-    },
-    {
-      name: "TF-IDF + SVM Vector Engine (NLP)",
-      acc: "93.80%",
-      prec: "93.42%",
-      rec: "94.12%",
-      f1: "93.77%",
-      auc: "0.976",
-      latency: "0.41ms",
-      params: "Linear Kernel, N-gram range=(1, 2)",
-      desc: "Support vector classifications separating sparse word/character representations of message lures."
-    },
-    {
-      name: "XGBoost Meta-Fusion Stacker",
-      acc: "99.72%",
-      prec: "99.68%",
-      rec: "99.76%",
-      f1: "99.72%",
-      auc: "1.000",
-      latency: "1.95ms",
-      params: "StackingClassifier, Meta=XGBoost",
-      desc: "Ensembled stack model fusing base URL logits, NLP safetensors, and Neo4j PageRank coordinates."
-    }
-  ];
+  const activeModel = mockModels[selectedModelIdx];
 
   useEffect(() => {
     const fetchExp = async () => {
@@ -85,366 +184,227 @@ const ResearchPage: React.FC = () => {
     fetchExp();
   }, []);
 
-  const getMetrics = (category: string, defaultVal: any) => {
-    const run = experiments.find(e => e.category === category);
-    return run ? run.metrics : defaultVal;
+  // Render pure SVG sparkline
+  const renderSparkline = (points: number[]) => {
+    const width = 80;
+    const height = 24;
+    const min = Math.min(...points);
+    const max = Math.max(...points);
+    const ratioX = width / (points.length - 1);
+    const ratioY = (height - 4) / (max - min || 1);
+
+    const pathData = points
+      .map((p, i) => `${i === 0 ? 'M' : 'L'} ${i * ratioX} ${height - 2 - (p - min) * ratioY}`)
+      .join(' ');
+
+    return (
+      <svg width={width} height={height} className="overflow-visible">
+        <path d={pathData} fill="none" stroke="#00E5FF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
   };
 
-  const urlMetrics = getMetrics("url_benchmark", {
-    "Logistic Regression": { accuracy: 0.84, precision: 0.83, recall: 0.85, f1_score: 0.84, roc_auc: 0.91, pr_auc: 0.88 },
-    "Random Forest": { accuracy: 0.89, precision: 0.88, recall: 0.90, f1_score: 0.89, roc_auc: 0.95, pr_auc: 0.92 },
-    "XGBoost": { accuracy: 0.92, precision: 0.91, recall: 0.92, f1_score: 0.92, roc_auc: 0.97, pr_auc: 0.95 }
-  });
+  // Render miniature calibration curve SVG
+  const renderMiniCalibration = (data: { ideal: number; actual: number }[]) => {
+    const size = 50;
+    const pointsIdeal = data.map((d) => `${(d.ideal / 100) * size},${size - (d.ideal / 100) * size}`).join(' ');
+    const pointsActual = data.map((d) => `${(d.ideal / 100) * size},${size - (d.actual / 100) * size}`).join(' ');
 
-  const urlChartData = Object.entries(urlMetrics).map(([name, m]: [string, any]) => ({
-    name,
-    Accuracy: m.accuracy,
-    Precision: m.precision,
-    Recall: m.recall,
-    F1: m.f1_score,
-    'ROC-AUC': m.roc_auc,
-    'PR-AUC': m.pr_auc || 0.90
-  }));
-
-  const nlpMetrics = getMetrics("nlp_benchmark", {
-    "TF-IDF + SVM": { accuracy: 0.82, precision: 0.81, recall: 0.83, f1_score: 0.82 },
-    "IndicBERT": { accuracy: 0.87, precision: 0.86, recall: 0.88, f1_score: 0.87 },
-    "MuRIL": { accuracy: 0.91, precision: 0.90, recall: 0.92, f1_score: 0.91 }
-  });
-
-  const nlpChartData = Object.entries(nlpMetrics).map(([name, m]: [string, any]) => ({
-    name,
-    Accuracy: m.accuracy,
-    Precision: m.precision,
-    Recall: m.recall,
-    F1: m.f1_score
-  }));
-
-  const calibrationCurveData = [
-    { forecast: 0.1, raw: 0.15, platt: 0.12, isotonic: 0.10, ideal: 0.1 },
-    { forecast: 0.3, raw: 0.42, platt: 0.33, isotonic: 0.31, ideal: 0.3 },
-    { forecast: 0.5, raw: 0.65, platt: 0.54, isotonic: 0.50, ideal: 0.5 },
-    { forecast: 0.7, raw: 0.84, platt: 0.73, isotonic: 0.71, ideal: 0.7 },
-    { forecast: 0.9, raw: 0.97, platt: 0.92, isotonic: 0.90, ideal: 0.9 },
-  ];
-
-  const ablationMetrics = getMetrics("fusion_test", {
-    "URL Only": { accuracy: 0.84, f1_score: 0.84 },
-    "NLP Only": { accuracy: 0.82, f1_score: 0.82 },
-    "Graph Only": { accuracy: 0.89, f1_score: 0.88 },
-    "URL + NLP": { accuracy: 0.91, f1_score: 0.91 },
-    "URL + Graph": { accuracy: 0.94, f1_score: 0.94 },
-    "NLP + Graph": { accuracy: 0.95, f1_score: 0.95 },
-    "Full Fusion": { accuracy: 0.97, f1_score: 0.97 }
-  });
-
-  const ablationChartData = Object.entries(ablationMetrics).map(([name, m]: [string, any]) => ({
-    name,
-    Accuracy: m.accuracy,
-    F1: m.f1_score
-  }));
-
-  const statsMetrics = getMetrics("stats_test", {
-    "wilcoxon": { "statistic": 62277.0, "p_value": 0.914, "significance": false },
-    "mcnemar": { "contingency_b_cells": 13, "contingency_c_cells": 166, "statistic": 129.07, "p_value": 6.53e-30, "significance": true },
-    "bootstrap_ci_accuracy": { "mean": 0.969, "ci_95_lower": 0.954, "ci_95_upper": 0.984 }
-  });
-
-  const ragMetrics = getMetrics("rag_test", {
-    "Precision@1": 0.92,
-    "Recall@1": 0.76,
-    "Groundedness": 0.958,
-    "Citation Coverage": 1.0
-  });
-
-  const ragChartData = Object.entries(ragMetrics).map(([metric, val]: [string, any]) => ({
-    subject: metric,
-    Score: val,
-    fullMark: 1.0
-  }));
+    return (
+      <svg width={size} height={size} className="border border-[#1E293B] bg-[#050811] overflow-visible">
+        {/* Ideal diagonal */}
+        <polyline points={pointsIdeal} fill="none" stroke="rgba(255, 255, 255, 0.15)" strokeWidth="1" strokeDasharray="2 2" />
+        {/* Actual calibration */}
+        <polyline points={pointsActual} fill="none" stroke="#6366F1" strokeWidth="1.5" />
+      </svg>
+    );
+  };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 text-left font-sans">
       <AppPageHeader 
         title="ML Observability & Model Registry" 
-        description="Monitor classifier calibration curves, feature importances, ablation benchmarks, and model registry metrics."
+        description="Monitor classifier calibration curves, model drift statistics, feature importance weights, and registered experiments."
       />
 
-      {/* Tab select bar */}
-      <div className="flex space-x-1 bg-[#0F172A] p-1 rounded-xl border border-[#1E293B] font-mono text-[10px] uppercase select-none w-max overflow-x-auto">
-        {[
-          { id: 'url', label: 'URL Benchmarks' },
-          { id: 'nlp', label: 'NLP Benchmarks' },
-          { id: 'calibration', label: 'Calibration Curve' },
-          { id: 'ablation', label: 'Ablations' },
-          { id: 'stats', label: 'Statistical Tests' },
-          { id: 'rag', label: 'RAG Indexes' }
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
-            className={`px-4 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-              activeTab === tab.id
-                ? 'bg-[#1E293B] text-[#06B6D4]'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
+      {/* Model Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {mockModels.map((model, idx) => {
+          const isSelected = selectedModelIdx === idx;
+          const isActive = model.status === 'ACTIVE';
+          return (
+            <div
+              key={idx}
+              onClick={() => setSelectedModelIdx(idx)}
+              className={`bg-[#0B1220] border rounded-2xl p-4 flex flex-col justify-between h-[155px] cursor-pointer transition-all ${
+                isSelected 
+                  ? 'border-[#00E5FF] shadow-lg shadow-cyan-500/5' 
+                  : 'border-[#1E293B] hover:border-slate-800'
+              }`}
+            >
+              {/* Card Header */}
+              <div className="flex justify-between items-start">
+                <div className="min-w-0">
+                  <h4 className="text-[11px] font-bold text-slate-200 uppercase tracking-wide truncate">
+                    {model.name}
+                  </h4>
+                  <span className="text-[8px] font-mono text-slate-500 uppercase mt-0.5 block">MODEL ID: RF-ENG-V{idx + 1}</span>
+                </div>
+                <AppBadge color={isActive ? 'success' : 'muted'} className="scale-75 origin-right">
+                  {model.status}
+                </AppBadge>
+              </div>
+
+              {/* F1 Score & Sparkline */}
+              <div className="flex justify-between items-center py-2">
+                <div className="text-left">
+                  <span className="text-[8px] font-mono text-slate-500 uppercase block leading-none">F1-Score</span>
+                  <span className="text-2xl font-bold font-mono text-slate-100">{model.f1}%</span>
+                </div>
+                {renderSparkline(model.sparkline)}
+              </div>
+
+              {/* Card Footer: Calibration indicator */}
+              <div className="border-t border-[#1E293B] pt-2 flex justify-between items-center text-[9px] font-mono text-slate-400">
+                <span>Calibration Curve:</span>
+                {renderMiniCalibration(model.calibrationData)}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Left Hand: Visualizations viewport */}
+        {/* Left Hand: Drift Monitor & Technical metrics */}
         <div className="lg:col-span-8 space-y-4">
-          <AppCard className="p-5 min-h-[440px] flex flex-col justify-between">
-            <h3 className="font-sans font-semibold text-xs text-slate-300 uppercase tracking-tight mb-4 flex items-center space-x-1.5">
-              <Activity className="w-4 h-4 text-[#06B6D4]" />
-              <span>{activeTab.toUpperCase()} Experiment</span>
-            </h3>
+          
+          {/* Model Drift Monitor */}
+          <AppCard className="p-5">
+            <div className="flex justify-between items-center border-b border-[#1E293B] pb-3 mb-4">
+              <span className="font-semibold text-xs text-slate-300 uppercase tracking-tight flex items-center space-x-1.5">
+                <Activity className="w-4 h-4 text-[#00E5FF] animate-pulse" />
+                <span>Model Drift Monitor (Past 30 Days)</span>
+              </span>
+              <span className="text-[9px] font-mono text-[#00E5FF] bg-[#00E5FF]/5 border border-[#00E5FF]/15 px-2 py-0.5 rounded">
+                CALIBRATED DRIFT OK
+              </span>
+            </div>
 
-            <div className="flex-1 w-full min-h-[300px] text-xs font-mono">
-              {activeTab === 'url' && (
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={urlChartData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
-                    <XAxis dataKey="name" stroke="#94A3B8" tick={{ fontSize: 9 }} />
-                    <YAxis stroke="#94A3B8" domain={[0.0, 1.0]} tick={{ fontSize: 9 }} />
-                    <Tooltip contentStyle={{ backgroundColor: '#0F172A', borderColor: '#1E293B' }} />
-                    <Legend wrapperStyle={{ fontSize: 9 }} />
-                    <Bar dataKey="F1" fill="#06B6D4" name="F1 Score" radius={[3, 3, 0, 0]} />
-                    <Bar dataKey="ROC-AUC" fill="#22C55E" name="ROC-AUC" radius={[3, 3, 0, 0]} />
-                    <Bar dataKey="PR-AUC" fill="#F59E0B" name="PR-AUC" radius={[3, 3, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              )}
-
-              {activeTab === 'nlp' && (
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={nlpChartData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
-                    <XAxis dataKey="name" stroke="#94A3B8" tick={{ fontSize: 9 }} />
-                    <YAxis stroke="#94A3B8" domain={[0.0, 1.0]} tick={{ fontSize: 9 }} />
-                    <Tooltip contentStyle={{ backgroundColor: '#0F172A', borderColor: '#1E293B' }} />
-                    <Legend wrapperStyle={{ fontSize: 9 }} />
-                    <Bar dataKey="F1" fill="#F59E0B" name="F1 Score" radius={[3, 3, 0, 0]} />
-                    <Bar dataKey="Accuracy" fill="#06B6D4" name="Accuracy" radius={[3, 3, 0, 0]} />
-                    <Bar dataKey="Precision" fill="#22C55E" name="Precision" radius={[3, 3, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              )}
-
-              {activeTab === 'calibration' && (
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={calibrationCurveData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
-                    <XAxis dataKey="forecast" stroke="#94A3B8" tick={{ fontSize: 9 }} />
-                    <YAxis stroke="#94A3B8" domain={[0, 1]} tick={{ fontSize: 9 }} />
-                    <Tooltip contentStyle={{ backgroundColor: '#0F172A', borderColor: '#1E293B' }} />
-                    <Legend wrapperStyle={{ fontSize: 9 }} />
-                    <Line type="monotone" dataKey="ideal" stroke="#94A3B8" strokeDasharray="5 5" name="Perfect Calibration" />
-                    <Line type="monotone" dataKey="raw" stroke="#EF4444" strokeWidth={1.5} dot={{ r: 3 }} name="Raw Model" />
-                    <Line type="monotone" dataKey="isotonic" stroke="#22C55E" strokeWidth={1.5} dot={{ r: 3 }} name="Isotonic Mapping" />
-                    <Line type="monotone" dataKey="platt" stroke="#06B6D4" strokeWidth={1.5} dot={{ r: 3 }} name="Platt Calibrated" />
-                  </LineChart>
-                </ResponsiveContainer>
-              )}
-
-              {activeTab === 'ablation' && (
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={ablationChartData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
-                    <XAxis dataKey="name" stroke="#94A3B8" tick={{ fontSize: 8 }} />
-                    <YAxis stroke="#94A3B8" domain={[0.0, 1.0]} tick={{ fontSize: 9 }} />
-                    <Tooltip contentStyle={{ backgroundColor: '#0F172A', borderColor: '#1E293B' }} />
-                    <Legend wrapperStyle={{ fontSize: 9 }} />
-                    <Bar dataKey="Accuracy" fill="#06B6D4" name="Accuracy" radius={[3, 3, 0, 0]} />
-                    <Bar dataKey="F1" fill="#F59E0B" name="F1 Score" radius={[3, 3, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              )}
-
-              {activeTab === 'stats' && (
-                <div className="space-y-4 max-h-[300px] overflow-y-auto pr-1">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-[#0F172A] border border-[#1E293B] rounded-xl p-4 space-y-1">
-                      <span className="font-semibold text-slate-300 text-xs block">McNemar Chi-Squared Test</span>
-                      <div className="text-[10px] text-slate-500 space-y-1 pt-1.5">
-                        <div>Contingency Cell B: {statsMetrics.mcnemar.contingency_b_cells}</div>
-                        <div>Contingency Cell C: {statsMetrics.mcnemar.contingency_c_cells}</div>
-                        <div>Chi-Stat: {statsMetrics.mcnemar.statistic.toFixed(2)}</div>
-                        <div>P-value: {statsMetrics.mcnemar.p_value.toExponential(4)}</div>
-                        <div className="mt-2 text-[#22C55E] font-bold text-xs uppercase">
-                          {statsMetrics.mcnemar.significance ? "✔ Statistically Significant (Rejects H0)" : "❌ Not Statistically Significant"}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="bg-[#0F172A] border border-[#1E293B] rounded-lg p-4 space-y-1">
-                      <span className="font-semibold text-slate-300 text-xs block">Wilcoxon Signed Rank Test</span>
-                      <div className="text-[10px] text-slate-500 space-y-1 pt-1.5">
-                        <div>W-Statistic: {statsMetrics.wilcoxon.statistic.toFixed(1)}</div>
-                        <div>P-value: {statsMetrics.wilcoxon.p_value.toFixed(4)}</div>
-                        <div className="mt-2 text-slate-400 font-bold text-xs uppercase">
-                          {statsMetrics.wilcoxon.significance ? "✔ Statistically Significant" : "ℹ Similar Median Distributions"}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-[#0F172A] border border-[#1E293B] rounded-xl p-4 space-y-1">
-                    <span className="font-semibold text-slate-300 text-xs block">Bootstrap Accuracy Confidence Intervals (95%)</span>
-                    <div className="text-[10px] text-slate-500 space-y-1.5 pt-1.5">
-                      <div className="flex justify-between">
-                        <span>Empirical Accuracy Mean:</span>
-                        <span className="text-slate-200 font-bold">{(statsMetrics.bootstrap_ci_accuracy.mean * 100).toFixed(2)}%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>95% Confidence Bounds:</span>
-                        <span className="text-[#22C55E] font-bold">
-                          [{(statsMetrics.bootstrap_ci_accuracy.ci_95_lower * 100).toFixed(1)}% — {(statsMetrics.bootstrap_ci_accuracy.ci_95_upper * 100).toFixed(1)}%]
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {activeTab === 'rag' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <RadarChart cx="50%" cy="50%" outerRadius="70%" data={ragChartData}>
-                        <PolarGrid stroke="#1E293B" />
-                        <PolarAngleAxis dataKey="subject" stroke="#94A3B8" tick={{ fontSize: 9 }} />
-                        <PolarRadiusAxis angle={30} domain={[0, 1]} stroke="#94A3B8" tick={{ fontSize: 8 }} />
-                        <Radar name="RAG Metrics" dataKey="Score" stroke="#06B6D4" fill="#06B6D4" fillOpacity={0.25} />
-                        <Tooltip contentStyle={{ backgroundColor: '#0F172A', borderColor: '#1E293B' }} />
-                      </RadarChart>
-                    </ResponsiveContainer>
-                  </div>
-                  <div className="space-y-3 font-sans text-xs">
-                    <span className="font-semibold text-slate-300 uppercase tracking-tight block border-b border-[#1E293B] pb-1.5 text-[10px]">RAG Evaluation Performance</span>
-                    <div className="space-y-2">
-                      {Object.entries(ragMetrics).map(([metric, val]: [string, any]) => (
-                        <div key={metric} className="bg-[#0F172A] border border-[#1E293B] rounded-xl p-2.5 flex justify-between items-center font-mono text-[10px]">
-                          <span className="text-slate-400">{metric}:</span>
-                          <span className="text-[#06B6D4] font-bold">{(val * 100).toFixed(1)}%</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
+            <div className="w-full h-64 text-xs font-mono">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={driftHistoryData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
+                  <XAxis dataKey="day" stroke="#94A3B8" tick={{ fontSize: 9 }} />
+                  <YAxis stroke="#94A3B8" tick={{ fontSize: 9 }} domain={[0, 0.03]} />
+                  <Tooltip contentStyle={{ backgroundColor: '#0B1220', borderColor: '#1E293B' }} />
+                  <Legend wrapperStyle={{ fontSize: 9 }} />
+                  <Line type="monotone" dataKey="DistilBERT" stroke="#00E5FF" strokeWidth={1.5} dot={{ r: 2 }} />
+                  <Line type="monotone" dataKey="IndiaScam" stroke="#6366F1" strokeWidth={1.5} dot={{ r: 2 }} />
+                  <Line type="monotone" dataKey="VisionAI" stroke="#EF4444" strokeWidth={1.5} dot={{ r: 2 }} />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
           </AppCard>
 
-          {/* Model Card Carousel slider */}
-          <AppCard className="p-5 space-y-4">
-            <div className="flex justify-between items-center border-b border-[#1E293B] pb-3">
-              <span className="font-sans font-semibold text-xs text-slate-300 uppercase tracking-tight flex items-center space-x-1.5">
-                <Cpu className="w-4.5 h-4.5 text-[#06B6D4]" />
-                <span>MODEL METRICS INVENTORY</span>
+          {/* Model specific Details tab */}
+          <AppCard className="p-5 grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
+            <div className="md:col-span-2 space-y-3">
+              <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block border-b border-[#1E293B] pb-1.5">
+                Technical Details: {activeModel.name}
               </span>
-              <div className="flex space-x-1 font-mono text-[10px]">
-                {modelCards.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setSelectedModelCard(idx)}
-                    className={`w-5 h-5 rounded font-bold flex items-center justify-center cursor-pointer transition-all ${
-                      selectedModelCard === idx 
-                        ? 'bg-[#06B6D4] text-slate-900 shadow-saas' 
-                        : 'bg-[#0F172A] text-slate-400 hover:bg-[#1E293B]'
-                    }`}
-                  >
-                    {idx + 1}
-                  </button>
-                ))}
+              <p className="text-slate-400 leading-relaxed font-sans">{activeModel.description}</p>
+              
+              <div className="grid grid-cols-2 gap-3 pt-1">
+                <div className="bg-[#050811] p-3 rounded-xl border border-[#1E293B] font-mono text-[9px] space-y-1">
+                  <span className="text-slate-500 block">PRECISION RATE</span>
+                  <span className="text-slate-200 font-bold text-sm block">{activeModel.precision}%</span>
+                </div>
+                <div className="bg-[#050811] p-3 rounded-xl border border-[#1E293B] font-mono text-[9px] space-y-1">
+                  <span className="text-slate-500 block">RECALL RATE</span>
+                  <span className="text-slate-200 font-bold text-sm block">{activeModel.recall}%</span>
+                </div>
+                <div className="bg-[#050811] p-3 rounded-xl border border-[#1E293B] font-mono text-[9px] space-y-1">
+                  <span className="text-slate-500 block">ROC-AUC SCORE</span>
+                  <span className="text-slate-200 font-bold text-sm block">{activeModel.auc}</span>
+                </div>
+                <div className="bg-[#050811] p-3 rounded-xl border border-[#1E293B] font-mono text-[9px] space-y-1">
+                  <span className="text-slate-500 block">30D CONCEPT DRIFT</span>
+                  <span className={`font-bold text-sm block ${activeModel.drift > 0.02 ? 'text-[#EF4444]' : 'text-[#22C55E]'}`}>
+                    {activeModel.drift * 100}%
+                  </span>
+                </div>
               </div>
             </div>
 
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={selectedModelCard}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs"
-              >
-                <div className="md:col-span-2 space-y-2.5">
-                  <h4 className="font-semibold text-slate-200 uppercase tracking-wider text-xs">
-                    {modelCards[selectedModelCard].name}
-                  </h4>
-                  <p className="text-slate-400 leading-relaxed">
-                    {modelCards[selectedModelCard].desc}
-                  </p>
-                  <div className="bg-[#0F172A] p-2.5 rounded border border-[#1E293B] space-y-1 font-mono text-[10px] text-slate-500">
-                    <div>HYPERPARAMETERS: <span className="text-[#06B6D4]">{modelCards[selectedModelCard].params}</span></div>
-                    <div>LATENCY: <span className="text-slate-300 font-bold">{modelCards[selectedModelCard].latency}</span></div>
+            {/* SVG based Feature Importance */}
+            <div className="space-y-3">
+              <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block border-b border-[#1E293B] pb-1.5">
+                SHAP Feature Weights
+              </span>
+              <div className="space-y-3 font-mono text-[9px] pt-1">
+                {shapAnalysisData.map((item, index) => (
+                  <div key={index} className="space-y-1">
+                    <div className="flex justify-between text-slate-400">
+                      <span className="uppercase">{item.feature}</span>
+                      <span className="text-[#00E5FF] font-bold">+{item.impact * 100}%</span>
+                    </div>
+                    <div className="w-full bg-[#050811] h-1 rounded-full overflow-hidden">
+                      <div className="h-full bg-[#00E5FF]" style={{ width: `${item.impact * 100}%` }} />
+                    </div>
                   </div>
-                </div>
-
-                {/* Score panel */}
-                <div className="bg-[#0F172A]/50 border border-[#1E293B] rounded-xl p-4 space-y-2 font-mono text-[10px] text-slate-400">
-                  <div className="flex justify-between border-b border-[#1E293B] pb-1.5">
-                    <span>ACCURACY:</span>
-                    <span className="text-[#22C55E] font-bold">{modelCards[selectedModelCard].acc}</span>
-                  </div>
-                  <div className="flex justify-between border-b border-[#1E293B] pb-1.5">
-                    <span>PRECISION:</span>
-                    <span className="text-[#06B6D4] font-bold">{modelCards[selectedModelCard].prec}</span>
-                  </div>
-                  <div className="flex justify-between border-b border-[#1E293B] pb-1.5">
-                    <span>RECALL:</span>
-                    <span className="text-[#F59E0B] font-bold">{modelCards[selectedModelCard].rec}</span>
-                  </div>
-                  <div className="flex justify-between border-b border-[#1E293B] pb-1.5">
-                    <span>F1-SCORE:</span>
-                    <span className="text-slate-200 font-bold">{modelCards[selectedModelCard].f1}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>ROC-AUC:</span>
-                    <span className="text-[#06B6D4] font-bold">{modelCards[selectedModelCard].auc}</span>
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+                ))}
+              </div>
+            </div>
           </AppCard>
         </div>
 
         {/* Right Hand: Experiment registry list */}
-        <div className="lg:col-span-4">
-          <AppCard className="p-5 space-y-4">
-            <h3 className="font-sans font-semibold text-xs text-slate-300 uppercase tracking-tight border-b border-[#1E293B] pb-3 flex items-center space-x-1.5">
-              <Database className="w-4 h-4 text-[#06B6D4]" />
-              <span>Experiment registry runs</span>
-            </h3>
+        <div className="lg:col-span-4 space-y-4">
+          <AppCard className="p-5 flex flex-col h-full min-h-[460px]">
+            <span className="font-sans font-semibold text-xs text-slate-300 uppercase tracking-tight border-b border-[#1E293B] pb-3 mb-4 flex items-center space-x-1.5">
+              <Database className="w-4 h-4 text-[#00E5FF]" />
+              <span>Experiment Registry Runs</span>
+            </span>
 
-            <div className="space-y-3 overflow-y-auto max-h-[560px] pr-1">
-              {experiments.map((exp: any) => (
-                <div key={exp.experiment_id} className="bg-[#0F172A] p-3 rounded-xl border border-[#1E293B] space-y-2 font-mono text-[10px]">
-                  <div className="flex justify-between items-start">
-                    <span className="text-slate-200 font-bold truncate max-w-[130px]">{exp.name}</span>
-                    <span className="text-[8px] bg-[#22C55E]/10 text-[#22C55E] border border-[#22C55E]/20 px-1.5 py-0.5 rounded font-bold uppercase">
-                      {exp.category.replace('_', ' ').replace('test', 'metrics').toUpperCase()}
-                    </span>
-                  </div>
-                  <div className="text-[9px] text-slate-500 space-y-1">
-                    <div className="flex justify-between">
-                      <span>Parameters:</span>
-                      <span className="text-slate-400 font-bold">{Object.keys(exp.parameters).length} fields</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Date:</span>
-                      <span className="text-slate-400">{new Date(exp.created_at).toLocaleDateString()}</span>
-                    </div>
-                  </div>
+            <div className="flex-1 overflow-y-auto space-y-3 pr-1 text-left">
+              {experiments.length === 0 && isLoading ? (
+                <div className="flex flex-col items-center justify-center h-48 space-y-2 text-slate-500 font-mono text-[10px]">
+                  <RefreshCw className="w-4 h-4 animate-spin text-[#00E5FF]" />
+                  <span>Ingesting experiments...</span>
                 </div>
-              ))}
+              ) : experiments.length === 0 ? (
+                <div className="text-slate-500 font-mono text-[9px] text-center py-12">
+                  No active ML experiments registered.
+                </div>
+              ) : (
+                experiments.map((exp: any) => (
+                  <div key={exp.experiment_id} className="bg-[#0B1220] p-3 rounded-xl border border-[#1E293B] space-y-2 font-mono text-[10px]">
+                    <div className="flex justify-between items-start">
+                      <span className="text-slate-200 font-bold truncate max-w-[130px]">{exp.name}</span>
+                      <span className="text-[8px] bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/15 px-1.5 py-0.5 rounded font-bold uppercase">
+                        {exp.category.replace('_', ' ').replace('test', 'metrics').toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="text-[9px] text-slate-500 space-y-1">
+                      <div className="flex justify-between">
+                        <span>Accuracy score:</span>
+                        <span className="text-slate-300 font-bold">{(exp.metrics.accuracy * 100).toFixed(1)}%</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>F1 benchmark:</span>
+                        <span className="text-[#22C55E] font-bold">{(exp.metrics.f1_score * 100).toFixed(1)}%</span>
+                      </div>
+                      <div className="flex justify-between border-t border-[#1E293B]/40 pt-1 mt-1 text-[8px]">
+                        <span>Timestamp:</span>
+                        <span className="text-slate-600">{new Date(exp.created_at).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </AppCard>
         </div>
-
       </div>
     </div>
   );

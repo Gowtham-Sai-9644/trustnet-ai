@@ -10,6 +10,7 @@ import ReportPage from './pages/ReportPage';
 import KnowledgePage from './pages/KnowledgePage';
 import VivaPage from './pages/VivaPage';
 import SettingsPage from './pages/SettingsPage';
+import InvestigationPage from './pages/InvestigationPage';
 
 const App: React.FC = () => {
   return (
@@ -20,6 +21,7 @@ const App: React.FC = () => {
           <Route index element={<DashboardPage />} />
           <Route path="analysis" element={<ThreatAnalysisPage />} />
           <Route path="graph" element={<GraphPage />} />
+          <Route path="investigations" element={<InvestigationPage />} />
           <Route path="research" element={<ResearchPage />} />
           <Route path="reports" element={<ReportPage />} />
           <Route path="assistant" element={<KnowledgePage />} />

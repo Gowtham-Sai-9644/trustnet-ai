@@ -10,7 +10,8 @@ import {
   Award, 
   Settings,
   Cpu,
-  Database
+  Database,
+  FolderOpen
 } from 'lucide-react';
 
 const NavigationSidebar: React.FC = () => {
@@ -18,6 +19,7 @@ const NavigationSidebar: React.FC = () => {
     { name: 'Mission Control', path: '/console', icon: LayoutDashboard },
     { name: 'Threat Analysis', path: '/console/analysis', icon: ShieldAlert },
     { name: 'Graph Intelligence', path: '/console/graph', icon: Network },
+    { name: 'Investigation Room', path: '/console/investigations', icon: FolderOpen },
     { name: 'Research Center', path: '/console/research', icon: BarChart3 },
     { name: 'Incident Reports', path: '/console/reports', icon: FileText },
     { name: 'AI Analyst Assistant', path: '/console/assistant', icon: MessageSquareCode },
