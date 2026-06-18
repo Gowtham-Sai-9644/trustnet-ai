@@ -8,17 +8,17 @@ export default {
     extend: {
       colors: {
         cyber: {
-          bg: '#070B14',
-          surface: '#0F172A',
+          bg: '#050811',
+          surface: '#0B1220',
           card: '#111827',
           border: '#1E293B',
-          accent: '#06B6D4',
-          cyan: '#06B6D4',
+          accent: '#00E5FF',
+          cyan: '#00E5FF',
           emerald: '#22C55E',
           amber: '#F59E0B',
           crimson: '#EF4444',
           muted: '#94A3B8',
-          panel: '#0F172A'
+          panel: '#0B1220'
         }
       },
       fontFamily: {
