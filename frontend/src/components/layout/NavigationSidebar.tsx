@@ -12,7 +12,7 @@ import {
   Cpu,
   Database,
   FolderOpen,
-  X
+  ChevronLeft
 } from 'lucide-react';
 
 interface NavigationSidebarProps {
@@ -67,7 +67,7 @@ const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ isOpen, onClose }
             onClick={onClose}
             className="md:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#1E293B] transition-colors"
           >
-            <X className="w-5 h-5" />
+            <ChevronLeft className="w-5 h-5" />
           </button>
         </div>
 
