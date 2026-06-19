@@ -2,11 +2,11 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const BACKGROUND_IMAGES: Record<number, string> = {
-  1: '/scene1_threat_landscape.png',
-  2: '/scene2_ingestion_scanner.png',
-  3: '/scene3_relationship_forensics.png',
-  4: '/scene4_explainable_ai.png',
-  5: '/scene5_mitigation_protocol.png'
+  1: '/spam_detect_1.png',
+  2: '/spam_detect_2.png',
+  3: '/spam_detect_3.png',
+  4: '/spam_detect_4.png',
+  5: '/spam_detect_1.png'
 };
 
 interface BackgroundSlideshowProps {
@@ -17,51 +17,50 @@ interface BackgroundSlideshowProps {
 
 const BackgroundSlideshow: React.FC<BackgroundSlideshowProps> = ({
   activeScene,
-  blurAmount = "0px", // Crisp by default
-  opacity = 0.35, // Clear visibility but still contrast-friendly for text
+  blurAmount = "0px",
+  opacity = 0.85, // Increased opacity for a vibrant, flashy look
 }) => {
   const currentImage = BACKGROUND_IMAGES[activeScene] || BACKGROUND_IMAGES[1];
 
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden bg-[#050811]">
+    <div className="fixed inset-0 -z-10 overflow-hidden bg-black">
       <AnimatePresence mode="popLayout">
         <motion.div
           key={activeScene}
-          initial={{ opacity: 0, scale: 1.02, x: -4, y: -4 }}
+          initial={{ opacity: 0, scale: 1.05, filter: "brightness(1.5) saturate(1.5)" }}
           animate={{ 
             opacity: opacity, 
-            scale: 1.08, 
-            x: 4,
-            y: 4
+            scale: 1.1, 
+            filter: "brightness(1) saturate(1.2)"
           }}
-          exit={{ opacity: 0, scale: 1.02 }}
+          exit={{ opacity: 0, scale: 1.05, filter: "brightness(0.5)" }}
           transition={{ 
-            opacity: { duration: 1.0, ease: "easeInOut" },
-            scale: { duration: 18, ease: "easeOut" },
-            x: { duration: 18, ease: "easeInOut" },
-            y: { duration: 18, ease: "easeInOut" }
+            opacity: { duration: 1.2, ease: "easeInOut" },
+            scale: { duration: 20, ease: "linear" },
+            filter: { duration: 2 }
           }}
           className="absolute inset-0"
           style={{
             backgroundImage: `url(${currentImage})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            filter: 'none',
           }}
         />
       </AnimatePresence>
 
-      {/* Grid overlay for tactical command center design */}
+      {/* Grid overlay for tactical command center design with neon edge light feel */}
       <div
-        className="absolute inset-0 opacity-[0.05] pointer-events-none"
+        className="absolute inset-0 opacity-[0.15] pointer-events-none"
         style={{
           backgroundImage: `
-            linear-gradient(rgba(0, 229, 255, 0.15) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 229, 255, 0.15) 1px, transparent 1px)
+            linear-gradient(rgba(0, 255, 255, 0.3) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 0, 255, 0.3) 1px, transparent 1px)
           `,
-          backgroundSize: '50px 50px',
+          backgroundSize: '40px 40px',
         }}
       />
+      {/* Dynamic edge lighting gradient */}
+      <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_150px_rgba(0,255,255,0.2)]" />
     </div>
   );
 };
