@@ -220,22 +220,22 @@ const DashboardLayout: React.FC = () => {
       {/* Main Area (Top Nav + Workspace Panel) */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
         {/* Top Navigation */}
-        <header className="h-14 border-b border-[#1E293B] bg-[#0B1220] px-4 md:px-6 flex items-center justify-between z-10">
-          <div className="flex items-center space-x-4 md:space-x-8">
+        <header className="h-14 border-b border-[#1E293B] bg-[#0B1220] px-4 md:px-6 flex items-center justify-between z-10 flex-shrink-0">
+          <div className="flex items-center space-x-3 md:space-x-8 min-w-0 flex-1">
             <button 
-              className="md:hidden p-1.5 -ml-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#1E293B] transition-colors"
+              className="md:hidden p-1.5 -ml-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#1E293B] transition-colors flex-shrink-0"
               onClick={() => setIsMobileMenuOpen(true)}
             >
               <Menu className="w-5 h-5" />
             </button>
-            <h2 className="font-sans font-bold text-xs text-slate-100 uppercase tracking-tight min-w-[120px] md:min-w-[140px] text-left">
+            <h2 className="font-sans font-bold text-xs text-slate-100 uppercase tracking-tight truncate text-left">
               {getPageTitle(location.pathname)}
             </h2>
             
             {/* Command Palette Trigger Search Box */}
             <div 
               onClick={() => setIsPaletteOpen(true)}
-              className="hidden md:flex items-center relative w-72 cursor-pointer group"
+              className="hidden md:flex items-center relative w-72 cursor-pointer group flex-shrink-0"
             >
               <Search className="absolute left-3 w-3.5 h-3.5 text-slate-500 group-hover:text-[#00E5FF] transition-colors" />
               <div className="w-full bg-[#050811] border border-[#1E293B] group-hover:border-[#00E5FF]/40 rounded-xl pl-9 pr-8 py-2 text-[10px] text-slate-500 text-left transition-all font-sans select-none">
@@ -247,7 +247,7 @@ const DashboardLayout: React.FC = () => {
             </div>
           </div>
           
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3 md:space-x-4 flex-shrink-0 ml-2">
             {/* Health Tickers */}
             <div className="hidden sm:flex items-center space-x-3 bg-[#111827] px-3 py-1.5 rounded-xl border border-[#1E293B] font-mono text-[9px] text-slate-400 select-none">
               <span className="text-[8px] uppercase tracking-wider text-slate-500 font-bold mr-1">System Health:</span>
@@ -268,7 +268,7 @@ const DashboardLayout: React.FC = () => {
             {/* Toggle Telemetry Stream */}
             <button 
               onClick={() => setShowTelemetry(prev => !prev)}
-              className={`p-1.5 rounded-xl border transition-all flex items-center justify-center cursor-pointer ${
+              className={`p-1.5 rounded-xl border transition-all flex items-center justify-center cursor-pointer flex-shrink-0 ${
                 showTelemetry 
                   ? 'bg-[#00E5FF]/10 border-[#00E5FF]/30 text-[#00E5FF]' 
                   : 'bg-[#111827] border-[#1E293B] text-slate-400 hover:text-slate-200'
@@ -279,8 +279,8 @@ const DashboardLayout: React.FC = () => {
             </button>
             
             {/* Operator Profile Card */}
-            <div className="flex items-center space-x-2.5 border-l border-[#1E293B] pl-4">
-              <div className="relative">
+            <div className="flex items-center space-x-2.5 border-l border-[#1E293B] pl-3 md:pl-4">
+              <div className="relative flex-shrink-0">
                 <img 
                   src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&h=64&q=80" 
                   alt="Operator Profile" 
@@ -288,7 +288,7 @@ const DashboardLayout: React.FC = () => {
                 />
                 <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-[#22C55E] border border-[#050811]" />
               </div>
-              <div className="flex flex-col text-left">
+              <div className="hidden sm:flex flex-col text-left">
                 <span className="text-[11px] font-semibold text-slate-200 leading-tight">Gowtham Sai</span>
                 <span className="text-[8px] font-mono text-[#00E5FF] uppercase tracking-wider leading-none">SecOps Operator</span>
               </div>
