@@ -1,7 +1,7 @@
 import os
 from typing import List
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import Field
+from pydantic import Field, field_validator
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "TrustNet AI"
@@ -18,12 +18,22 @@ class Settings(BaseSettings):
         validation_alias="DATABASE_URL"
     )
     
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def assemble_db_connection(cls, v: str) -> str:
+        if isinstance(v, str):
+            if v.startswith("postgres://"):
+                return v.replace("postgres://", "postgresql+asyncpg://", 1)
+            elif v.startswith("postgresql://") and not v.startswith("postgresql+asyncpg://"):
+                return v.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return v
+    
     NEO4J_URI: str = Field(default="bolt://localhost:7687", validation_alias="NEO4J_URI")
     NEO4J_USER: str = Field(default="neo4j", validation_alias="NEO4J_USER")
     NEO4J_PASSWORD: str = Field(default="password", validation_alias="NEO4J_PASSWORD")
     
     # CORS
-    BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000"]
+    BACKEND_CORS_ORIGINS: List[str] = ["*"]
     
     model_config = SettingsConfigDict(
         env_file=".env",
