@@ -194,6 +194,8 @@ const DashboardLayout: React.FC = () => {
     };
   }, [showTelemetry]);
   
+  const [isDesktopSidebarCollapsed, setIsDesktopSidebarCollapsed] = useState(false);
+
   // Resolve view title from active route
   const getPageTitle = (path: string) => {
     switch(path) {
@@ -215,6 +217,8 @@ const DashboardLayout: React.FC = () => {
       <NavigationSidebar 
         isOpen={isMobileMenuOpen} 
         onClose={() => setIsMobileMenuOpen(false)} 
+        isCollapsed={isDesktopSidebarCollapsed}
+        onToggleCollapse={() => setIsDesktopSidebarCollapsed(!isDesktopSidebarCollapsed)}
       />
 
       {/* Main Area (Top Nav + Workspace Panel) */}
