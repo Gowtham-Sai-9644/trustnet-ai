@@ -65,7 +65,7 @@ const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ isOpen, onClose }
           </Link>
           <button 
             onClick={onClose}
-            className="md:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#1E293B] transition-colors"
+            className="md:hidden p-1.5 rounded-lg text-[#00E5FF] hover:text-white hover:bg-[#1E293B] transition-all drop-shadow-[0_0_8px_rgba(0,229,255,0.8)]"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
