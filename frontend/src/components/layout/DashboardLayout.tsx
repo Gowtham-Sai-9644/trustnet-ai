@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import NavigationSidebar from './NavigationSidebar';
-import { Search, Activity, Radio, Cpu, Network, Database, ChevronRight, ChevronLeft, Volume2, ShieldAlert } from 'lucide-react';
+import { Search, Activity, Radio, Cpu, Network, Database, ChevronRight, ChevronLeft, Volume2, ShieldAlert, Menu } from 'lucide-react';
 import { useAppStore } from '../../stores/appStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SearchCommandPalette } from '../ui/SearchCommandPalette';
@@ -20,6 +20,7 @@ const DashboardLayout: React.FC = () => {
   const { systemHealth, fetchSystemHealth, setInputs } = useAppStore();
   const [showTelemetry, setShowTelemetry] = useState(true);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeFeedTab, setActiveFeedTab] = useState<'all' | 'threat' | 'investigate' | 'discover' | 'escalate' | 'evolve'>('all');
   const [streamEvents, setStreamEvents] = useState<StreamEvent[]>([]);
   const [telemetryStats, setTelemetryStats] = useState({
@@ -211,14 +212,23 @@ const DashboardLayout: React.FC = () => {
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#050811] text-slate-100 font-sans selection:bg-[#00E5FF]/20 selection:text-slate-200">
       {/* Left Sidebar */}
-      <NavigationSidebar />
+      <NavigationSidebar 
+        isOpen={isMobileMenuOpen} 
+        onClose={() => setIsMobileMenuOpen(false)} 
+      />
 
       {/* Main Area (Top Nav + Workspace Panel) */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
         {/* Top Navigation */}
-        <header className="h-14 border-b border-[#1E293B] bg-[#0B1220] px-6 flex items-center justify-between z-10">
-          <div className="flex items-center space-x-8">
-            <h2 className="font-sans font-bold text-xs text-slate-100 uppercase tracking-tight min-w-[140px] text-left">
+        <header className="h-14 border-b border-[#1E293B] bg-[#0B1220] px-4 md:px-6 flex items-center justify-between z-10">
+          <div className="flex items-center space-x-4 md:space-x-8">
+            <button 
+              className="md:hidden p-1.5 -ml-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#1E293B] transition-colors"
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <h2 className="font-sans font-bold text-xs text-slate-100 uppercase tracking-tight min-w-[120px] md:min-w-[140px] text-left">
               {getPageTitle(location.pathname)}
             </h2>
             
