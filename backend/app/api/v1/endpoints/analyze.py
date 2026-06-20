@@ -44,13 +44,17 @@ async def analyze_fusion(payload: FusionAnalysisRequest, db: AsyncSession = Depe
     if payload.url:
         url_prob, _ = ml_pipeline.predict_url(payload.url)
     if payload.message_text:
-        url_prob, _ = ml_pipeline.predict_url(payload.url) if payload.url else (0.0, {})
         pred_cat, probs = ml_pipeline.predict_message(payload.message_text)
         nlp_prob = probs.get(pred_cat, 0.0)
     if payload.upi or payload.phone:
         graph_prob = ml_pipeline.predict_graph(payload.upi, payload.phone)
         
-    fused_raw = ml_pipeline.predict_fusion(url_prob, nlp_prob, graph_prob)
+    fused_raw = ml_pipeline.predict_fusion(
+        url_prob, nlp_prob, graph_prob,
+        has_url=bool(payload.url),
+        has_nlp=bool(payload.message_text),
+        has_graph=bool(payload.upi or payload.phone)
+    )
     calib_prob, confidence, method = ml_pipeline.calibrate_probability(fused_raw)
     
     # Check if Neo4j is available
@@ -64,13 +68,19 @@ async def analyze_fusion(payload: FusionAnalysisRequest, db: AsyncSession = Depe
         raw_hops = await graph_service.fetch_neighborhood(target_entity)
         
     trace = explain_service.format_evidence_path(raw_hops)
-    shap_vals = explain_service.get_mock_shap_values(payload.url, payload.upi, payload.message_text)
+    shap_vals = explain_service.get_mock_shap_values(
+        url_prob=url_prob if payload.url else 0.0,
+        nlp_prob=nlp_prob if payload.message_text else 0.0,
+        graph_prob=graph_prob if (payload.upi or payload.phone) else 0.0
+    )
     explanation = explain_service.generate_explanation(shap_vals, trace)
     
     # Assign category
     pred_category = "Advance Payment Scam"
     if payload.message_text:
         pred_category, _ = ml_pipeline.predict_message(payload.message_text)
+    elif payload.url and fused_raw > 0.50:
+        pred_category = "Phishing / Credential Theft"
         
     scan_id = str(uuid.uuid4())
     
