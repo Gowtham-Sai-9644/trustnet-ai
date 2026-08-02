@@ -66,7 +66,7 @@ const ThreatAnalysisPage: React.FC = () => {
   };
 
   const score = currentResult?.calibration?.calibrated_probability ?? 0;
-  const isHighRisk = score > 0.5;
+  const isHighRisk = score >= 0.55;
 
   useEffect(() => {
     let timer: any;
