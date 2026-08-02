@@ -11,7 +11,7 @@ export const SolutionWorkflow: React.FC = () => {
   ];
 
   return (
-    <section className="py-24 px-6 md:px-12 bg-app-btn-bg text-app-btn-text relative overflow-hidden" id="solution">
+    <section className="py-24 px-6 md:px-12 bg-landing-accent text-white relative overflow-hidden" id="solution">
       {/* Subtle grid background */}
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
       
@@ -20,7 +20,7 @@ export const SolutionWorkflow: React.FC = () => {
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-6">
             The Complete Intelligence Pipeline
           </h2>
-          <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+          <p className="text-lg text-landing-muted max-w-2xl mx-auto">
             We replace manual moderation with a deterministic, real-time AI pipeline built on modern vector databases and large language models.
           </p>
         </div>
@@ -32,14 +32,14 @@ export const SolutionWorkflow: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="w-full max-w-2xl bg-slate-800/50 backdrop-blur-md border border-slate-700 p-6 rounded-2xl flex items-center space-x-6"
+                className="w-full max-w-2xl bg-landing-surface/50 backdrop-blur-md border border-landing-border p-6 rounded-2xl flex items-center space-x-6"
               >
                 <div className="bg-violet-500/20 text-blue-400 p-4 rounded-xl border border-blue-500/30">
                   {step.icon}
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-slate-100 mb-1">{step.title}</h3>
-                  <p className="text-sm text-slate-400">{step.desc}</p>
+                  <h3 className="text-xl font-bold text-landing-text mb-1">{step.title}</h3>
+                  <p className="text-sm text-landing-muted">{step.desc}</p>
                 </div>
               </motion.div>
               
@@ -48,7 +48,7 @@ export const SolutionWorkflow: React.FC = () => {
                   initial={{ opacity: 0, height: 0 }}
                   whileInView={{ opacity: 1, height: 'auto' }}
                   viewport={{ once: true }}
-                  className="text-app-muted"
+                  className="text-landing-muted"
                 >
                   <ArrowDown className="w-6 h-6 animate-bounce" />
                 </motion.div>

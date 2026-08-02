@@ -42,7 +42,7 @@ export const AppMetricCard: React.FC<AppMetricCardProps> = ({
   return (
     <div
       className="relative overflow-hidden group cursor-pointer transition-all duration-200 rounded-2xl p-5"
-      style={{
+      style={{ backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', 
         background: 'var(--theme-card)',
         border: `1px solid var(--theme-border)`,
         boxShadow: '0 1px 3px rgba(0,0,0,0.2)',

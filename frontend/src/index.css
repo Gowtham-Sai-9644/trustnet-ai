@@ -18,14 +18,14 @@
     --theme-btn-bg: #00E5FF;
     --theme-btn-text: #090D16;
 
-    /* Landing page always light */
-    --landing-bg: #FFFFFF;
-    --landing-surface: #F8FAFC;
-    --landing-text: #0F172A;
-    --landing-muted: #475569;
-    --landing-border: #E2E8F0;
-    --landing-card: #FFFFFF;
-    --landing-accent: #6D28D9;
+    /* Landing page Apple Minimalist Theme (Tailwind compatible RGB) */
+    --landing-bg: 251 251 253;
+    --landing-surface: 255 255 255;
+    --landing-text: 29 29 31;
+    --landing-muted: 134 134 139;
+    --landing-border: 210 210 215;
+    --landing-card: 255 255 255;
+    --landing-accent: 0 102 204;
   }
 
   /* Sapphire — Royal Indigo */
@@ -50,26 +50,28 @@
     --landing-accent: #2563EB;
   }
 
-  /* Emerald — Deep Forest & Gold */
+  /* Emerald — Deep Forest & Gold (Glassmorphism) */
   [data-theme="emerald"] {
+    /* Main console theme - Glassmorphism emerald */
     --theme-bg: #040F0A;
-    --theme-surface: #081A11;
-    --theme-card: #0C251A;
+    --theme-surface: rgba(8, 26, 17, 0.85);
+    --theme-card: rgba(12, 37, 26, 0.70);
     --theme-text: #ECFDF5;
     --theme-text-muted: #6EE7B7;
-    --theme-border: #134E35;
+    --theme-border: rgba(19, 78, 53, 0.6);
     --theme-accent-start: #10B981;
     --theme-accent-end: #F59E0B;
     --theme-btn-bg: #10B981;
     --theme-btn-text: #040F0A;
 
-    --landing-bg: #FFFFFF;
-    --landing-surface: #F0FDF4;
-    --landing-text: #052E16;
-    --landing-muted: #166534;
-    --landing-border: #BBF7D0;
-    --landing-card: #FFFFFF;
-    --landing-accent: #059669;
+    /* Sleek Apple-style Dark Mode */
+    --landing-bg: 10 10 12; /* Dark bg */
+    --landing-surface: 24 24 26;
+    --landing-text: 245 245 247; /* Off-white text */
+    --landing-muted: 161 161 166; /* Light gray text */
+    --landing-border: 50 50 50;
+    --landing-card: 28 28 30; /* Dark card bg */
+    --landing-accent: 13 148 136; /* #0D9488 */
   }
 
   /* Classic Dark */
@@ -136,6 +138,13 @@
   .landing-surface      { background-color: var(--landing-surface, #F8FAFC) !important; }
   .landing-card         { background-color: var(--landing-card, #FFFFFF) !important; }
   .landing-border       { border-color: var(--landing-border, #E2E8F0) !important; }
+
+/* Global Glassmorphism for Theme Elements */
+[style*="var(--theme-surface)"],
+[style*="var(--theme-card)"] {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
 }
 
 /* ── Keyframes ── */

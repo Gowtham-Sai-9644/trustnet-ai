@@ -18,9 +18,9 @@ export function AppTable<T>({ columns, data, keyExtractor, emptyState, isLoading
   if (isLoading) {
     return (
       <div className="space-y-2.5 animate-pulse py-2">
-        <div className="h-10 rounded-xl w-full" style={{ background: 'var(--theme-surface)' }} />
+        <div className="h-10 rounded-xl w-full" style={{ backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',  background: 'var(--theme-surface)' }} />
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="h-12 rounded-xl w-full" style={{ background: 'var(--theme-card)', opacity: 0.6 }} />
+          <div key={i} className="h-12 rounded-xl w-full" style={{ backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',  background: 'var(--theme-card)', opacity: 0.6 }} />
         ))}
       </div>
     );
@@ -52,7 +52,7 @@ export function AppTable<T>({ columns, data, keyExtractor, emptyState, isLoading
       <table className="w-full border-collapse text-left">
         <thead>
           <tr
-            style={{
+            style={{ backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', 
               background: 'var(--theme-surface)',
               borderBottom: '1px solid var(--theme-border)',
             }}

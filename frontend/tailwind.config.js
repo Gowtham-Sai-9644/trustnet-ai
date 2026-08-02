@@ -19,6 +19,15 @@ export default {
           'btn-text': 'var(--theme-btn-text)',
           'nav-bg': 'var(--theme-nav-bg)',
         },
+        landing: {
+          bg: 'rgb(var(--landing-bg) / <alpha-value>)',
+          surface: 'rgb(var(--landing-surface) / <alpha-value>)',
+          text: 'rgb(var(--landing-text) / <alpha-value>)',
+          muted: 'rgb(var(--landing-muted) / <alpha-value>)',
+          border: 'rgb(var(--landing-border) / <alpha-value>)',
+          card: 'rgb(var(--landing-card) / <alpha-value>)',
+          accent: 'rgb(var(--landing-accent) / <alpha-value>)',
+        },
         cyber: {
           bg: '#050811',
           surface: '#0B1220',

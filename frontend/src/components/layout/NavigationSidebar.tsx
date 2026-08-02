@@ -53,6 +53,8 @@ const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ isOpen, onClose, 
         `}
         style={{
           background: 'var(--theme-surface, #0E1726)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
           borderRight: '1px solid var(--theme-border, #1E293B)'
         }}
       >

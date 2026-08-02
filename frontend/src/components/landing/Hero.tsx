@@ -1,469 +1,185 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
-import { ShieldAlert, Globe, Search, AlertTriangle, Zap, Eye } from 'lucide-react';
+import React from 'react';
+import { ShieldAlert, Globe, Search, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 
-/* ── Live Observatory Feed Items ── */
-interface FeedItem {
-  id: string;
-  label: string;
-  time: string;
-  type: 'critical' | 'warning' | 'info';
-  icon: string;
-  detail: string;
-}
-
-const FEED_POOL: Omit<FeedItem, 'id' | 'time'>[] = [
-  { label: 'UPI Scam Verified', type: 'critical', icon: '🚨', detail: 'merchant-fraud-99@ybl flagged' },
-  { label: 'Fake Job Portal', type: 'warning', icon: '🦊', detail: 'jobs-earn-daily.online detected' },
-  { label: 'Phishing Domain', type: 'critical', icon: '🎭', detail: 'sbi-verify-now.net — takedown initiated' },
-  { label: 'QR Code Threat', type: 'warning', icon: '📱', detail: 'Malicious redirect in QR payload' },
-  { label: 'Lottery Scam', type: 'info', icon: '🎰', detail: 'lotto-rewards-claim.cfd — low risk' },
-  { label: 'Investment Fraud', type: 'critical', icon: '📉', detail: 'High-yield scheme network found' },
+/* ── Feed Items ── */
+const FEED_ITEMS = [
+  { id: 1, title: 'Fake Instagram Job', desc: 'Job offering scam detected', time: '10m ago', verified: true, alert: true, icon: '🕵️' },
+  { id: 2, title: 'UPI Payment Scam', desc: 'Fake payment request', time: '18m ago', verified: true, alert: true, icon: '💸' },
+  { id: 3, title: 'Phishing Website', desc: 'Credential harvesting site', time: '25m ago', verified: true, alert: true, icon: '🎣' },
+  { id: 4, title: 'Fake Social Giveaway', desc: 'Prize scam detected', time: '32m ago', verified: true, alert: true, icon: '🎁' },
+  { id: 5, title: 'Spam Call Campaign', desc: 'Robocall fraud detected', time: '45m ago', verified: true, alert: true, icon: '📞' },
 ];
 
-const makeFeedItem = (): FeedItem => {
-  const base = FEED_POOL[Math.floor(Math.random() * FEED_POOL.length)];
-  const now = new Date();
-  return {
-    ...base,
-    id: String(Math.random()),
-    time: `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')} ago`,
-  };
-};
+/* ── Analytical Tools ── */
+const ANALYTICAL_TOOLS = [
+  { id: 1, title: 'Phishing Shield', desc: 'URL & Email Analysis', icon: '🛡️' },
+  { id: 2, title: 'Scammer Trace', desc: 'Phone & Profile Origin', icon: '🕵️‍♂️' },
+  { id: 3, title: 'Data Forgery Lab', desc: 'Job & Document Verification', icon: '📄' },
+  { id: 4, title: 'Community Watch', desc: 'Real-time Reports', icon: '🌐' },
+  { id: 5, title: 'Secure Social', desc: 'Profile Authenticity', icon: '✅' },
+];
 
-/* ── Realistic Globe Component ── */
-const RealisticGlobe: React.FC = () => {
-  const rings = 12;
-  const nodes = 35;
-
-  const generateNodes = () => {
-    return Array.from({ length: nodes }).map((_, i) => {
-      const theta = Math.random() * 2 * Math.PI;
-      const phi = Math.acos(2 * Math.random() - 1);
-      const x = 200 + 150 * Math.sin(phi) * Math.cos(theta);
-      const y = 200 + 150 * Math.sin(phi) * Math.sin(theta) * 0.4 + 150 * Math.cos(phi) * 0.9;
-      // Gold and deep amber nodes for a more physical, realistic look
-      const isGold = Math.random() > 0.4;
-      const r = Math.random() * 2.5 + 1.5;
-      return { x, y, isGold, r, delay: Math.random() * 4 };
-    });
-  };
-
-  const globeNodes = React.useMemo(generateNodes, []);
-
+/* ── Custom Compass SVG ── */
+const SafetyCompass: React.FC = () => {
   return (
-    <g>
-      {/* Physical glass/acrylic sphere base */}
-      <circle cx="200" cy="200" r="150" fill="url(#glassSphere)" />
-      {/* Subtle inner shadow for 3D depth */}
-      <circle cx="200" cy="200" r="150" fill="url(#innerShadow)" />
+    <div className="relative w-full max-w-[700px] aspect-[4/3] flex items-center justify-center mx-auto">
+      <svg width="100%" height="100%" viewBox="0 0 800 600" className="drop-shadow-2xl overflow-visible">
+        <defs>
+          <radialGradient id="dialGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="70%" stopColor="#D97706" stopOpacity="0.1" />
+            <stop offset="100%" stopColor="transparent" />
+          </radialGradient>
+          <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="10" stdDeviation="15" floodOpacity="0.1" />
+          </filter>
+        </defs>
 
-      {/* Latitudinal rings (horizontal) - styled like engraved metallic lines */}
-      {[1, 2, 3, 4, 5].map(i => {
-        const ry = 150 * Math.sin(Math.PI * i / 6);
-        const yOffset = 150 * Math.cos(Math.PI * i / 6);
-        return (
-          <ellipse
-            key={`lat-${i}`}
-            cx="200" cy={200 + yOffset * 0.3}
-            rx={150 * Math.sin(Math.acos(yOffset/150))} ry={ry * 0.35}
-            fill="none"
-            stroke="url(#metalLine)"
-            strokeWidth="0.75"
-            opacity="0.65"
-          />
-        );
-      })}
-
-      {/* Longitudinal rings (vertical) */}
-      {Array.from({ length: rings }).map((_, i) => (
-        <ellipse
-          key={`lon-${i}`}
-          cx="200" cy="200"
-          rx={150 * Math.cos((i * Math.PI) / rings)} ry="150"
-          fill="none"
-          stroke="url(#metalLine)"
-          strokeWidth="0.75"
-          opacity="0.55"
-        />
-      ))}
-
-      {/* Glowing Nodes - styled like realistic LED indicators */}
-      {globeNodes.map((node, i) => (
-        <g key={`node-${i}`}>
-          <circle
-            cx={node.x} cy={node.y} r={node.r * 2.5}
-            fill={node.isGold ? '#BAE6FD' : '#DBEAFE'}
-            opacity="0.25"
-          >
-            <animate
-              attributeName="opacity"
-              values="0.15;0.5;0.15"
-              dur={`${3 + node.delay}s`}
-              repeatCount="indefinite"
-            />
-          </circle>
-          <circle
-            cx={node.x} cy={node.y} r={node.r}
-            fill={node.isGold ? '#38BDF8' : '#60A5FA'}
-            opacity="0.9"
-            stroke={node.isGold ? '#E0F2FE' : '#EFF6FF'}
-            strokeWidth="0.5"
-          />
+        {/* ── Background Connections (Dots & Lines) ── */}
+        <g stroke="#E2E8F0" strokeWidth="1" opacity="0.6">
+          <line x1="150" y1="200" x2="300" y2="300" />
+          <line x1="150" y1="300" x2="300" y2="300" />
+          <line x1="150" y1="400" x2="300" y2="300" />
+          
+          <line x1="650" y1="200" x2="500" y2="300" />
+          <line x1="650" y1="300" x2="500" y2="300" />
+          <line x1="650" y1="400" x2="500" y2="300" />
         </g>
-      ))}
 
-      {/* Front Specular Highlight to enhance 3D realism */}
-      <ellipse cx="160" cy="120" rx="40" ry="20" fill="url(#highlight)" transform="rotate(-30 160 120)" />
-    </g>
+        {/* ── Central Compass ── */}
+        <g transform="translate(400, 300)" filter="url(#dropShadow)">
+          {/* Outer glowing rings */}
+          <circle r="160" fill="none" stroke="#D97706" strokeWidth="1" strokeDasharray="4 4" opacity="0.3" />
+          <circle r="145" fill="none" stroke="#0D9488" strokeWidth="2" opacity="0.5" />
+          
+          {/* Main Dial Body */}
+          <circle r="130" fill="#FFF" stroke="#E2E8F0" strokeWidth="1" />
+          
+          {/* Golden Inner Ring */}
+          <circle r="115" fill="none" stroke="#D97706" strokeWidth="12" opacity="0.1" />
+          <circle r="115" fill="none" stroke="#D97706" strokeWidth="1" />
+
+          {/* Compass Ticks */}
+          {Array.from({ length: 24 }).map((_, i) => (
+            <line key={i} x1="0" y1="-105" x2="0" y2="-115" transform={`rotate(${i * 15})`} stroke="#CBD5E1" strokeWidth={i % 6 === 0 ? "2" : "1"} />
+          ))}
+
+          {/* Inner Teal Ring */}
+          <circle r="90" fill="url(#dialGlow)" />
+          <circle r="90" fill="none" stroke="#0D9488" strokeWidth="8" opacity="0.2" />
+          <circle r="90" fill="none" stroke="#0D9488" strokeWidth="1" />
+
+          {/* Center Text */}
+          <text y="-55" textAnchor="middle" fontSize="12" fill="#64748B" fontWeight="600">Scan Field</text>
+          <path d="M -40 -45 Q 0 -35 40 -45" fill="none" stroke="#CBD5E1" strokeWidth="1" />
+          
+          <text y="-25" textAnchor="middle" fontSize="12" fill="#64748B" fontWeight="600">Data Streams</text>
+          <path d="M -50 -15 Q 0 -5 50 -15" fill="none" stroke="#CBD5E1" strokeWidth="1" />
+
+          <text y="5" textAnchor="middle" fontSize="12" fill="#64748B" fontWeight="600">Trust Hub</text>
+
+          {/* 96% INTEGRITY */}
+          <text y="40" textAnchor="middle" fontSize="36" fill="#0F172A" fontWeight="900">96%</text>
+          <text y="55" textAnchor="middle" fontSize="10" fill="#64748B" fontWeight="700" letterSpacing="2">INTEGRITY</text>
+          
+          {/* Compass Needle Highlights */}
+          <path d="M -80 0 L -100 0 M 80 0 L 100 0" stroke="#0D9488" strokeWidth="2" />
+        </g>
+
+        {/* ── Left Nodes (Teal) ── */}
+        <g transform="translate(150, 200)">
+          <circle r="25" fill="#0D9488" opacity="0.1" />
+          <circle r="18" fill="#0D9488" />
+          <text y="5" textAnchor="middle" fill="#FFF" fontSize="14" fontFamily="sans-serif">💬</text>
+          <text x="35" y="4" fontSize="14" fill="#0F172A" fontWeight="600">Message</text>
+        </g>
+
+        <g transform="translate(130, 300)">
+          <circle r="25" fill="#0D9488" opacity="0.1" />
+          <circle r="18" fill="#0D9488" />
+          <text y="5" textAnchor="middle" fill="#FFF" fontSize="14" fontFamily="sans-serif">🔗</text>
+          <text x="35" y="4" fontSize="14" fill="#0F172A" fontWeight="600">URL</text>
+        </g>
+
+        <g transform="translate(150, 400)">
+          <circle r="25" fill="#0D9488" opacity="0.1" />
+          <circle r="18" fill="#0D9488" />
+          <text y="5" textAnchor="middle" fill="#FFF" fontSize="14" fontFamily="sans-serif">₹</text>
+          <text x="35" y="4" fontSize="14" fill="#0F172A" fontWeight="600">UPI</text>
+        </g>
+
+        {/* ── Right Nodes (Gold) ── */}
+        <g transform="translate(650, 200)">
+          <circle r="25" fill="#D97706" opacity="0.1" />
+          <circle r="18" fill="#D97706" />
+          <text y="5" textAnchor="middle" fill="#FFF" fontSize="14" fontFamily="sans-serif">👥</text>
+          <text x="-35" y="4" textAnchor="end" fontSize="14" fill="#0F172A" fontWeight="600">Social</text>
+        </g>
+
+        <g transform="translate(670, 300)">
+          <circle r="25" fill="#D97706" opacity="0.1" />
+          <circle r="18" fill="#D97706" />
+          <text y="5" textAnchor="middle" fill="#FFF" fontSize="14" fontFamily="sans-serif">📱</text>
+          <text x="-35" y="4" textAnchor="end" fontSize="14" fill="#0F172A" fontWeight="600">QR</text>
+        </g>
+
+        <g transform="translate(650, 400)">
+          <circle r="25" fill="#D97706" opacity="0.1" />
+          <circle r="18" fill="#D97706" />
+          <text y="5" textAnchor="middle" fill="#FFF" fontSize="14" fontFamily="sans-serif">🖼️</text>
+          <text x="-35" y="4" textAnchor="end" fontSize="14" fill="#0F172A" fontWeight="600">Image</text>
+        </g>
+
+      </svg>
+
+      {/* Floating Search Bar */}
+      <div className="absolute bottom-[-10%] md:bottom-[5%] left-1/2 -translate-x-1/2 w-[90%] max-w-[600px]">
+        <div className="bg-white rounded-full shadow-2xl p-2 flex items-center border border-slate-200">
+          <div className="pl-4 text-slate-400">
+            <Search className="w-5 h-5" />
+          </div>
+          <input 
+            type="text" 
+            placeholder="Input fraud signal (URL, message, UPI, code)..." 
+            className="flex-1 bg-transparent border-none outline-none px-4 text-sm text-slate-800 placeholder-slate-400"
+          />
+          <button className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-full text-xs font-bold tracking-wide transition-colors">
+            DECONSTRUCT
+          </button>
+        </div>
+        <div className="text-center mt-3 text-[11px] text-slate-500 font-medium tracking-wide">
+          Supports: URL • Message • UPI • QR • Image • Email
+        </div>
+      </div>
+    </div>
   );
 };
 
-/* ── Main Hero ── */
 export const Hero: React.FC = () => {
-  const [inputValue, setInputValue] = useState('');
-  const [feedItems, setFeedItems] = useState<FeedItem[]>(() =>
-    [0, 1, 2].map(() => makeFeedItem())
-  );
-  const [blockedCount] = useState(1_247_382);
-  const [scanning, setScanning] = useState(false);
-  const navigate = useNavigate();
-
-  /* Rotate feed every 4 s */
-  useEffect(() => {
-    const t = setInterval(() => {
-      setFeedItems(prev => [makeFeedItem(), ...prev.slice(0, 2)]);
-    }, 4000);
-    return () => clearInterval(t);
-  }, []);
-
-  const handleScan = () => {
-    if (!inputValue.trim()) return;
-    setScanning(true);
-    setTimeout(() => {
-      setScanning(false);
-      navigate('/console/analysis');
-    }, 800);
-  };
-
-  const typeColors = {
-    critical: { bg: '#FFF0F0', border: '#FECACA', text: '#B91C1C' },
-    warning:  { bg: '#FFFBEB', border: '#FDE68A', text: '#92400E' },
-    info:     { bg: '#F0F9FF', border: '#BAE6FD', text: '#0369A1' },
-  };
-
   return (
-    <section
-      className="relative min-h-screen flex flex-col items-center justify-start pt-24 pb-10 px-4 overflow-hidden"
-    >
-      {/* ── Left: Floating shield + social ── */}
-      <div className="hidden lg:flex flex-col items-center gap-4 absolute left-6 top-1/3 -translate-y-1/2 z-10">
-        {/* Shield illustration */}
-        <motion.div
-          animate={{ y: [0, -8, 0] }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-          className="relative"
-        >
-          <div
-            className="w-24 h-28 rounded-2xl flex items-center justify-center shadow-xl"
-            style={{
-              background: 'linear-gradient(145deg, rgba(255,255,255,0.9), rgba(245,237,216,0.7))',
-              border: '2px solid rgba(180,140,60,0.3)',
-              backdropFilter: 'blur(8px)',
-            }}
-          >
-            <div
-              className="w-16 h-16 rounded-xl flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, #93C5FD, #6366F1)' }}
-            >
-              <ShieldAlert className="w-9 h-9 text-white" />
-            </div>
-          </div>
-          {/* Glow dots */}
-          <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-400 shadow-lg animate-pulse" />
-          <div className="absolute -bottom-1 -left-1 w-2 h-2 rounded-full bg-emerald-400 shadow-lg animate-pulse" />
-        </motion.div>
-
-        {/* Social media bubbles */}
-        {[
-          { color: '#1877F2', label: 'f' },
-          { color: '#1DA1F2', label: '𝕏' },
-          { color: '#E60023', label: '𝑃' },
-          { color: '#C13584', label: '◉' },
-        ].map((s, i) => (
-          <motion.div
-            key={i}
-            whileHover={{ scale: 1.15 }}
-            className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md cursor-pointer"
-            style={{ background: s.color }}
-          >
-            {s.label}
-          </motion.div>
-        ))}
+    <section className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden">
+      
+      {/* Background ambient accents */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-40">
+        <div className="absolute top-[10%] left-[10%] w-[500px] h-[500px] bg-teal-100 rounded-full blur-[120px]" />
+        <div className="absolute top-[20%] right-[10%] w-[500px] h-[500px] bg-amber-50 rounded-full blur-[120px]" />
       </div>
 
-      {/* ── Center Content ── */}
-      <div className="max-w-5xl w-full mx-auto text-center flex flex-col items-center">
-
-        {/* Title */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h1
-            className="text-4xl md:text-6xl font-extrabold tracking-tight mb-2"
-            style={{ color: '#1C0D00', fontFamily: "'Outfit', sans-serif" }}
-          >
-            The Safety Compass
+      <div className="max-w-4xl mx-auto px-4 md:px-8 relative z-10 flex flex-col items-center pt-48 md:pt-56">
+        
+        {/* ── Center: Title & Compass ── */}
+        <div className="flex flex-col items-center text-center">
+          <h1 className="text-5xl md:text-6xl font-black text-slate-900 tracking-tight mb-4">
+            Deconstruct The Scam Web.<br/>
+            <span className="text-teal-600 font-bold">Instantly verify with AI.</span>
           </h1>
-          <p
-            className="text-base md:text-lg font-medium mb-6"
-            style={{ color: '#5C3D11' }}
-          >
-            India's AI-powered scam detection engine — URLs, UPI, messages &amp; beyond
+          <p className="text-sm md:text-base text-slate-600 max-w-2xl mx-auto mb-10 font-medium">
+            Analyze URLs, messages, QR codes, images and more.<br/>
+            Powered by AI. Secured by Community.
           </p>
-        </motion.div>
-
-        {/* ── Compass SVG ── */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.85 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.1 }}
-          className="relative w-[340px] h-[340px] md:w-[400px] md:h-[400px] mx-auto mb-6"
-        >
-          <svg viewBox="0 0 400 400" className="w-full h-full drop-shadow-xl" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <radialGradient id="glassSphere" cx="30%" cy="30%" r="70%">
-                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.5" />
-                <stop offset="50%" stopColor="#E0F2FE" stopOpacity="0.2" />
-                <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.15" />
-              </radialGradient>
-              <radialGradient id="innerShadow" cx="50%" cy="50%" r="50%">
-                <stop offset="70%" stopColor="transparent" />
-                <stop offset="100%" stopColor="#0F172A" stopOpacity="0.25" />
-              </radialGradient>
-              <linearGradient id="metalLine" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#7DD3FC" stopOpacity="0.8" />
-                <stop offset="50%" stopColor="#BAE6FD" stopOpacity="0.4" />
-                <stop offset="100%" stopColor="#0EA5E9" stopOpacity="0.7" />
-              </linearGradient>
-              <linearGradient id="highlight" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.6" />
-                <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-              </linearGradient>
-            </defs>
-
-            <RealisticGlobe />
-          </svg>
-
-          {/* Floating Labels - styled as physical metallic plates */}
-          <div className="absolute top-[8%] left-[-5%] px-3 py-1.5 rounded text-[10px] font-bold shadow-md uppercase tracking-wider"
-               style={{ background: 'linear-gradient(to bottom, #F8FAFC, #F1F5F9)', border: '1px solid #BAE6FD', color: '#0369A1' }}>
-            Active Scanning
-          </div>
-          <div className="absolute top-[18%] right-[-10%] px-3 py-1.5 rounded text-[10px] font-bold shadow-md uppercase tracking-wider"
-               style={{ background: 'linear-gradient(to bottom, #F8FAFC, #F1F5F9)', border: '1px solid #BAE6FD', color: '#0369A1' }}>
-            Threat Telemetry
-          </div>
-          <div className="absolute bottom-[20%] left-[-15%] px-3 py-1.5 rounded text-[10px] font-bold shadow-md uppercase tracking-wider"
-               style={{ background: 'linear-gradient(to bottom, #F8FAFC, #F1F5F9)', border: '1px solid #BAE6FD', color: '#0369A1' }}>
-            Signal Intercept
-          </div>
-          <div className="absolute bottom-[10%] right-[-5%] px-3 py-1.5 rounded text-[10px] font-bold shadow-md uppercase tracking-wider"
-               style={{ background: 'linear-gradient(to bottom, #F8FAFC, #F1F5F9)', border: '1px solid #BAE6FD', color: '#0369A1' }}>
-            Pattern Matching
-          </div>
-
-          {/* Corner tech badges */}
-          {[
-            { label: '🔗 URL', pos: 'top-2 left-0' },
-            { label: '📱 UPI', pos: 'top-2 right-0' },
-            { label: '💬 SMS', pos: 'bottom-2 left-0' },
-            { label: '📷 QR',  pos: 'bottom-2 right-0' },
-          ].map(({ label, pos }) => (
-            <div
-              key={label}
-              className={`absolute ${pos} text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm`}
-              style={{
-                background: 'rgba(255,255,255,0.85)',
-                border: '1px solid rgba(180,140,60,0.3)',
-                color: '#5C3D11',
-                backdropFilter: 'blur(4px)',
-              }}
-            >
-              {label}
-            </div>
-          ))}
-        </motion.div>
-
-        {/* ── Scan Input ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="w-full max-w-lg mx-auto relative"
-        >
-          <div
-            className="flex items-center rounded-2xl overflow-hidden shadow-xl"
-            style={{
-              background: 'rgba(255,255,255,0.92)',
-              border: '1.5px solid rgba(180,140,60,0.35)',
-              backdropFilter: 'blur(8px)',
-            }}
-          >
-            <Search className="w-4 h-4 ml-4 flex-shrink-0" style={{ color: '#9CA3AF' }} />
-            <input
-              className="flex-1 px-3 py-4 text-sm bg-transparent outline-none"
-              style={{ color: '#1C0D00' }}
-              placeholder="Input fraud signal (URL, message, UPI, code)…"
-              value={inputValue}
-              onChange={e => setInputValue(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleScan()}
-            />
-            <button
-              onClick={handleScan}
-              disabled={scanning}
-              className="mr-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95 disabled:opacity-60"
-              style={{
-                background: 'linear-gradient(135deg, #8B6914, #C9971A)',
-                color: '#FFFFFF',
-                letterSpacing: '0.1em',
-              }}
-            >
-              {scanning ? '…' : 'Deconstruct'}
-            </button>
-          </div>
-          <p className="text-[11px] mt-2" style={{ color: '#9CA3AF' }}>
-            Supports: URLs · UPI IDs · Phone numbers · SMS text · QR payloads
-          </p>
-        </motion.div>
-
-        {/* ── Global Watch Panel ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.45 }}
-          className="w-full max-w-lg mx-auto mt-5 rounded-2xl overflow-hidden shadow-lg"
-          style={{
-            background: 'linear-gradient(135deg, #67E8F9 0%, #818CF8 50%, #C084FC 100%)',
-          }}
-        >
-          <div className="p-5 flex items-center justify-between relative overflow-hidden">
-            {/* Globe illustration */}
-            <div className="relative z-10">
-              <p className="text-xl font-extrabold text-white" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                Global Watch
-              </p>
-              <p className="text-sm font-medium text-white/80 mt-0.5">Threats Blocked Today:</p>
-              <p className="text-4xl font-black text-white mt-1 tracking-tight" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                {(blockedCount + Math.floor(Math.random() * 10)).toLocaleString()}
-              </p>
-            </div>
-            {/* Globe SVG */}
-            <div className="relative z-10">
-              <Globe className="w-20 h-20 text-white/30" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-12 h-12 rounded-full border-2 border-white/40 animate-spin" style={{ borderTopColor: 'rgba(255,255,255,0.9)', animationDuration: '3s' }} />
-              </div>
-            </div>
-            {/* Background shimmer blobs */}
-            <div className="absolute -right-6 -bottom-6 w-32 h-32 rounded-full" style={{ background: 'rgba(255,255,255,0.08)' }} />
-            <div className="absolute -left-4 -top-4 w-20 h-20 rounded-full" style={{ background: 'rgba(255,255,255,0.06)' }} />
-          </div>
-          {/* Pulse indicator */}
-          <div
-            className="px-5 py-2.5 flex items-center gap-2"
-            style={{ background: 'rgba(0,0,0,0.12)', borderTop: '1px solid rgba(255,255,255,0.15)' }}
-          >
-            <span className="flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-amber-300 opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-300" />
-            </span>
-            <span className="text-xs font-medium text-white/80">
-              Global Watch Pulse · {new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
-            </span>
-          </div>
-        </motion.div>
-
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="flex items-center gap-3 mt-5"
-        >
-          <Link
-            to="/console"
-            className="px-6 py-2.5 rounded-full text-sm font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all active:scale-95"
-            style={{ background: 'linear-gradient(135deg, #8B6914, #C9971A)', color: '#FFFFFF' }}
-          >
-            Open Full Console →
-          </Link>
-          <a
-            href="#architecture"
-            className="px-6 py-2.5 rounded-full text-sm font-semibold transition-all hover:scale-105"
-            style={{
-              background: 'rgba(255,255,255,0.7)',
-              color: '#5C3D11',
-              border: '1.5px solid rgba(180,140,60,0.3)',
-              backdropFilter: 'blur(4px)',
-            }}
-          >
-            See Architecture
-          </a>
-        </motion.div>
-      </div>
-
-      {/* ── Right: Scam Observatory Feed ── */}
-      <div className="hidden lg:flex flex-col gap-3 absolute right-4 xl:right-8 top-28 w-52 z-10">
-        <div
-          className="px-4 py-2 rounded-xl text-sm font-bold"
-          style={{ color: '#2D1B00', background: 'rgba(255,255,255,0.5)', backdropFilter: 'blur(8px)' }}
-        >
-          🔭 Scam Observatory
+          
+          <SafetyCompass />
         </div>
-        <AnimatePresence>
-          {feedItems.map((item) => {
-            const colors = typeColors[item.type];
-            return (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.4 }}
-                className="rounded-2xl p-3 shadow-md cursor-pointer hover:scale-[1.02] transition-transform"
-                style={{
-                  background: colors.bg,
-                  border: `1px solid ${colors.border}`,
-                  backdropFilter: 'blur(8px)',
-                }}
-              >
-                <div className="flex items-start gap-2.5">
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-xl"
-                    style={{ background: 'rgba(255,255,255,0.7)' }}
-                  >
-                    {item.icon}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-[11px] font-bold leading-tight" style={{ color: colors.text }}>
-                      Observatory Feed:
-                    </p>
-                    <p className="text-[10px] font-medium truncate" style={{ color: '#374151' }}>
-                      {item.label}
-                    </p>
-                    <p className="text-[9px] mt-0.5" style={{ color: '#9CA3AF' }}>
-                      Verified · {item.time}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
+
       </div>
     </section>
   );

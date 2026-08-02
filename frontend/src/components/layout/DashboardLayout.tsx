@@ -6,6 +6,7 @@ import { useAppStore } from '../../stores/appStore';
 import { useTheme } from '../../contexts/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SearchCommandPalette } from '../ui/SearchCommandPalette';
+import { BackgroundSlider } from '../landing/BackgroundSlider';
 
 interface StreamEvent {
   id: string;
@@ -189,9 +190,10 @@ const DashboardLayout: React.FC = () => {
 
   return (
     <div
-      className="flex h-screen w-screen overflow-hidden font-sans"
+      className="flex h-screen w-screen overflow-hidden font-sans relative"
       style={{ background: 'var(--theme-bg)', color: 'var(--theme-text)' }}
     >
+
       {/* ── Left Sidebar ── */}
       <NavigationSidebar
         isOpen={isMobileMenuOpen}
@@ -206,7 +208,7 @@ const DashboardLayout: React.FC = () => {
         {/* ── Top Navigation Bar ── */}
         <header
           className="h-14 px-4 md:px-6 flex items-center justify-between z-10 flex-shrink-0"
-          style={{
+          style={{ backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', 
             background: 'var(--theme-surface)',
             borderBottom: '1px solid var(--theme-border)',
             boxShadow: '0 1px 0 0 var(--theme-border)'
@@ -272,7 +274,7 @@ const DashboardLayout: React.FC = () => {
             {/* Health Status Pills */}
             <div
               className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl font-mono text-[9px] select-none"
-              style={{ background: 'var(--theme-card)', border: '1px solid var(--theme-border)', color: 'var(--theme-text-muted)' }}
+              style={{ backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',  background: 'var(--theme-card)', border: '1px solid var(--theme-border)', color: 'var(--theme-text-muted)' }}
             >
               <span className="text-[8px] uppercase tracking-wider font-bold" style={{ opacity: 0.6 }}>Health</span>
               {[
@@ -305,50 +307,34 @@ const DashboardLayout: React.FC = () => {
               <Radio className={`w-4 h-4 ${showTelemetry ? 'animate-pulse' : ''}`} />
             </button>
 
-            {/* Operator Profile */}
-            <div
-              className="flex items-center gap-2.5 pl-3"
-              style={{ borderLeft: '1px solid var(--theme-border)' }}
-            >
-              <div className="relative flex-shrink-0">
-                <img
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&h=64&q=80"
-                  alt="Operator"
-                  className="w-7 h-7 rounded-full object-cover"
-                  style={{ border: '2px solid color-mix(in srgb, var(--theme-accent-start) 50%, transparent)' }}
-                />
-                <span
-                  className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-400"
-                  style={{ border: '2px solid var(--theme-surface)' }}
-                />
-              </div>
-              <div className="hidden sm:flex flex-col text-left">
-                <span className="text-[11px] font-semibold leading-tight" style={{ color: 'var(--theme-text)' }}>Gowtham Sai</span>
-                <span className="text-[8px] font-mono uppercase tracking-wider" style={{ color: 'var(--theme-accent-start)' }}>SecOps Operator</span>
-              </div>
-            </div>
+
           </div>
         </header>
 
-        {/* ── Main Content ── */}
-        <main
-          className="flex-1 overflow-y-auto p-6 relative"
-          style={{ background: 'var(--theme-bg)' }}
-        >
-          {/* Ambient gradient glows */}
-          <div
-            className="pointer-events-none fixed inset-0 z-0"
-            style={{
-              background: `
-                radial-gradient(ellipse 55% 38% at 25% 15%, color-mix(in srgb, var(--theme-accent-start) 6%, transparent), transparent),
-                radial-gradient(ellipse 45% 32% at 82% 85%, color-mix(in srgb, var(--theme-accent-end) 5%, transparent), transparent)
-              `
-            }}
-          />
-          <div className="max-w-[1440px] mx-auto w-full relative z-10">
-            <Outlet />
-          </div>
-        </main>
+        {/* ── Main Content Wrapper ── */}
+        <div className="flex-1 relative overflow-hidden bg-transparent">
+          {/* ── Dynamic Background (Local to Main) ── */}
+          <BackgroundSlider themeContext={theme} />
+          
+          <main
+            className="absolute inset-0 overflow-y-auto p-6"
+            style={{ background: 'transparent' }}
+          >
+            {/* Ambient gradient glows */}
+            <div
+              className="pointer-events-none fixed inset-0 z-0"
+              style={{
+                background: `
+                  radial-gradient(ellipse 55% 38% at 25% 15%, color-mix(in srgb, var(--theme-accent-start) 6%, transparent), transparent),
+                  radial-gradient(ellipse 45% 32% at 82% 85%, color-mix(in srgb, var(--theme-accent-end) 5%, transparent), transparent)
+                `
+              }}
+            />
+            <div className="max-w-[1440px] mx-auto w-full relative z-10">
+              <Outlet />
+            </div>
+          </main>
+        </div>
       </div>
 
       {/* ── Right Telemetry Sidebar ── */}
@@ -360,7 +346,7 @@ const DashboardLayout: React.FC = () => {
             exit={{ width: 0, opacity: 0 }}
             transition={{ duration: 0.25, ease: 'easeInOut' }}
             className="hidden xl:flex flex-col w-72 h-screen overflow-hidden relative z-20 flex-shrink-0"
-            style={{ background: 'var(--theme-surface)', borderLeft: '1px solid var(--theme-border)' }}
+            style={{ backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',  background: 'var(--theme-surface)', borderLeft: '1px solid var(--theme-border)' }}
           >
             {/* Header */}
             <div
@@ -391,7 +377,7 @@ const DashboardLayout: React.FC = () => {
                 <div
                   key={label}
                   className="p-2.5 rounded-xl"
-                  style={{ background: 'var(--theme-card)', border: '1px solid var(--theme-border)' }}
+                  style={{ backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',  background: 'var(--theme-card)', border: '1px solid var(--theme-border)' }}
                 >
                   <span className="text-[7px] font-mono uppercase block mb-1" style={{ color: 'var(--theme-text-muted)' }}>{label}</span>
                   <span className="text-xs font-bold font-mono" style={{ color: accent }}>{value}</span>
@@ -428,7 +414,7 @@ const DashboardLayout: React.FC = () => {
                 <div
                   key={label}
                   className="flex justify-between items-center px-2.5 py-1.5 rounded-lg"
-                  style={{ background: 'var(--theme-card)', border: '1px solid var(--theme-border)' }}
+                  style={{ backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',  background: 'var(--theme-card)', border: '1px solid var(--theme-border)' }}
                 >
                   <div className="flex items-center gap-1.5 font-mono text-[9px]">
                     <Icon className="w-3 h-3" style={{ color: accent }} />
