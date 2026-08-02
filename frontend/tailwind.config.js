@@ -7,6 +7,18 @@ export default {
   theme: {
     extend: {
       colors: {
+        app: {
+          bg: 'var(--theme-bg)',
+          card: 'var(--theme-card)',
+          text: 'var(--theme-text)',
+          muted: 'var(--theme-text-muted)',
+          border: 'var(--theme-border)',
+          'accent-start': 'var(--theme-accent-start)',
+          'accent-end': 'var(--theme-accent-end)',
+          'btn-bg': 'var(--theme-btn-bg)',
+          'btn-text': 'var(--theme-btn-text)',
+          'nav-bg': 'var(--theme-nav-bg)',
+        },
         cyber: {
           bg: '#050811',
           surface: '#0B1220',

@@ -10,7 +10,7 @@ export const Metrics: React.FC = () => {
   ];
 
   return (
-    <section className="py-24 px-6 md:px-12 bg-slate-900 text-white" id="metrics">
+    <section className="py-24 px-6 md:px-12 bg-app-btn-bg text-app-btn-text" id="metrics">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 text-center">
           {metrics.map((m, i) => (

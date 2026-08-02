@@ -3,9 +3,53 @@
 @tailwind utilities;
 
 @layer base {
+  :root, [data-theme="light"] {
+    --theme-bg: #f8fafc;
+    --theme-card: #ffffff;
+    --theme-text: #0f172a;
+    --theme-text-muted: #475569;
+    --theme-border: #e2e8f0;
+    --theme-accent-start: #2563eb;
+    --theme-accent-end: #9333ea;
+    --theme-btn-bg: #1e293b;
+    --theme-btn-text: #ffffff;
+    --theme-nav-bg: rgba(255, 255, 255, 0.8);
+    --theme-blur: 8px;
+  }
+
+  [data-theme="dark"] {
+    --theme-bg: #020617;
+    --theme-card: #0f172a;
+    --theme-text: #f8fafc;
+    --theme-text-muted: #94a3b8;
+    --theme-border: #1e293b;
+    --theme-accent-start: #3b82f6;
+    --theme-accent-end: #a855f7;
+    --theme-btn-bg: #f8fafc;
+    --theme-btn-text: #0f172a;
+    --theme-nav-bg: rgba(15, 23, 42, 0.8);
+    --theme-blur: 8px;
+  }
+
+  [data-theme="glass"] {
+    --theme-bg: transparent;
+    --theme-card: rgba(255, 255, 255, 0.35);
+    --theme-text: #1e1b4b;
+    --theme-text-muted: rgba(30, 27, 75, 0.7);
+    --theme-border: rgba(255, 255, 255, 0.4);
+    --theme-accent-start: #7c3aed;
+    --theme-accent-end: #06b6d4;
+    --theme-btn-bg: #1e1b4b;
+    --theme-btn-text: #ffffff;
+    --theme-nav-bg: rgba(255, 255, 255, 0.4);
+    --theme-blur: 12px;
+  }
+
   body {
-    @apply bg-[#050811] text-slate-100 antialiased overflow-x-hidden relative;
+    @apply antialiased overflow-x-hidden relative;
     font-family: 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--theme-bg, #050811);
+    color: var(--theme-text, #f8fafc);
   }
 
   code, pre {
@@ -13,7 +57,6 @@
     @apply text-xs;
   }
 
-  /* Apply Geist Mono to all mono classes */
   .font-mono {
     font-family: 'Geist Mono', 'JetBrains Mono', monospace;
   }

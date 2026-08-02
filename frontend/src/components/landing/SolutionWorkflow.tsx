@@ -11,7 +11,7 @@ export const SolutionWorkflow: React.FC = () => {
   ];
 
   return (
-    <section className="py-24 px-6 md:px-12 bg-slate-900 text-white relative overflow-hidden" id="solution">
+    <section className="py-24 px-6 md:px-12 bg-app-btn-bg text-app-btn-text relative overflow-hidden" id="solution">
       {/* Subtle grid background */}
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
       
@@ -34,7 +34,7 @@ export const SolutionWorkflow: React.FC = () => {
                 viewport={{ once: true }}
                 className="w-full max-w-2xl bg-slate-800/50 backdrop-blur-md border border-slate-700 p-6 rounded-2xl flex items-center space-x-6"
               >
-                <div className="bg-blue-500/20 text-blue-400 p-4 rounded-xl border border-blue-500/30">
+                <div className="bg-violet-500/20 text-blue-400 p-4 rounded-xl border border-blue-500/30">
                   {step.icon}
                 </div>
                 <div>
@@ -48,7 +48,7 @@ export const SolutionWorkflow: React.FC = () => {
                   initial={{ opacity: 0, height: 0 }}
                   whileInView={{ opacity: 1, height: 'auto' }}
                   viewport={{ once: true }}
-                  className="text-slate-600"
+                  className="text-app-muted"
                 >
                   <ArrowDown className="w-6 h-6 animate-bounce" />
                 </motion.div>

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 import { Navbar } from '../components/landing/Navbar';
+import { BackgroundSlider } from '../components/landing/BackgroundSlider';
 import { Hero } from '../components/landing/Hero';
 import { TrustedBy } from '../components/landing/TrustedBy';
 import { ProblemSection } from '../components/landing/ProblemSection';
@@ -27,10 +28,11 @@ const LandingPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-500/30 overflow-x-hidden">
+    <div className="min-h-screen text-app-text font-sans selection:bg-violet-500/30 overflow-x-hidden relative">
+      <BackgroundSlider />
       <Navbar />
       
-      <main>
+      <main className="relative z-10">
         <Hero />
         <TrustedBy />
         <ProblemSection />

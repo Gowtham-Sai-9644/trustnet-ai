@@ -11,7 +11,7 @@ export const TrustedBy: React.FC = () => {
   ];
 
   return (
-    <section className="py-12 border-b border-slate-200/50 bg-white/50 backdrop-blur-sm">
+    <section className="py-12 border-b border-app-border bg-white/50 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-6 text-center">
         <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-8">
           Powering Review Integrity For Global Platforms
