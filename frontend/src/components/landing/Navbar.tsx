@@ -13,6 +13,16 @@ export const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, progress: number) => {
+    e.preventDefault();
+    const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+    window.scrollTo({
+      top: scrollHeight * progress,
+      behavior: 'smooth'
+    });
+    setMobileOpen(false);
+  };
+
   return (
     <header
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-landing-bg/90 backdrop-blur-xl border-b border-landing-border shadow-sm"
@@ -30,11 +40,11 @@ export const Navbar: React.FC = () => {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-landing-muted">
-          <a href="#features" className="hover:text-landing-primary transition-colors">My Defense Hub</a>
+          <a href="#" onClick={(e) => scrollToSection(e, 0.65)} className="hover:text-landing-primary transition-colors">My Defense Hub</a>
           <span className="opacity-30">|</span>
-          <a href="#solution" className="hover:text-landing-primary transition-colors">Scam Observatory</a>
+          <a href="#" onClick={(e) => scrollToSection(e, 0.25)} className="hover:text-landing-primary transition-colors">Scam Observatory</a>
           <span className="opacity-30">|</span>
-          <a href="#architecture" className="hover:text-landing-primary transition-colors">About Us</a>
+          <a href="#" onClick={(e) => scrollToSection(e, 0.90)} className="hover:text-landing-primary transition-colors">About Us</a>
         </nav>
 
         {/* Right actions */}
@@ -79,8 +89,9 @@ export const Navbar: React.FC = () => {
             exit={{ opacity: 0, y: -10 }}
             className="md:hidden absolute top-16 left-0 right-0 py-4 px-6 flex flex-col gap-4 shadow-lg bg-landing-bg/95 backdrop-blur-xl"
           >
-            <a href="#features" className="font-medium text-landing-text" onClick={() => setMobileOpen(false)}>My Defense Hub</a>
-            <a href="#solution" className="font-medium text-landing-text" onClick={() => setMobileOpen(false)}>Scam Observatory</a>
+            <a href="#" onClick={(e) => scrollToSection(e, 0.65)} className="font-medium text-landing-text">My Defense Hub</a>
+            <a href="#" onClick={(e) => scrollToSection(e, 0.25)} className="font-medium text-landing-text">Scam Observatory</a>
+            <a href="#" onClick={(e) => scrollToSection(e, 0.90)} className="font-medium text-landing-text">About Us</a>
             <Link
               to="/console"
               className="text-center py-2.5 rounded-xl font-bold bg-landing-primary text-white"
