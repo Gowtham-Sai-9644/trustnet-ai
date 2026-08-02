@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, HttpUrl
-from typing import Optional, Dict
+from typing import Optional, Dict, Any, List
 
 # URL Analysis
 class URLAnalysisRequest(BaseModel):
@@ -19,6 +19,47 @@ class MessageAnalysisResponse(BaseModel):
     raw_text: str
     category_probabilities: Dict[str, float]
     predicted_category: str
+
+
+# LinkedIn Analysis
+class LinkedInAnalysisRequest(BaseModel):
+    profile_url: Optional[str] = Field(None, description="LinkedIn profile URL or job offer URL to analyze")
+    profile_text: Optional[str] = Field(None, description="Bio text, message text, or job description")
+    claimed_company: Optional[str] = Field(None, description="Claimed company or employer name")
+
+class LinkedInAnalysisResponse(BaseModel):
+    scan_id: str
+    target: str
+    risk_level: str
+    risk_score: float
+    is_suspicious: bool
+    domain_analysis: Dict[str, Any]
+    lure_analysis: Dict[str, Any]
+    risk_indicators: List[str]
+    explanation: str
+    forensic_timeline: List[Dict[str, Any]]
+    evidence_locker: List[Dict[str, Any]]
+
+
+# QR Code Analysis
+class QRAnalysisRequest(BaseModel):
+    qr_payload: Optional[str] = Field(None, description="Decoded QR payload string or URL")
+    qr_image_b64: Optional[str] = Field(None, description="Base64 encoded QR image")
+
+class QRAnalysisResponse(BaseModel):
+    scan_id: str
+    target: str
+    payload_type: str
+    decoded_content: str
+    risk_level: str
+    risk_score: float
+    is_suspicious: bool
+    upi_details: Optional[Dict[str, Any]] = None
+    url_details: Optional[Dict[str, Any]] = None
+    risk_indicators: List[str]
+    explanation: str
+    forensic_timeline: List[Dict[str, Any]]
+    evidence_locker: List[Dict[str, Any]]
 
 
 # Fused Multi-Modal Analysis
@@ -47,3 +88,4 @@ class FusionAnalysisResponse(BaseModel):
     calibration: CalibrationResult
     explainability: ShapAttributions
     graph_available: bool
+

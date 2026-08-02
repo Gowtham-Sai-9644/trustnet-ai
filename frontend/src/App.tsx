@@ -1,11 +1,9 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
 import LandingPage from './pages/LandingPage';
 import DashboardLayout from './components/layout/DashboardLayout';
-import DashboardPage from './pages/DashboardPage';
 import ThreatAnalysisPage from './pages/ThreatAnalysisPage';
-import GraphPage from './pages/GraphPage';
 import ResearchPage from './pages/ResearchPage';
 import ReportPage from './pages/ReportPage';
 import KnowledgePage from './pages/KnowledgePage';
@@ -18,24 +16,22 @@ const App: React.FC = () => {
     <ThemeProvider>
       <BrowserRouter>
         <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/console" element={<DashboardLayout />}>
-          <Route index element={<DashboardPage />} />
-          <Route path="analysis" element={<ThreatAnalysisPage />} />
-          <Route path="graph" element={<GraphPage />} />
-          <Route path="investigations" element={<InvestigationPage />} />
-          <Route path="research" element={<ResearchPage />} />
-          <Route path="reports" element={<ReportPage />} />
-          <Route path="assistant" element={<KnowledgePage />} />
-          <Route path="viva" element={<VivaPage />} />
-          <Route path="settings" element={<SettingsPage />} />
-          <Route path="*" element={<DashboardPage />} />
-        </Route>
-      </Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/console" element={<DashboardLayout />}>
+            <Route index element={<Navigate to="/console/analysis" replace />} />
+            <Route path="analysis" element={<ThreatAnalysisPage />} />
+            <Route path="investigations" element={<InvestigationPage />} />
+            <Route path="research" element={<ResearchPage />} />
+            <Route path="reports" element={<ReportPage />} />
+            <Route path="assistant" element={<KnowledgePage />} />
+            <Route path="viva" element={<VivaPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+            <Route path="*" element={<Navigate to="/console/analysis" replace />} />
+          </Route>
+        </Routes>
       </BrowserRouter>
     </ThemeProvider>
   );
 };
 
 export default App;
-

@@ -51,9 +51,8 @@ export const SearchCommandPalette: React.FC<SearchCommandPaletteProps> = ({ isOp
 
   // Define static quick navigation paths
   const staticNavigations = [
-    { label: 'Go to Mission Control Cockpit', path: '/console', icon: Cpu, type: 'NAV' },
-    { label: 'Go to Graph Intelligence Workspace', path: '/console/graph', icon: Network, type: 'NAV' },
     { label: 'Go to Threat Analysis Console', path: '/console/analysis', icon: ShieldAlert, type: 'NAV' },
+    { label: 'Go to Investigation Room', path: '/console/investigations', icon: Search, type: 'NAV' },
     { label: 'Go to Digital Fraud Analyst Assistant', path: '/console/assistant', icon: Terminal, type: 'NAV' }
   ];
 
@@ -68,12 +67,12 @@ export const SearchCommandPalette: React.FC<SearchCommandPaletteProps> = ({ isOp
     
     return [
       {
-        label: `Search "${query}" as Entity (Graph Workspace)`,
+        label: `Investigate "${query}" (Investigation Room)`,
         type: 'GRAPH_SEARCH',
-        icon: Network,
+        icon: Search,
         execute: () => {
           setInputs({ [indicatorType]: query });
-          navigate('/console/graph');
+          navigate('/console/investigations');
         }
       },
       {

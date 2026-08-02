@@ -1,5 +1,4 @@
 import React from 'react';
-import { AppCard } from './AppCard';
 
 interface AppMetricCardProps {
   title: string;
@@ -10,6 +9,7 @@ interface AppMetricCardProps {
   icon: React.ComponentType<any>;
   iconColor?: string;
   insightText?: string;
+  accentColor?: string;
 }
 
 export const AppMetricCard: React.FC<AppMetricCardProps> = ({
@@ -19,49 +19,127 @@ export const AppMetricCard: React.FC<AppMetricCardProps> = ({
   changeType = 'neutral',
   sparklineType = 'flat',
   icon: Icon,
-  iconColor = 'text-[#06B6D4]',
-  insightText
+  iconColor,
+  insightText,
+  accentColor,
 }) => {
+  const accent = accentColor ?? 'var(--theme-accent-start)';
+
   const getSparklinePath = () => {
-    switch(sparklineType) {
-      case 'up': return "M0 15 Q 10 5, 20 12 T 40 4 T 50 2";
-      case 'down': return "M0 8 Q 10 16, 20 10 T 40 14 T 50 6";
-      case 'growth': return "M0 16 Q 15 12, 25 15 T 50 5";
-      case 'flat':
-      default: return "M0 18 L 10 14 L 20 15 L 30 11 L 40 8 L 50 4";
+    switch (sparklineType) {
+      case 'up':     return 'M0 16 Q 10 10, 20 13 T 40 6 T 50 2';
+      case 'down':   return 'M0 4 Q 10 12, 20 8 T 40 14 T 50 18';
+      case 'growth': return 'M0 18 Q 15 14, 25 16 T 50 4';
+      default:       return 'M0 14 L 10 11 L 20 13 L 30 9 L 40 7 L 50 4';
     }
   };
 
-  const getSparklineColor = () => {
-    if (changeType === 'positive') return 'text-[#22C55E]';
-    if (changeType === 'negative') return 'text-[#EF4444]';
-    return 'text-[#06B6D4]';
-  };
+  const trendColor =
+    changeType === 'positive' ? '#10B981'
+    : changeType === 'negative' ? '#EF4444'
+    : 'var(--theme-text-muted)';
 
   return (
-    <AppCard hoverable className="flex items-center justify-between p-5 relative overflow-hidden group">
-      <div className="space-y-1.5 flex-1 min-w-0 pr-2">
-        <span className="text-[10px] font-sans font-semibold text-slate-500 uppercase tracking-wider block truncate">{title}</span>
-        <h3 className="text-2xl font-bold font-mono text-slate-100">{value}</h3>
-        <div className="flex items-center space-x-3 pt-1">
+    <div
+      className="relative overflow-hidden group cursor-pointer transition-all duration-200 rounded-2xl p-5"
+      style={{
+        background: 'var(--theme-card)',
+        border: `1px solid var(--theme-border)`,
+        boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+      }}
+      onMouseEnter={e => {
+        const el = e.currentTarget as HTMLElement;
+        el.style.transform = 'translateY(-2px)';
+        el.style.boxShadow = `0 8px 24px rgba(0,0,0,0.3), 0 0 0 1px ${accent}30`;
+        el.style.borderColor = `${accent}40`;
+      }}
+      onMouseLeave={e => {
+        const el = e.currentTarget as HTMLElement;
+        el.style.transform = '';
+        el.style.boxShadow = '0 1px 3px rgba(0,0,0,0.2)';
+        el.style.borderColor = 'var(--theme-border)';
+      }}
+    >
+      {/* Top accent gradient line */}
+      <div
+        className="absolute top-0 left-0 right-0 h-[1.5px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        style={{ background: `linear-gradient(90deg, ${accent}, transparent)` }}
+      />
+
+      {/* Background glow blob */}
+      <div
+        className="absolute -top-8 -right-8 w-28 h-28 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+        style={{ background: `radial-gradient(circle, ${accent}12, transparent 70%)` }}
+      />
+
+      <div className="flex items-start justify-between mb-3">
+        {/* Icon badge */}
+        <div
+          className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+          style={{
+            background: `${accent}15`,
+            border: `1px solid ${accent}25`,
+          }}
+        >
+          <Icon
+            className="w-5 h-5"
+            style={{ color: iconColor ?? accent }}
+          />
+        </div>
+
+        {/* Sparkline */}
+        <svg
+          className="w-16 h-7 opacity-60 group-hover:opacity-100 transition-opacity"
+          viewBox="0 0 50 20"
+          style={{ color: trendColor }}
+        >
+          <path
+            d={getSparklinePath()}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
+
+      <div className="space-y-0.5">
+        <span
+          className="text-[11px] font-bold uppercase tracking-[0.08em] block"
+          style={{ color: 'var(--theme-text-muted)' }}
+        >
+          {title}
+        </span>
+        <h3
+          className="text-3xl font-bold font-mono leading-none"
+          style={{ color: 'var(--theme-text)', fontVariantNumeric: 'tabular-nums' }}
+        >
+          {value}
+        </h3>
+      </div>
+
+      {(changeText || insightText) && (
+        <div className="mt-3 pt-3 flex items-center gap-2" style={{ borderTop: '1px solid var(--theme-border)' }}>
           {changeText && (
-            <span className={`text-[10px] font-mono font-medium ${
-              changeType === 'positive' ? 'text-[#22C55E]' : changeType === 'negative' ? 'text-[#EF4444]' : 'text-slate-400'
-            }`}>
+            <span
+              className="text-[11px] font-mono font-bold flex items-center gap-1"
+              style={{ color: trendColor }}
+            >
+              {changeType === 'positive' ? '▲' : changeType === 'negative' ? '▼' : '→'}
               {changeText}
             </span>
           )}
-          <svg className={`w-14 h-5 ${getSparklineColor()}`} viewBox="0 0 50 20">
-            <path d={getSparklinePath()} fill="none" stroke="currentColor" strokeWidth="1.5" />
-          </svg>
+          {insightText && (
+            <span
+              className="text-[11px] truncate font-sans font-medium"
+              style={{ color: 'var(--theme-text-muted)' }}
+            >
+              {insightText}
+            </span>
+          )}
         </div>
-        {insightText && (
-          <span className="text-[9px] text-slate-500 block truncate font-sans">{insightText}</span>
-        )}
-      </div>
-      <div className="bg-slate-800/40 p-2.5 rounded-xl border border-slate-700/30 flex-shrink-0 transition-colors group-hover:border-[#06B6D4]/30">
-        <Icon className={`w-5 h-5 ${iconColor}`} />
-      </div>
-    </AppCard>
+      )}
+    </div>
   );
 };

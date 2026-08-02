@@ -8,7 +8,9 @@ from app.schemas.analyze_schema import (
     URLAnalysisRequest, URLAnalysisResponse,
     MessageAnalysisRequest, MessageAnalysisResponse,
     FusionAnalysisRequest, FusionAnalysisResponse,
-    CalibrationResult, ShapAttributions
+    CalibrationResult, ShapAttributions,
+    LinkedInAnalysisRequest, LinkedInAnalysisResponse,
+    QRAnalysisRequest, QRAnalysisResponse
 )
 from app.schemas.experiment_schema import ExplainabilityResponse
 from app.services.ml_service import ml_pipeline
@@ -120,3 +122,21 @@ async def get_explainability(scan_id: str = Query(..., description="ID of the sc
         evidence_hops=hops,
         natural_language_explanation=narrative
     )
+
+@router.post("/linkedin", response_model=LinkedInAnalysisResponse)
+async def analyze_linkedin(payload: LinkedInAnalysisRequest):
+    res = ml_pipeline.predict_linkedin(
+        profile_url=payload.profile_url,
+        profile_text=payload.profile_text,
+        claimed_company=payload.claimed_company
+    )
+    return LinkedInAnalysisResponse(**res)
+
+@router.post("/qr", response_model=QRAnalysisResponse)
+async def analyze_qr(payload: QRAnalysisRequest):
+    res = ml_pipeline.predict_qr(
+        qr_payload=payload.qr_payload,
+        qr_image_b64=payload.qr_image_b64
+    )
+    return QRAnalysisResponse(**res)
+

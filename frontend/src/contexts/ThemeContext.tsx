@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 
-type Theme = 'light' | 'dark' | 'glass';
+// Console is locked to Emerald theme
+export type Theme = 'emerald';
 
 interface ThemeContextType {
   theme: Theme;
@@ -10,21 +11,18 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    // Default to glass for the landing page aesthetics we just built
-    const saved = localStorage.getItem('app-theme') as Theme;
-    return saved || 'glass';
-  });
+  // Always emerald — no switching
+  const theme: Theme = 'emerald';
 
-  const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme);
-    localStorage.setItem('app-theme', newTheme);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const setTheme = (_newTheme: Theme) => {
+    // No-op: theme is locked to emerald
   };
 
   useEffect(() => {
-    // Inject the theme into the document body to allow CSS variables to take effect
-    document.body.setAttribute('data-theme', theme);
-  }, [theme]);
+    document.body.setAttribute('data-theme', 'emerald');
+    localStorage.setItem('app-theme', 'emerald');
+  }, []);
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>

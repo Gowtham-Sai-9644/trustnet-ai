@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import NavigationSidebar from './NavigationSidebar';
-import { Search, Activity, Radio, Cpu, Network, Database, ChevronRight, ChevronLeft, Volume2, ShieldAlert, Menu } from 'lucide-react';
+import { Search, Activity, Radio, Cpu, Database, Menu } from 'lucide-react';
 import { useAppStore } from '../../stores/appStore';
+import { useTheme } from '../../contexts/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SearchCommandPalette } from '../ui/SearchCommandPalette';
 
@@ -18,9 +19,11 @@ const DashboardLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { systemHealth, fetchSystemHealth, setInputs } = useAppStore();
+  const { theme } = useTheme();
   const [showTelemetry, setShowTelemetry] = useState(true);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDesktopSidebarCollapsed, setIsDesktopSidebarCollapsed] = useState(false);
   const [activeFeedTab, setActiveFeedTab] = useState<'all' | 'threat' | 'investigate' | 'discover' | 'escalate' | 'evolve'>('all');
   const [streamEvents, setStreamEvents] = useState<StreamEvent[]>([]);
   const [telemetryStats, setTelemetryStats] = useState({
@@ -29,7 +32,7 @@ const DashboardLayout: React.FC = () => {
     cpuLoad: 28,
     dbLatency: 4.8
   });
-  
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -50,7 +53,7 @@ const DashboardLayout: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Initial stream seed matching different feeds
+  // Initial stream seed
   useEffect(() => {
     const seedEvents: StreamEvent[] = [
       { id: '1', time: '13:41:02', type: 'CRITICAL', source: 'THREAT', message: 'Risk score 0.98 triggered on merchant-scam-address-24@ybl' },
@@ -73,13 +76,10 @@ const DashboardLayout: React.FC = () => {
         { source: 'ESCALATE', message: 'Coercion probability exceeded threshold on threat ticket TXN-72091' },
         { source: 'INVESTIGATE', message: 'Compliance playbook verified: PCI-DSS rules applied to suspect transfer' }
       ];
-      
       const selectedFeed = feeds[Math.floor(Math.random() * feeds.length)];
       const randomType = types[Math.floor(Math.random() * types.length)];
-      
       const now = new Date();
       const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-      
       const newEvent: StreamEvent = {
         id: String(Math.random()),
         time: timeStr,
@@ -87,10 +87,7 @@ const DashboardLayout: React.FC = () => {
         source: selectedFeed.source,
         message: selectedFeed.message
       };
-
       setStreamEvents(prev => [newEvent, ...prev.slice(0, 9)]);
-      
-      // Update telemetry numbers
       setTelemetryStats(prev => ({
         scannedCount: prev.scannedCount + 1,
         criticalAlerts: prev.criticalAlerts + (randomType === 'CRITICAL' ? 1 : 0),
@@ -98,15 +95,12 @@ const DashboardLayout: React.FC = () => {
         dbLatency: Number((3.5 + Math.random() * 2.5).toFixed(1))
       }));
     }, 5000);
-
     return () => clearInterval(interval);
   }, []);
 
   const handleLogClick = (event: StreamEvent) => {
     let type: 'url' | 'upi' | 'phone' | 'messageText' = 'url';
     let value = '';
-
-    // Extract indicator from log message
     if (event.message.includes('@')) {
       type = 'upi';
       const match = event.message.match(/[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+/);
@@ -120,51 +114,39 @@ const DashboardLayout: React.FC = () => {
       const match = event.message.match(/\+91\s*[0-9\s]{8,15}/);
       value = match ? match[0] : '+91 9988776655';
     } else {
-      // Fallback
       type = 'url';
       value = 'https://lotto-rewards-claim.cfd';
     }
-
     setInputs({ [type]: value });
-
-    // Navigate to respective pages
     if (type === 'upi' || type === 'phone') {
-      navigate('/console/graph');
+      navigate('/console/investigations');
     } else {
       navigate('/console/analysis');
     }
   };
 
-  // Ambient canvas waveform animation
+  // Waveform canvas animation
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-
     let animationId: number;
     let offset = 0;
-
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.strokeStyle = 'rgba(0, 229, 255, 0.15)';
+      ctx.strokeStyle = 'rgba(0, 229, 255, 0.12)';
       ctx.lineWidth = 1;
       ctx.beginPath();
-      
-      // Draw grid lines
       const gridSpacing = 20;
       for (let x = 0; x < canvas.width; x += gridSpacing) {
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
+        ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height);
       }
       for (let y = 0; y < canvas.height; y += gridSpacing) {
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
+        ctx.moveTo(0, y); ctx.lineTo(canvas.width, y);
       }
       ctx.stroke();
-
-      // Draw active waveform
-      ctx.strokeStyle = 'rgba(0, 229, 255, 0.4)';
+      ctx.strokeStyle = 'rgba(0, 229, 255, 0.5)';
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       for (let x = 0; x < canvas.width; x++) {
@@ -173,35 +155,27 @@ const DashboardLayout: React.FC = () => {
         else ctx.lineTo(x, y);
       }
       ctx.stroke();
-
       offset += 0.02;
       animationId = requestAnimationFrame(draw);
     };
-
-    // Resize handler
     const handleResize = () => {
       canvas.width = canvas.parentElement?.clientWidth || 288;
       canvas.height = 80;
     };
     handleResize();
     window.addEventListener('resize', handleResize);
-    
     draw();
-
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener('resize', handleResize);
     };
   }, [showTelemetry]);
-  
-  const [isDesktopSidebarCollapsed, setIsDesktopSidebarCollapsed] = useState(false);
 
-  // Resolve view title from active route
   const getPageTitle = (path: string) => {
-    switch(path) {
-      case '/console': return 'Mission Control Cockpit';
+    switch (path) {
+      case '/console':
       case '/console/analysis': return 'Calibrated Threat Analysis';
-      case '/console/graph': return 'Graph Intelligence Workspace';
+      case '/console/investigations': return 'Investigation Room';
       case '/console/research': return 'Observability & Model Registry';
       case '/console/reports': return 'Incident Intake Portal';
       case '/console/assistant': return 'Digital Fraud Analyst';
@@ -211,226 +185,325 @@ const DashboardLayout: React.FC = () => {
     }
   };
 
+
+
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#050811] text-slate-100 font-sans selection:bg-[#00E5FF]/20 selection:text-slate-200">
-      {/* Left Sidebar */}
-      <NavigationSidebar 
-        isOpen={isMobileMenuOpen} 
-        onClose={() => setIsMobileMenuOpen(false)} 
+    <div
+      className="flex h-screen w-screen overflow-hidden font-sans"
+      style={{ background: 'var(--theme-bg)', color: 'var(--theme-text)' }}
+    >
+      {/* ── Left Sidebar ── */}
+      <NavigationSidebar
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
         isCollapsed={isDesktopSidebarCollapsed}
         onToggleCollapse={() => setIsDesktopSidebarCollapsed(!isDesktopSidebarCollapsed)}
       />
 
-      {/* Main Area (Top Nav + Workspace Panel) */}
+      {/* ── Main Column ── */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
-        {/* Top Navigation */}
-        <header className="h-14 border-b border-[#1E293B] bg-[#0B1220] px-4 md:px-6 flex items-center justify-between z-10 flex-shrink-0">
-          <div className="flex items-center space-x-3 md:space-x-8 min-w-0 flex-1">
-            <button 
-              className="md:hidden p-1.5 -ml-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#1E293B] transition-colors flex-shrink-0"
+
+        {/* ── Top Navigation Bar ── */}
+        <header
+          className="h-14 px-4 md:px-6 flex items-center justify-between z-10 flex-shrink-0"
+          style={{
+            background: 'var(--theme-surface)',
+            borderBottom: '1px solid var(--theme-border)',
+            boxShadow: '0 1px 0 0 var(--theme-border)'
+          }}
+        >
+          {/* Left: hamburger + page title + search */}
+          <div className="flex items-center space-x-3 md:space-x-5 min-w-0 flex-1">
+            <button
+              className="md:hidden p-1.5 -ml-2 rounded-lg transition-colors flex-shrink-0"
+              style={{ color: 'var(--theme-text-muted)' }}
               onClick={() => setIsMobileMenuOpen(true)}
             >
               <Menu className="w-5 h-5" />
             </button>
-            <h2 className="font-sans font-bold text-xs text-slate-100 uppercase tracking-tight truncate text-left">
-              {getPageTitle(location.pathname)}
-            </h2>
-            
-            {/* Command Palette Trigger Search Box */}
-            <div 
+
+            {/* Page title with gradient underline */}
+            <div className="flex flex-col items-start min-w-0">
+              <h2
+                className="font-display font-bold text-[11px] uppercase tracking-widest truncate"
+                style={{ color: 'var(--theme-text)' }}
+              >
+                {getPageTitle(location.pathname)}
+              </h2>
+              <div
+                className="h-0.5 w-10 rounded-full mt-0.5"
+                style={{ background: 'linear-gradient(90deg, var(--theme-accent-start), var(--theme-accent-end))' }}
+              />
+            </div>
+
+            {/* Command Palette Search Trigger */}
+            <div
               onClick={() => setIsPaletteOpen(true)}
-              className="hidden md:flex items-center relative w-72 cursor-pointer group flex-shrink-0"
+              className="hidden md:flex items-center relative w-60 cursor-pointer flex-shrink-0 group"
             >
-              <Search className="absolute left-3 w-3.5 h-3.5 text-slate-500 group-hover:text-[#00E5FF] transition-colors" />
-              <div className="w-full bg-[#050811] border border-[#1E293B] group-hover:border-[#00E5FF]/40 rounded-xl pl-9 pr-8 py-2 text-[10px] text-slate-500 text-left transition-all font-sans select-none">
-                Search cases, indicators, networks...
+              <Search
+                className="absolute left-3 w-3.5 h-3.5 transition-colors"
+                style={{ color: 'var(--theme-text-muted)' }}
+              />
+              <div
+                className="w-full rounded-xl pl-9 pr-12 py-2 text-[10px] text-left transition-all font-sans select-none"
+                style={{
+                  background: 'var(--theme-bg)',
+                  border: '1px solid var(--theme-border)',
+                  color: 'var(--theme-text-muted)'
+                }}
+              >
+                Search cases, threats, indicators…
               </div>
-              <div className="absolute right-2 px-1.5 py-0.5 rounded bg-[#1E293B] text-[8px] text-slate-500 font-mono select-none">
+              <div
+                className="absolute right-2.5 px-1.5 py-0.5 rounded text-[8px] font-mono select-none"
+                style={{ background: 'var(--theme-border)', color: 'var(--theme-text-muted)' }}
+              >
                 ⌘K
               </div>
             </div>
           </div>
-          
-          <div className="flex items-center space-x-3 md:space-x-4 flex-shrink-0 ml-2">
-            {/* Health Tickers */}
-            <div className="hidden sm:flex items-center space-x-3 bg-[#111827] px-3 py-1.5 rounded-xl border border-[#1E293B] font-mono text-[9px] text-slate-400 select-none">
-              <span className="text-[8px] uppercase tracking-wider text-slate-500 font-bold mr-1">System Health:</span>
-              <div className="flex items-center space-x-1.5">
-                <span className={`w-1.5 h-1.5 rounded-full ${systemHealth?.api ? 'bg-[#22C55E]' : 'bg-[#EF4444]'}`} />
-                <span className="text-slate-300">API</span>
-              </div>
-              <div className="flex items-center space-x-1.5">
-                <span className={`w-1.5 h-1.5 rounded-full ${systemHealth?.postgres ? 'bg-[#22C55E]' : 'bg-[#EF4444]'}`} />
-                <span className="text-slate-300">SQL</span>
-              </div>
-              <div className="flex items-center space-x-1.5">
-                <span className={`w-1.5 h-1.5 rounded-full ${systemHealth?.neo4j ? 'bg-[#22C55E]' : 'bg-[#F59E0B]'}`} />
-                <span className="text-slate-300">NEO4J</span>
-              </div>
+
+          {/* Right: theme switcher + health badges + telemetry toggle + operator */}
+          <div className="flex items-center space-x-2 md:space-x-3 flex-shrink-0 ml-2">
+
+
+
+            {/* Health Status Pills */}
+            <div
+              className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl font-mono text-[9px] select-none"
+              style={{ background: 'var(--theme-card)', border: '1px solid var(--theme-border)', color: 'var(--theme-text-muted)' }}
+            >
+              <span className="text-[8px] uppercase tracking-wider font-bold" style={{ opacity: 0.6 }}>Health</span>
+              {[
+                { label: 'API', ok: systemHealth?.api },
+                { label: 'SQL', ok: systemHealth?.postgres },
+                { label: 'NEO4J', ok: systemHealth?.neo4j }
+              ].map(s => (
+                <div key={s.label} className="flex items-center gap-1">
+                  <span className={`w-1.5 h-1.5 rounded-full ${s.ok ? 'bg-emerald-400' : 'bg-red-500'}`} />
+                  <span style={{ color: 'var(--theme-text)' }}>{s.label}</span>
+                </div>
+              ))}
             </div>
 
-            {/* Toggle Telemetry Stream */}
-            <button 
+            {/* Telemetry Toggle */}
+            <button
               onClick={() => setShowTelemetry(prev => !prev)}
-              className={`p-1.5 rounded-xl border transition-all flex items-center justify-center cursor-pointer flex-shrink-0 ${
-                showTelemetry 
-                  ? 'bg-[#00E5FF]/10 border-[#00E5FF]/30 text-[#00E5FF]' 
-                  : 'bg-[#111827] border-[#1E293B] text-slate-400 hover:text-slate-200'
-              }`}
-              title="Toggle Telemetry Stream"
+              className="p-1.5 rounded-xl border transition-all flex items-center justify-center cursor-pointer flex-shrink-0"
+              title="Toggle Live Signal Feed"
+              style={showTelemetry ? {
+                background: 'color-mix(in srgb, var(--theme-accent-start) 12%, transparent)',
+                borderColor: 'color-mix(in srgb, var(--theme-accent-start) 40%, transparent)',
+                color: 'var(--theme-accent-start)'
+              } : {
+                background: 'var(--theme-card)',
+                borderColor: 'var(--theme-border)',
+                color: 'var(--theme-text-muted)'
+              }}
             >
               <Radio className={`w-4 h-4 ${showTelemetry ? 'animate-pulse' : ''}`} />
             </button>
-            
-            {/* Operator Profile Card */}
-            <div className="flex items-center space-x-2.5 border-l border-[#1E293B] pl-3 md:pl-4">
+
+            {/* Operator Profile */}
+            <div
+              className="flex items-center gap-2.5 pl-3"
+              style={{ borderLeft: '1px solid var(--theme-border)' }}
+            >
               <div className="relative flex-shrink-0">
-                <img 
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&h=64&q=80" 
-                  alt="Operator Profile" 
-                  className="w-7 h-7 rounded-full object-cover border border-[#00E5FF]/40"
+                <img
+                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&h=64&q=80"
+                  alt="Operator"
+                  className="w-7 h-7 rounded-full object-cover"
+                  style={{ border: '2px solid color-mix(in srgb, var(--theme-accent-start) 50%, transparent)' }}
                 />
-                <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-[#22C55E] border border-[#050811]" />
+                <span
+                  className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-400"
+                  style={{ border: '2px solid var(--theme-surface)' }}
+                />
               </div>
               <div className="hidden sm:flex flex-col text-left">
-                <span className="text-[11px] font-semibold text-slate-200 leading-tight">Gowtham Sai</span>
-                <span className="text-[8px] font-mono text-[#00E5FF] uppercase tracking-wider leading-none">SecOps Operator</span>
+                <span className="text-[11px] font-semibold leading-tight" style={{ color: 'var(--theme-text)' }}>Gowtham Sai</span>
+                <span className="text-[8px] font-mono uppercase tracking-wider" style={{ color: 'var(--theme-accent-start)' }}>SecOps Operator</span>
               </div>
             </div>
           </div>
         </header>
 
-        {/* Main Content Workspace Viewport */}
-        <main className="flex-1 overflow-y-auto bg-[#050811] p-6 relative">
-          <div className="max-w-[1440px] mx-auto w-full">
+        {/* ── Main Content ── */}
+        <main
+          className="flex-1 overflow-y-auto p-6 relative"
+          style={{ background: 'var(--theme-bg)' }}
+        >
+          {/* Ambient gradient glows */}
+          <div
+            className="pointer-events-none fixed inset-0 z-0"
+            style={{
+              background: `
+                radial-gradient(ellipse 55% 38% at 25% 15%, color-mix(in srgb, var(--theme-accent-start) 6%, transparent), transparent),
+                radial-gradient(ellipse 45% 32% at 82% 85%, color-mix(in srgb, var(--theme-accent-end) 5%, transparent), transparent)
+              `
+            }}
+          />
+          <div className="max-w-[1440px] mx-auto w-full relative z-10">
             <Outlet />
           </div>
         </main>
       </div>
 
-      {/* Right Intelligence Telemetry & Threat Activity Sidebar */}
+      {/* ── Right Telemetry Sidebar ── */}
       <AnimatePresence>
         {showTelemetry && (
-          <motion.aside 
+          <motion.aside
             initial={{ width: 0, opacity: 0 }}
             animate={{ width: 288, opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
             transition={{ duration: 0.25, ease: 'easeInOut' }}
-            className="hidden xl:flex flex-col w-72 bg-[#0B1220] border-l border-[#1E293B] h-screen overflow-hidden relative z-20 flex-shrink-0"
+            className="hidden xl:flex flex-col w-72 h-screen overflow-hidden relative z-20 flex-shrink-0"
+            style={{ background: 'var(--theme-surface)', borderLeft: '1px solid var(--theme-border)' }}
           >
-            {/* Sidebar Header */}
-            <div className="p-4 border-b border-[#1E293B] flex items-center justify-between">
-              <span className="text-[10px] font-sans font-bold text-slate-200 uppercase tracking-wider flex items-center space-x-2">
-                <Activity className="w-3.5 h-3.5 text-[#00E5FF]" />
-                <span>Live Signal Telemetry</span>
+            {/* Header */}
+            <div
+              className="p-4 flex items-center justify-between flex-shrink-0"
+              style={{ borderBottom: '1px solid var(--theme-border)' }}
+            >
+              <span className="text-[10px] font-sans font-bold uppercase tracking-wider flex items-center gap-2" style={{ color: 'var(--theme-text)' }}>
+                <Activity className="w-3.5 h-3.5" style={{ color: 'var(--theme-accent-start)' }} />
+                Live Signal Telemetry
               </span>
-              <span className="bg-[#EF4444]/10 text-[#EF4444] px-1.5 py-0.5 rounded font-mono text-[8px] font-bold border border-[#EF4444]/20 animate-pulse">
+              <span
+                className="px-1.5 py-0.5 rounded font-mono text-[8px] font-bold border animate-pulse"
+                style={{ background: 'rgba(239,68,68,0.1)', color: '#EF4444', borderColor: 'rgba(239,68,68,0.25)' }}
+              >
                 STREAM ACTIVE
               </span>
             </div>
 
-            {/* Live Telemetry counters */}
-            <div className="p-4 border-b border-[#1E293B] grid grid-cols-2 gap-2 text-left">
-              <div className="bg-[#111827] border border-[#1E293B] p-2 rounded-xl">
-                <span className="text-[7px] text-slate-500 font-mono uppercase block">Total Scans</span>
-                <span className="text-xs font-bold font-mono text-[#00E5FF]">
-                  {telemetryStats.scannedCount.toLocaleString()}
-                </span>
-              </div>
-              <div className="bg-[#111827] border border-[#1E293B] p-2 rounded-xl">
-                <span className="text-[7px] text-slate-500 font-mono uppercase block">Critical Alerts</span>
-                <span className="text-xs font-bold font-mono text-[#EF4444]">
-                  {telemetryStats.criticalAlerts}
-                </span>
-              </div>
+            {/* Stats Grid */}
+            <div
+              className="p-4 grid grid-cols-2 gap-2 flex-shrink-0"
+              style={{ borderBottom: '1px solid var(--theme-border)' }}
+            >
+              {[
+                { label: 'Total Scans', value: telemetryStats.scannedCount.toLocaleString(), accent: 'var(--theme-accent-start)' },
+                { label: 'Critical Alerts', value: String(telemetryStats.criticalAlerts), accent: '#EF4444' },
+              ].map(({ label, value, accent }) => (
+                <div
+                  key={label}
+                  className="p-2.5 rounded-xl"
+                  style={{ background: 'var(--theme-card)', border: '1px solid var(--theme-border)' }}
+                >
+                  <span className="text-[7px] font-mono uppercase block mb-1" style={{ color: 'var(--theme-text-muted)' }}>{label}</span>
+                  <span className="text-xs font-bold font-mono" style={{ color: accent }}>{value}</span>
+                </div>
+              ))}
             </div>
 
-            {/* Waveform Visualization */}
-            <div className="p-4 border-b border-[#1E293B] bg-[#050811]/40 flex flex-col items-center">
-              <span className="text-[7px] font-mono text-slate-500 uppercase tracking-widest block mb-2 text-left w-full">Threat Frequency Amplitude</span>
-              <div className="w-full bg-[#050811] rounded-xl border border-[#1E293B] overflow-hidden flex items-center justify-center">
+            {/* Waveform */}
+            <div
+              className="p-4 flex flex-col items-center flex-shrink-0"
+              style={{ borderBottom: '1px solid var(--theme-border)' }}
+            >
+              <span className="text-[7px] font-mono uppercase tracking-widest block mb-2 w-full" style={{ color: 'var(--theme-text-muted)' }}>
+                Threat Frequency Amplitude
+              </span>
+              <div
+                className="w-full rounded-xl overflow-hidden"
+                style={{ background: 'var(--theme-bg)', border: '1px solid var(--theme-border)' }}
+              >
                 <canvas ref={canvasRef} className="w-full h-20" />
               </div>
             </div>
 
-            {/* Live Operational Health Status */}
-            <div className="p-4 border-b border-[#1E293B] space-y-2 text-left font-mono text-[9px] text-slate-400">
-              <span className="text-[8px] font-sans font-bold text-slate-500 uppercase tracking-wide block mb-1">Resource Overhead</span>
-              <div className="flex justify-between items-center bg-[#111827]/40 px-2.5 py-1.5 rounded-lg border border-[#1E293B]/60">
-                <div className="flex items-center space-x-1.5">
-                  <Cpu className="w-3 h-3 text-[#00E5FF]" />
-                  <span>CPU Overhead</span>
+            {/* Resource Overhead */}
+            <div
+              className="p-4 space-y-2 flex-shrink-0"
+              style={{ borderBottom: '1px solid var(--theme-border)' }}
+            >
+              <span className="text-[8px] font-sans font-bold uppercase tracking-wide block" style={{ color: 'var(--theme-text-muted)', opacity: 0.7 }}>Resource Overhead</span>
+              {[
+                { Icon: Cpu, label: 'CPU Overhead', value: `${telemetryStats.cpuLoad}%`, accent: 'var(--theme-accent-start)' },
+                { Icon: Database, label: 'DB Latency', value: `${telemetryStats.dbLatency}ms`, accent: '#22C55E' },
+              ].map(({ Icon, label, value, accent }) => (
+                <div
+                  key={label}
+                  className="flex justify-between items-center px-2.5 py-1.5 rounded-lg"
+                  style={{ background: 'var(--theme-card)', border: '1px solid var(--theme-border)' }}
+                >
+                  <div className="flex items-center gap-1.5 font-mono text-[9px]">
+                    <Icon className="w-3 h-3" style={{ color: accent }} />
+                    <span style={{ color: 'var(--theme-text-muted)' }}>{label}</span>
+                  </div>
+                  <span className="text-[9px] font-bold font-mono" style={{ color: 'var(--theme-text)' }}>{value}</span>
                 </div>
-                <span className="text-slate-200">{telemetryStats.cpuLoad}%</span>
-              </div>
-              <div className="flex justify-between items-center bg-[#111827]/40 px-2.5 py-1.5 rounded-lg border border-[#1E293B]/60">
-                <div className="flex items-center space-x-1.5">
-                  <Database className="w-3 h-3 text-[#22C55E]" />
-                  <span>DB Latency</span>
-                </div>
-                <span className="text-slate-200">{telemetryStats.dbLatency}ms</span>
-              </div>
+              ))}
             </div>
 
-            {/* Feed Selector Tabs */}
-            <div className="px-4 py-2 border-b border-[#1E293B]/60 flex space-x-1.5 overflow-x-auto no-scrollbar font-mono text-[8px] scroll-smooth">
-              {[
-                { id: 'all', label: 'ALL' },
-                { id: 'threat', label: 'THREATS' },
-                { id: 'investigate', label: 'INVEST' },
-                { id: 'discover', label: 'DISCOV' },
-                { id: 'escalate', label: 'ESCAL' },
-                { id: 'evolve', label: 'EVOLV' }
-              ].map(t => (
+            {/* Feed Tabs */}
+            <div
+              className="px-4 py-2 flex gap-1 overflow-x-auto no-scrollbar font-mono text-[8px] flex-shrink-0"
+              style={{ borderBottom: '1px solid color-mix(in srgb, var(--theme-border) 60%, transparent)' }}
+            >
+              {(['all', 'threat', 'investigate', 'discover', 'escalate', 'evolve'] as const).map(id => (
                 <button
-                  key={t.id}
-                  onClick={() => setActiveFeedTab(t.id as any)}
-                  className={`px-1.5 py-0.5 rounded transition-all whitespace-nowrap cursor-pointer border ${
-                    activeFeedTab === t.id 
-                      ? 'bg-[#00E5FF]/10 text-[#00E5FF] font-bold border-[#00E5FF]/30' 
-                      : 'text-slate-500 border-transparent hover:text-slate-300'
-                  }`}
+                  key={id}
+                  onClick={() => setActiveFeedTab(id)}
+                  className="px-1.5 py-0.5 rounded transition-all whitespace-nowrap cursor-pointer"
+                  style={activeFeedTab === id ? {
+                    background: 'color-mix(in srgb, var(--theme-accent-start) 12%, transparent)',
+                    color: 'var(--theme-accent-start)',
+                    border: '1px solid color-mix(in srgb, var(--theme-accent-start) 30%, transparent)',
+                    fontWeight: 'bold'
+                  } : {
+                    color: 'var(--theme-text-muted)',
+                    border: '1px solid transparent'
+                  }}
                 >
-                  {t.label}
+                  {id.toUpperCase().slice(0, 6)}
                 </button>
               ))}
             </div>
 
-            {/* Live Event Stream logs */}
-            <div className="flex-1 p-4 flex flex-col min-h-0 text-left">
-              <span className="text-[8px] font-sans font-bold text-slate-500 uppercase tracking-wide block mb-2">Live Activity Stream</span>
-              <div className="flex-1 overflow-y-auto space-y-2.5 pr-1">
+            {/* Live Stream Events */}
+            <div className="flex-1 p-4 flex flex-col min-h-0 overflow-hidden">
+              <span className="text-[8px] font-sans font-bold uppercase tracking-wide block mb-2 flex-shrink-0" style={{ color: 'var(--theme-text-muted)', opacity: 0.7 }}>
+                Live Activity Stream
+              </span>
+              <div className="flex-1 overflow-y-auto space-y-2 pr-1">
                 <AnimatePresence initial={false}>
                   {streamEvents
-                    .filter(event => {
+                    .filter(ev => {
                       if (activeFeedTab === 'all') return true;
-                      if (activeFeedTab === 'threat') return event.source === 'THREAT';
-                      if (activeFeedTab === 'investigate') return event.source === 'INVESTIGATE';
-                      if (activeFeedTab === 'discover') return event.source === 'DISCOVER';
-                      if (activeFeedTab === 'escalate') return event.source === 'ESCALATE';
-                      if (activeFeedTab === 'evolve') return event.source === 'EVOLVE';
-                      return true;
+                      return ev.source === activeFeedTab.toUpperCase();
                     })
-                    .map(event => (
+                    .map(ev => (
                       <motion.div
-                        key={event.id}
-                        initial={{ opacity: 0, y: -10 }}
+                        key={ev.id}
+                        initial={{ opacity: 0, y: -8 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0 }}
-                        onClick={() => handleLogClick(event)}
-                        className="border-b border-[#1E293B]/40 pb-2 text-[9px] font-mono leading-relaxed cursor-pointer hover:bg-[#1E293B]/20 p-2 rounded-xl transition-all block"
+                        onClick={() => handleLogClick(ev)}
+                        className="pb-2 text-[9px] font-mono leading-relaxed cursor-pointer p-2 rounded-xl transition-all block"
+                        style={{ borderBottom: '1px solid color-mix(in srgb, var(--theme-border) 40%, transparent)' }}
+                        onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'color-mix(in srgb, var(--theme-border) 50%, transparent)'}
+                        onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'transparent'}
                       >
-                        <div className="flex justify-between items-center mb-1 text-[8px]">
-                          <span className="text-slate-500">{event.time}</span>
-                          <span className={`px-1.5 py-0.5 rounded font-bold border ${
-                            event.type === 'CRITICAL' ? 'bg-[#EF4444]/10 text-[#EF4444] border-[#EF4444]/20' :
-                            event.type === 'WARNING' ? 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/20' :
-                            'bg-[#00E5FF]/10 text-[#00E5FF] border-[#00E5FF]/20'
-                          }`}>
-                            {event.source}
+                        <div className="flex justify-between items-center mb-1">
+                          <span style={{ color: 'var(--theme-text-muted)' }}>{ev.time}</span>
+                          <span
+                            className="px-1.5 py-0.5 rounded font-bold border text-[8px]"
+                            style={
+                              ev.type === 'CRITICAL'
+                                ? { background: 'rgba(239,68,68,0.1)', color: '#EF4444', borderColor: 'rgba(239,68,68,0.25)' }
+                                : ev.type === 'WARNING'
+                                ? { background: 'rgba(245,158,11,0.1)', color: '#F59E0B', borderColor: 'rgba(245,158,11,0.25)' }
+                                : { background: 'color-mix(in srgb, var(--theme-accent-start) 10%, transparent)', color: 'var(--theme-accent-start)', borderColor: 'color-mix(in srgb, var(--theme-accent-start) 25%, transparent)' }
+                            }
+                          >
+                            {ev.source}
                           </span>
                         </div>
-                        <p className="text-slate-300 text-[9px] tracking-tight">{event.message}</p>
+                        <p className="text-[9px] tracking-tight" style={{ color: 'var(--theme-text)', opacity: 0.85 }}>{ev.message}</p>
                       </motion.div>
                     ))}
                 </AnimatePresence>
@@ -440,8 +513,8 @@ const DashboardLayout: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Global Command Palette Search */}
-      <SearchCommandPalette 
+      {/* Global Command Palette */}
+      <SearchCommandPalette
         isOpen={isPaletteOpen}
         onClose={() => setIsPaletteOpen(false)}
       />

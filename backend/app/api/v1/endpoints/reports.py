@@ -1,48 +1,44 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-import uuid
+from typing import List, Dict, Any
 
 from app.core.database import get_db
 from app.schemas.report_schema import ReportCreateRequest, ReportResponse
-from app.services.graph_service import graph_service
+from app.services.report_service import report_service
 
 router = APIRouter()
 
 @router.post("", response_model=ReportResponse, status_code=status.HTTP_201_CREATED)
 async def create_scam_report(payload: ReportCreateRequest, db: AsyncSession = Depends(get_db)):
+    """
+    Submits a public incident report for financial or cyber fraud.
+    Requires at least one target identifier (Phone, UPI, or URL).
+    """
     if not payload.reported_phone and not payload.reported_upi and not payload.reported_url:
         raise HTTPException(
             status_code=400,
-            detail="At least one identifier (Phone, UPI, or URL) must be provided in the report."
+            detail="At least one target identifier (Phone, UPI, or URL) must be provided in the incident report."
         )
-        
-    report_uuid = str(uuid.uuid4())
-    
-    # 1. Update Graph DB nodes and edges
-    properties = {
-        "loss_amount": float(payload.loss_amount),
-        "scam_category": payload.scam_category,
-        "description": payload.description
-    }
-    
-    await graph_service.create_entity_node("Report", report_uuid, properties)
-    
-    if payload.reported_phone:
-        await graph_service.create_entity_node("Phone", payload.reported_phone, {"phone_number": payload.reported_phone})
-        await graph_service.create_relationship("Phone", payload.reported_phone, "Report", report_uuid, "REPORTED_AS")
-        
-    if payload.reported_upi:
-        await graph_service.create_entity_node("UPI", payload.reported_upi, {"upi_id": payload.reported_upi})
-        await graph_service.create_relationship("UPI", payload.reported_upi, "Report", report_uuid, "REPORTED_AS")
-        if payload.reported_phone:
-            await graph_service.create_relationship("Phone", payload.reported_phone, "UPI", payload.reported_upi, "USES")
-            
-    if payload.reported_url:
-        await graph_service.create_entity_node("Website", payload.reported_url, {"url": payload.reported_url})
-        await graph_service.create_relationship("Website", payload.reported_url, "Report", report_uuid, "REPORTED_AS")
-        
-    return ReportResponse(
-        report_id=report_uuid,
-        status="success",
-        message="Incident report processed and injected into cyber intelligence graph."
+
+    res = await report_service.create_report(
+        scam_category=payload.scam_category,
+        description=payload.description,
+        loss_amount=payload.loss_amount,
+        reported_phone=payload.reported_phone,
+        reported_upi=payload.reported_upi,
+        reported_url=payload.reported_url,
+        db=db
     )
+
+    return ReportResponse(
+        report_id=res["report_id"],
+        status=res["status"],
+        message=res["message"]
+    )
+
+@router.get("", response_model=List[Dict[str, Any]])
+async def list_scam_reports(limit: int = Query(20, ge=1, le=100)):
+    """
+    Retrieves recent verified scam incident reports.
+    """
+    return report_service.list_reports(limit=limit)
