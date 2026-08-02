@@ -29,10 +29,9 @@ const LandingPage: React.FC = () => {
     /* Transparent — BackgroundSlider (fixed, z-[-1]) shows through */
     <div
       className="min-h-screen font-sans overflow-x-hidden relative"
-      style={{ background: 'transparent', color: '#1C0D00' }}
+      style={{ background: 'transparent', color: '#e2e8f0' }}
     >
       <BackgroundSlider />
-      <Navbar />
 
       <main className="relative z-10">
         <Hero />
