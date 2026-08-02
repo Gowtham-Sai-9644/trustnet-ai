@@ -25,7 +25,7 @@ export const BackgroundSlider: React.FC = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-[-1] overflow-hidden" style={{ background: '#080c16' }}>
+    <div className="fixed inset-0 z-[-1] overflow-hidden" style={{ background: '#10172A' }}>
       <AnimatePresence mode="wait">
         {backgrounds.map((bg, idx) => {
           if (idx !== currentSlide) return null;
@@ -38,30 +38,30 @@ export const BackgroundSlider: React.FC = () => {
               transition={{ opacity: { duration: 0.6 }, scale: { duration: 2.2, ease: 'linear' } }}
               className="absolute inset-0"
             >
-              <img src={bg} alt="Vibrant Background" className="w-full h-full object-cover saturate-150 contrast-110 opacity-40" />
+              <img src={bg} alt="Vibrant Background" className="w-full h-full object-cover saturate-150 contrast-110" />
             </motion.div>
           );
         })}
       </AnimatePresence>
 
-      {/* Dark Aether overlay to ensure text readability while maintaining atmosphere */}
+      {/* Balanced cream/amber overlay to retain vibrant background visuals while ensuring dark text readability */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'radial-gradient(ellipse at center, rgba(13, 20, 36, 0.6) 0%, rgba(8, 12, 22, 0.95) 100%)',
+          background: 'radial-gradient(ellipse at center, rgba(255, 252, 245, 0.75) 0%, rgba(255, 248, 235, 0.90) 100%)',
         }}
       />
 
       {/* Subtle tech circuit texture */}
-      <svg className="absolute inset-0 w-full h-full opacity-[0.03] pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+      <svg className="absolute inset-0 w-full h-full opacity-[0.06] pointer-events-none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <pattern id="circuit" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 40 30 M 40 50 L 40 80 M 0 40 L 30 40 M 50 40 L 80 40" stroke="#00E5FF" strokeWidth="1" fill="none"/>
-            <circle cx="40" cy="40" r="4" fill="none" stroke="#00E5FF" strokeWidth="1"/>
-            <circle cx="40" cy="0" r="2" fill="#00E5FF"/>
-            <circle cx="40" cy="80" r="2" fill="#00E5FF"/>
-            <circle cx="0" cy="40" r="2" fill="#00E5FF"/>
-            <circle cx="80" cy="40" r="2" fill="#00E5FF"/>
+            <path d="M 40 0 L 40 30 M 40 50 L 40 80 M 0 40 L 30 40 M 50 40 L 80 40" stroke="#7C5C2E" strokeWidth="1" fill="none"/>
+            <circle cx="40" cy="40" r="4" fill="none" stroke="#7C5C2E" strokeWidth="1"/>
+            <circle cx="40" cy="0" r="2" fill="#7C5C2E"/>
+            <circle cx="40" cy="80" r="2" fill="#7C5C2E"/>
+            <circle cx="0" cy="40" r="2" fill="#7C5C2E"/>
+            <circle cx="80" cy="40" r="2" fill="#7C5C2E"/>
           </pattern>
         </defs>
         <rect width="100%" height="100%" fill="url(#circuit)"/>
