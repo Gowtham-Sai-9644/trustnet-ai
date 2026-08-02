@@ -38,9 +38,9 @@ export const Hero: React.FC = () => {
                 className="absolute inset-0"
               >
                 {bg.type === 'image' ? (
-                  <img src={bg.src} alt="Background" className="w-full h-full object-cover brightness-[1.40]" />
+                  <img src={bg.src} alt="Background" className="w-full h-full object-cover brightness-[1.80]" />
                 ) : (
-                  <video src={bg.src} autoPlay muted loop playsInline className="w-full h-full object-cover brightness-[1.40]" />
+                  <video src={bg.src} autoPlay muted loop playsInline className="w-full h-full object-cover brightness-[1.80]" />
                 )}
               </motion.div>
             );
