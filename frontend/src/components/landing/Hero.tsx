@@ -1,13 +1,55 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, PlayCircle, ShieldCheck } from 'lucide-react';
 
+const backgrounds = [
+  { type: 'image', src: '/bg_slide_1.jpg' },
+  { type: 'image', src: '/bg_slide_2.jpg' },
+  { type: 'video', src: 'https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-connection-lines-10088-large.mp4' },
+  { type: 'image', src: '/bg_slide_3.jpg' },
+  { type: 'image', src: '/bg_slide_4.jpg' }
+];
+
 export const Hero: React.FC = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % backgrounds.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
-    <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden px-6 bg-cover bg-center" style={{ backgroundImage: 'url(/abstract_bg.jpg)' }}>
+    <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden px-6">
+      {/* Background Slider */}
+      <div className="absolute inset-0 z-0 bg-slate-100">
+        <AnimatePresence>
+          {backgrounds.map((bg, idx) => {
+            if (idx !== currentSlide) return null;
+            return (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1 }}
+                className="absolute inset-0"
+              >
+                {bg.type === 'image' ? (
+                  <img src={bg.src} alt="Background" className="w-full h-full object-cover" />
+                ) : (
+                  <video src={bg.src} autoPlay muted loop playsInline className="w-full h-full object-cover" />
+                )}
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </div>
+
       {/* Background overlay */}
-      <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px]"></div>
+      <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] z-0"></div>
 
       {/* Background Gradients */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] pointer-events-none">
