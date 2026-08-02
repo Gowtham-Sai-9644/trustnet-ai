@@ -5,7 +5,10 @@ import { ArrowRight, PlayCircle, ShieldCheck } from 'lucide-react';
 
 export const Hero: React.FC = () => {
   return (
-    <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden px-6">
+    <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden px-6 bg-cover bg-center" style={{ backgroundImage: 'url(/abstract_bg.jpg)' }}>
+      {/* Background overlay */}
+      <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px]"></div>
+
       {/* Background Gradients */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] pointer-events-none">
         <div className="absolute top-20 left-20 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl opacity-50 mix-blend-multiply animate-blob" />
@@ -28,14 +31,14 @@ export const Hero: React.FC = () => {
             <span className="text-xs font-semibold text-slate-700 tracking-wide uppercase">TrustNet AI 2.0 is Live</span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 leading-[1.1] mb-6 max-w-4xl">
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 leading-[1.1] mb-6 max-w-4xl drop-shadow-sm">
             Trust Every Review with <br className="hidden md:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
               AI-Powered Intelligence
             </span>
           </h1>
 
-          <p className="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl leading-relaxed">
+          <p className="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl leading-relaxed font-medium">
             The enterprise Review Intelligence Platform that detects fake reviews, performs sentiment analysis, calculates trust scores, and uses RAG with LLMs to explain its decisions.
           </p>
 
@@ -76,8 +79,8 @@ export const Hero: React.FC = () => {
             
             {/* Mock Dashboard Body */}
             <div className="aspect-[16/9] w-full bg-slate-50 flex items-center justify-center relative overflow-hidden">
-              <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=2000&q=80" alt="Dashboard Preview" className="w-full h-full object-cover opacity-20" />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-50 via-transparent to-transparent" />
+              <img src="/dashboard_mockup.jpg" alt="Dashboard Preview" className="w-full h-full object-cover opacity-60 mix-blend-multiply" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-50/80 via-transparent to-transparent" />
               
               <div className="absolute inset-0 p-8 grid grid-cols-3 gap-6">
                  {/* Fake UI Elements for demo */}
