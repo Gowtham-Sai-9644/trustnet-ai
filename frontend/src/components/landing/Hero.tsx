@@ -71,7 +71,7 @@ const RealisticGlobe: React.FC = () => {
             fill="none"
             stroke="url(#metalLine)"
             strokeWidth="0.75"
-            opacity="0.6"
+            opacity="0.65"
           />
         );
       })}
@@ -85,7 +85,7 @@ const RealisticGlobe: React.FC = () => {
           fill="none"
           stroke="url(#metalLine)"
           strokeWidth="0.75"
-          opacity="0.5"
+          opacity="0.55"
         />
       ))}
 
@@ -94,21 +94,21 @@ const RealisticGlobe: React.FC = () => {
         <g key={`node-${i}`}>
           <circle
             cx={node.x} cy={node.y} r={node.r * 2.5}
-            fill={node.isGold ? '#FDE68A' : '#FCA5A5'}
-            opacity="0.2"
+            fill={node.isGold ? '#BAE6FD' : '#DBEAFE'}
+            opacity="0.25"
           >
             <animate
               attributeName="opacity"
-              values="0.1;0.4;0.1"
+              values="0.15;0.5;0.15"
               dur={`${3 + node.delay}s`}
               repeatCount="indefinite"
             />
           </circle>
           <circle
             cx={node.x} cy={node.y} r={node.r}
-            fill={node.isGold ? '#D97706' : '#B91C1C'}
-            opacity="0.95"
-            stroke={node.isGold ? '#FEF3C7' : '#FEE2E2'}
+            fill={node.isGold ? '#38BDF8' : '#60A5FA'}
+            opacity="0.9"
+            stroke={node.isGold ? '#E0F2FE' : '#EFF6FF'}
             strokeWidth="0.5"
           />
         </g>
@@ -233,21 +233,21 @@ export const Hero: React.FC = () => {
           transition={{ duration: 0.8, delay: 0.1 }}
           className="relative w-[340px] h-[340px] md:w-[400px] md:h-[400px] mx-auto mb-6"
         >
-          <svg viewBox="0 0 400 400" className="w-full h-full drop-shadow-2xl" xmlns="http://www.w3.org/2000/svg">
+          <svg viewBox="0 0 400 400" className="w-full h-full drop-shadow-xl" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <radialGradient id="glassSphere" cx="30%" cy="30%" r="70%">
-                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.4" />
-                <stop offset="50%" stopColor="#F5EDD8" stopOpacity="0.1" />
-                <stop offset="100%" stopColor="#8B6914" stopOpacity="0.3" />
+                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.5" />
+                <stop offset="50%" stopColor="#E0F2FE" stopOpacity="0.2" />
+                <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.15" />
               </radialGradient>
               <radialGradient id="innerShadow" cx="50%" cy="50%" r="50%">
                 <stop offset="70%" stopColor="transparent" />
-                <stop offset="100%" stopColor="#452a0a" stopOpacity="0.4" />
+                <stop offset="100%" stopColor="#0F172A" stopOpacity="0.25" />
               </radialGradient>
               <linearGradient id="metalLine" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#B48C3C" stopOpacity="0.8" />
-                <stop offset="50%" stopColor="#FDE68A" stopOpacity="0.4" />
-                <stop offset="100%" stopColor="#78350F" stopOpacity="0.8" />
+                <stop offset="0%" stopColor="#7DD3FC" stopOpacity="0.8" />
+                <stop offset="50%" stopColor="#BAE6FD" stopOpacity="0.4" />
+                <stop offset="100%" stopColor="#0EA5E9" stopOpacity="0.7" />
               </linearGradient>
               <linearGradient id="highlight" x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.6" />
@@ -260,19 +260,19 @@ export const Hero: React.FC = () => {
 
           {/* Floating Labels - styled as physical metallic plates */}
           <div className="absolute top-[8%] left-[-5%] px-3 py-1.5 rounded text-[10px] font-bold shadow-md uppercase tracking-wider"
-               style={{ background: 'linear-gradient(to bottom, #F5EDD8, #E8D5A8)', border: '1px solid #B48C3C', color: '#5C3D11' }}>
+               style={{ background: 'linear-gradient(to bottom, #F8FAFC, #F1F5F9)', border: '1px solid #BAE6FD', color: '#0369A1' }}>
             Active Scanning
           </div>
           <div className="absolute top-[18%] right-[-10%] px-3 py-1.5 rounded text-[10px] font-bold shadow-md uppercase tracking-wider"
-               style={{ background: 'linear-gradient(to bottom, #F5EDD8, #E8D5A8)', border: '1px solid #B48C3C', color: '#5C3D11' }}>
+               style={{ background: 'linear-gradient(to bottom, #F8FAFC, #F1F5F9)', border: '1px solid #BAE6FD', color: '#0369A1' }}>
             Threat Telemetry
           </div>
           <div className="absolute bottom-[20%] left-[-15%] px-3 py-1.5 rounded text-[10px] font-bold shadow-md uppercase tracking-wider"
-               style={{ background: 'linear-gradient(to bottom, #F5EDD8, #E8D5A8)', border: '1px solid #B48C3C', color: '#5C3D11' }}>
+               style={{ background: 'linear-gradient(to bottom, #F8FAFC, #F1F5F9)', border: '1px solid #BAE6FD', color: '#0369A1' }}>
             Signal Intercept
           </div>
           <div className="absolute bottom-[10%] right-[-5%] px-3 py-1.5 rounded text-[10px] font-bold shadow-md uppercase tracking-wider"
-               style={{ background: 'linear-gradient(to bottom, #F5EDD8, #E8D5A8)', border: '1px solid #B48C3C', color: '#5C3D11' }}>
+               style={{ background: 'linear-gradient(to bottom, #F8FAFC, #F1F5F9)', border: '1px solid #BAE6FD', color: '#0369A1' }}>
             Pattern Matching
           </div>
 
