@@ -32,10 +32,10 @@ const makeFeedItem = (): FeedItem => {
   };
 };
 
-/* ── Aether Sphere Component ── */
-const AetherSphere: React.FC = () => {
-  const rings = 8;
-  const nodes = 40;
+/* ── Realistic Globe Component ── */
+const RealisticGlobe: React.FC = () => {
+  const rings = 12;
+  const nodes = 35;
 
   const generateNodes = () => {
     return Array.from({ length: nodes }).map((_, i) => {
@@ -43,32 +43,34 @@ const AetherSphere: React.FC = () => {
       const phi = Math.acos(2 * Math.random() - 1);
       const x = 200 + 150 * Math.sin(phi) * Math.cos(theta);
       const y = 200 + 150 * Math.sin(phi) * Math.sin(theta) * 0.4 + 150 * Math.cos(phi) * 0.9;
-      const isCyan = Math.random() > 0.5;
-      const r = Math.random() * 3 + 2;
-      return { x, y, isCyan, r, delay: Math.random() * 3 };
+      // Gold and deep amber nodes for a more physical, realistic look
+      const isGold = Math.random() > 0.4;
+      const r = Math.random() * 2.5 + 1.5;
+      return { x, y, isGold, r, delay: Math.random() * 4 };
     });
   };
 
-  const sphereNodes = React.useMemo(generateNodes, []);
+  const globeNodes = React.useMemo(generateNodes, []);
 
   return (
     <g>
-      {/* Glow behind sphere - made slightly darker so cyan/magenta pops against the light cream theme */}
-      <circle cx="200" cy="200" r="165" fill="#081021" opacity="0.95" />
-      <circle cx="200" cy="200" r="160" fill="url(#sphereGlow)" />
+      {/* Physical glass/acrylic sphere base */}
+      <circle cx="200" cy="200" r="150" fill="url(#glassSphere)" />
+      {/* Subtle inner shadow for 3D depth */}
+      <circle cx="200" cy="200" r="150" fill="url(#innerShadow)" />
 
-      {/* Latitudinal rings (horizontal) */}
-      {[0, 1, 2, 3, 4, 5, 6].map(i => {
+      {/* Latitudinal rings (horizontal) - styled like engraved metallic lines */}
+      {[1, 2, 3, 4, 5].map(i => {
         const ry = 150 * Math.sin(Math.PI * i / 6);
         const yOffset = 150 * Math.cos(Math.PI * i / 6);
         return (
           <ellipse
             key={`lat-${i}`}
             cx="200" cy={200 + yOffset * 0.3}
-            rx={150 * Math.sin(Math.acos(yOffset/150))} ry={ry * 0.4}
+            rx={150 * Math.sin(Math.acos(yOffset/150))} ry={ry * 0.35}
             fill="none"
-            stroke="url(#ringGrad)"
-            strokeWidth="1.5"
+            stroke="url(#metalLine)"
+            strokeWidth="0.75"
             opacity="0.6"
           />
         );
@@ -81,48 +83,39 @@ const AetherSphere: React.FC = () => {
           cx="200" cy="200"
           rx={150 * Math.cos((i * Math.PI) / rings)} ry="150"
           fill="none"
-          stroke="url(#ringGrad)"
-          strokeWidth="1.5"
-          opacity="0.6"
+          stroke="url(#metalLine)"
+          strokeWidth="0.75"
+          opacity="0.5"
         />
       ))}
 
-      {/* Diagonal connecting lines */}
-      <path
-        d="M 120 120 L 280 280 M 120 280 L 280 120 M 150 100 L 250 300 M 250 100 L 150 300"
-        stroke="url(#ringGrad)"
-        strokeWidth="1"
-        opacity="0.5"
-      />
-
-      {/* Glowing Nodes */}
-      {sphereNodes.map((node, i) => (
-        <circle
-          key={`node-${i}`}
-          cx={node.x} cy={node.y} r={node.r}
-          fill={node.isCyan ? '#00E5FF' : '#E879F9'}
-          opacity="0.9"
-        >
-          <animate
-            attributeName="opacity"
-            values="0.4;1;0.4"
-            dur={`${2 + node.delay}s`}
-            repeatCount="indefinite"
+      {/* Glowing Nodes - styled like realistic LED indicators */}
+      {globeNodes.map((node, i) => (
+        <g key={`node-${i}`}>
+          <circle
+            cx={node.x} cy={node.y} r={node.r * 2.5}
+            fill={node.isGold ? '#FDE68A' : '#FCA5A5'}
+            opacity="0.2"
+          >
+            <animate
+              attributeName="opacity"
+              values="0.1;0.4;0.1"
+              dur={`${3 + node.delay}s`}
+              repeatCount="indefinite"
+            />
+          </circle>
+          <circle
+            cx={node.x} cy={node.y} r={node.r}
+            fill={node.isGold ? '#D97706' : '#B91C1C'}
+            opacity="0.95"
+            stroke={node.isGold ? '#FEF3C7' : '#FEE2E2'}
+            strokeWidth="0.5"
           />
-          <animate
-            attributeName="r"
-            values={`${node.r};${node.r * 1.6};${node.r}`}
-            dur={`${2 + node.delay}s`}
-            repeatCount="indefinite"
-          />
-        </circle>
+        </g>
       ))}
 
-      {/* Center core pulse */}
-      <circle cx="200" cy="200" r="10" fill="#00E5FF" opacity="0.9">
-        <animate attributeName="r" values="8;16;8" dur="2s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.9;0.3;0.9" dur="2s" repeatCount="indefinite" />
-      </circle>
+      {/* Front Specular Highlight to enhance 3D realism */}
+      <ellipse cx="160" cy="120" rx="40" ry="20" fill="url(#highlight)" transform="rotate(-30 160 120)" />
     </g>
   );
 };
@@ -240,39 +233,47 @@ export const Hero: React.FC = () => {
           transition={{ duration: 0.8, delay: 0.1 }}
           className="relative w-[340px] h-[340px] md:w-[400px] md:h-[400px] mx-auto mb-6"
         >
-          <svg viewBox="0 0 400 400" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <svg viewBox="0 0 400 400" className="w-full h-full drop-shadow-2xl" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <radialGradient id="sphereGlow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#00E5FF" stopOpacity="0.25" />
-                <stop offset="60%" stopColor="#C026D3" stopOpacity="0.08" />
-                <stop offset="100%" stopColor="#C026D3" stopOpacity="0" />
+              <radialGradient id="glassSphere" cx="30%" cy="30%" r="70%">
+                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.4" />
+                <stop offset="50%" stopColor="#F5EDD8" stopOpacity="0.1" />
+                <stop offset="100%" stopColor="#8B6914" stopOpacity="0.3" />
               </radialGradient>
-              <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#00E5FF" stopOpacity="0.9" />
-                <stop offset="50%" stopColor="#818CF8" stopOpacity="0.6" />
-                <stop offset="100%" stopColor="#C026D3" stopOpacity="0.9" />
+              <radialGradient id="innerShadow" cx="50%" cy="50%" r="50%">
+                <stop offset="70%" stopColor="transparent" />
+                <stop offset="100%" stopColor="#452a0a" stopOpacity="0.4" />
+              </radialGradient>
+              <linearGradient id="metalLine" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#B48C3C" stopOpacity="0.8" />
+                <stop offset="50%" stopColor="#FDE68A" stopOpacity="0.4" />
+                <stop offset="100%" stopColor="#78350F" stopOpacity="0.8" />
+              </linearGradient>
+              <linearGradient id="highlight" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.6" />
+                <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
               </linearGradient>
             </defs>
 
-            <AetherSphere />
+            <RealisticGlobe />
           </svg>
 
-          {/* Floating Labels (Quantum Scans, Pattern Flux) */}
-          <div className="absolute top-[8%] left-[-5%] px-3 py-1.5 rounded-full text-[10px] font-bold shadow-lg"
-               style={{ background: 'rgba(13, 20, 36, 0.8)', border: '1px solid rgba(0, 229, 255, 0.3)', color: '#00E5FF', backdropFilter: 'blur(4px)' }}>
-            Quantum Scans Active
+          {/* Floating Labels - styled as physical metallic plates */}
+          <div className="absolute top-[8%] left-[-5%] px-3 py-1.5 rounded text-[10px] font-bold shadow-md uppercase tracking-wider"
+               style={{ background: 'linear-gradient(to bottom, #F5EDD8, #E8D5A8)', border: '1px solid #B48C3C', color: '#5C3D11' }}>
+            Active Scanning
           </div>
-          <div className="absolute top-[18%] right-[-10%] px-3 py-1.5 rounded-full text-[10px] font-bold shadow-lg"
-               style={{ background: 'rgba(13, 20, 36, 0.8)', border: '1px solid rgba(232, 121, 249, 0.3)', color: '#E879F9', backdropFilter: 'blur(4px)' }}>
-            Pattern Flux
+          <div className="absolute top-[18%] right-[-10%] px-3 py-1.5 rounded text-[10px] font-bold shadow-md uppercase tracking-wider"
+               style={{ background: 'linear-gradient(to bottom, #F5EDD8, #E8D5A8)', border: '1px solid #B48C3C', color: '#5C3D11' }}>
+            Threat Telemetry
           </div>
-          <div className="absolute bottom-[20%] left-[-15%] px-3 py-1.5 rounded-full text-[10px] font-bold shadow-lg"
-               style={{ background: 'rgba(13, 20, 36, 0.8)', border: '1px solid rgba(0, 229, 255, 0.3)', color: '#00E5FF', backdropFilter: 'blur(4px)' }}>
-            Quantum Scans Active
+          <div className="absolute bottom-[20%] left-[-15%] px-3 py-1.5 rounded text-[10px] font-bold shadow-md uppercase tracking-wider"
+               style={{ background: 'linear-gradient(to bottom, #F5EDD8, #E8D5A8)', border: '1px solid #B48C3C', color: '#5C3D11' }}>
+            Signal Intercept
           </div>
-          <div className="absolute bottom-[10%] right-[-5%] px-3 py-1.5 rounded-full text-[10px] font-bold shadow-lg"
-               style={{ background: 'rgba(13, 20, 36, 0.8)', border: '1px solid rgba(232, 121, 249, 0.3)', color: '#E879F9', backdropFilter: 'blur(4px)' }}>
-            Pattern Flux
+          <div className="absolute bottom-[10%] right-[-5%] px-3 py-1.5 rounded text-[10px] font-bold shadow-md uppercase tracking-wider"
+               style={{ background: 'linear-gradient(to bottom, #F5EDD8, #E8D5A8)', border: '1px solid #B48C3C', color: '#5C3D11' }}>
+            Pattern Matching
           </div>
 
           {/* Corner tech badges */}
