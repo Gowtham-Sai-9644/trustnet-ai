@@ -210,41 +210,29 @@ class MLService:
 
     def predict_linkedin(self, profile_url: str = None, profile_text: str = None, claimed_company: str = None) -> Dict[str, Any]:
         import datetime
+        import numpy as np
+        
         url = (profile_url or "").strip()
         text = (profile_text or "").strip()
         company = (claimed_company or "").strip()
         
         target = url or company or "LinkedIn Target Profile"
-        risk_score = 0.10
-        risk_indicators = []
         
-        # 1. URL Domain Analysis
+        # 1. Feature Extraction for Random Forest
         url_lower = url.lower()
-        is_official = False
-        is_typosquat = False
-        
-        if url:
-            if "linkedin.com/in/" in url_lower or "linkedin.com/jobs/" in url_lower or "linkedin.com/company/" in url_lower:
-                is_official = True
-                if any(kw in url_lower for kw in ["crypto", "recruiter-hr", "support-verify", "guaranteed-income", "admin-security"]):
-                    risk_score += 0.35
-                    risk_indicators.append("Suspicious profile URL keyword match")
-            else:
-                typosquat_patterns = ["linkedn", "linked-in", "linkedin-auth", "linkedin-verify", "linkedin-jobs", "lnkedin", "linkdin"]
-                suspicious_tlds = [".top", ".cfd", ".xyz", ".click", ".win", ".gq", ".tk", ".site"]
-                if any(p in url_lower for p in typosquat_patterns):
-                    is_typosquat = True
-                    risk_score += 0.55
-                    risk_indicators.append("Typosquatting LinkedIn domain detected in URL")
-                if any(url_lower.endswith(tld) or (tld + "/") in url_lower for tld in suspicious_tlds):
-                    risk_score += 0.30
-                    risk_indicators.append("High-risk TLD detected in profile link")
-                if not is_official and not is_typosquat:
-                    risk_score += 0.25
-                    risk_indicators.append("Non-standard LinkedIn domain structure")
-        
-        # 2. Text / Lure Analysis
         text_lower = text.lower()
+        
+        is_official = False
+        if "linkedin.com/in/" in url_lower or "linkedin.com/jobs/" in url_lower or "linkedin.com/company/" in url_lower:
+            is_official = True
+            
+        typosquat_patterns = ["linkedn", "linked-in", "linkedin-auth", "linkedin-verify", "linkedin-jobs", "lnkedin", "linkdin"]
+        suspicious_tlds = [".top", ".cfd", ".xyz", ".click", ".win", ".gq", ".tk", ".site"]
+        
+        f_typosquat = 1 if any(p in url_lower for p in typosquat_patterns) else 0
+        f_sus_tld = 1 if any(url_lower.endswith(tld) or (tld + "/") in url_lower for tld in suspicious_tlds) else 0
+        f_text_vol = min(1.0, len(text) / 500.0) # Normalize up to 500 chars
+        
         lure_keywords = {
             "hr_recruiter_fake": ["hr manager", "talent acquisition", "urgent hiring", "part-time job", "work from home"],
             "financial_lure": ["$500/day", "daily payout", "earn $", "no experience required", "crypto investment"],
@@ -252,24 +240,33 @@ class MLService:
             "urgency": ["immediate joining", "limited spots", "apply within 1 hour", "offer expires"]
         }
         
-        detected_lures = []
-        for category, kws in lure_keywords.items():
-            matches = [kw for kw in kws if kw in text_lower]
-            if matches:
-                detected_lures.extend(matches)
-                if category == "off_platform":
-                    risk_score += 0.40
-                    risk_indicators.append(f"Off-platform redirection lure ({', '.join(matches)})")
-                elif category == "financial_lure":
-                    risk_score += 0.35
-                    risk_indicators.append(f"Unrealistic financial/job lure ({', '.join(matches)})")
-                elif category == "hr_recruiter_fake":
-                    risk_score += 0.20
-                    risk_indicators.append(f"Generic recruiter bait phrases ({', '.join(matches)})")
-                elif category == "urgency":
-                    risk_score += 0.15
-                    risk_indicators.append(f"Coercive urgency tactics ({', '.join(matches)})")
+        f_off_platform = 1 if any(kw in text_lower for kw in lure_keywords["off_platform"]) else 0
+        f_financial = 1 if any(kw in text_lower for kw in lure_keywords["financial_lure"]) else 0
+        f_urgency = 1 if any(kw in text_lower for kw in lure_keywords["urgency"]) else 0
+        f_fake_hr = 1 if any(kw in text_lower for kw in lure_keywords["hr_recruiter_fake"]) else 0
         
+        # Extract matches for explanations
+        detected_lures = []
+        for kws in lure_keywords.values():
+            detected_lures.extend([kw for kw in kws if kw in text_lower])
+        
+        # 2. Run Random Forest Inference
+        features = np.array([[f_typosquat, f_sus_tld, f_text_vol, f_off_platform, f_financial, f_urgency, f_fake_hr]])
+        # Predict probability of class 1 (Fake)
+        risk_score = self.linkedin_rf.predict_proba(features)[0][1]
+        
+        # 3. Explainability - Feature Contributions
+        risk_indicators = []
+        # In trees, feature importances measure global importance. We'll use a simplified attribution for the specific prediction.
+        if f_typosquat: risk_indicators.append("Typosquatting LinkedIn domain detected")
+        if f_sus_tld: risk_indicators.append("High-risk TLD detected in profile link")
+        if f_off_platform: risk_indicators.append("Off-platform redirection lure detected")
+        if f_financial: risk_indicators.append("Unrealistic financial/job lure detected")
+        if f_fake_hr: risk_indicators.append("Generic fake recruiter bait detected")
+        if f_urgency: risk_indicators.append("Coercive urgency tactics detected")
+        if f_text_vol < 0.2 and risk_score > 0.4: risk_indicators.append("Suspiciously sparse profile text")
+        
+        # Calibration bounds
         risk_score = round(min(max(risk_score, 0.05), 0.98), 3)
         
         if risk_score >= 0.80:
@@ -284,8 +281,8 @@ class MLService:
         is_suspicious = risk_score >= 0.45
         
         explanation = (
-            f"LinkedIn investigation for target '{target}' yielded a risk score of {int(risk_score * 100)}% ({risk_level}). "
-            + (f"Key risk triggers: {'; '.join(risk_indicators)}." if risk_indicators else "No high-risk impersonation markers detected.")
+            f"LinkedIn Random Forest Classifier evaluated target '{target}' at a {int(risk_score * 100)}% risk probability ({risk_level}). "
+            + (f"Key ML feature triggers: {'; '.join(risk_indicators)}." if risk_indicators else "No high-risk ML features detected.")
         )
         
         now = datetime.datetime.utcnow()

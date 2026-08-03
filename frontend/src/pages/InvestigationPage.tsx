@@ -75,7 +75,9 @@ export const InvestigationPage: React.FC = () => {
   const [linkedinCompany, setLinkedinCompany] = useState<string>('');
 
   // QR form state
-  const [qrInputMode, setQrInputMode] = useState<'laptop' | 'camera'>('laptop');
+  const [qrInputMode, setQrInputMode] = useState<'laptop' | 'camera'>(
+    typeof window !== 'undefined' && window.innerWidth < 768 ? 'camera' : 'laptop'
+  );
   const [qrPayload, setQrPayload] = useState<string>('');
   const [qrImageB64, setQrImageB64] = useState<string>('');
   const [qrFileName, setQrFileName] = useState<string>('');
@@ -528,7 +530,7 @@ export const InvestigationPage: React.FC = () => {
                   }`}
                 >
                   <Upload className="w-3.5 h-3.5" />
-                  <span>Upload Image from Laptop</span>
+                  <span>Upload QR Image</span>
                 </button>
                 <button
                   onClick={() => {
@@ -542,7 +544,7 @@ export const InvestigationPage: React.FC = () => {
                   }`}
                 >
                   <Video className="w-3.5 h-3.5" />
-                  <span>Scan via Live Laptop Camera</span>
+                  <span>Live Camera Scanner</span>
                 </button>
               </div>
 
@@ -580,7 +582,7 @@ export const InvestigationPage: React.FC = () => {
                       <p className="text-[10px] font-mono text-[#EF4444] max-w-sm">{cameraError}</p>
                     ) : (
                       <p className="text-[10px] text-slate-500 font-mono">
-                        Point your laptop or device webcam directly at any physical or digital QR code.
+                        Point your device camera directly at any physical or digital QR code.
                       </p>
                     )}
                     <button

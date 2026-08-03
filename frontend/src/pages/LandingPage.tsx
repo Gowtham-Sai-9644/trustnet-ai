@@ -51,6 +51,94 @@ const AnimatedBackground = () => {
   );
 };
 
+// Deep Space Asteroid effect constrained to left and right margins
+const SpaceGutter = () => {
+  // Generate random particles (stars and asteroids)
+  const generateParticles = (count: number, type: 'star' | 'asteroid', side: 'left' | 'right') => {
+    return Array.from({ length: count }).map((_, i) => {
+      const size = type === 'star' ? Math.random() * 3 + 1 : Math.random() * 20 + 10;
+      const left = Math.random() * 100; // 0 to 100% of the gutter width
+      const duration = type === 'star' ? Math.random() * 10 + 10 : Math.random() * 15 + 15;
+      const delay = Math.random() * -25; // Negative delay so they start already on screen
+      const rot = Math.random() * 360 + 180; // For asteroids
+      
+      return (
+        <div
+          key={`${side}-${type}-${i}`}
+          className={type === 'star' ? 'star-particle' : 'asteroid-particle'}
+          style={{
+            width: `${size}px`,
+            height: `${size}px`,
+            left: `${left}%`,
+            animationDuration: `${duration}s`,
+            animationDelay: `${delay}s`,
+            ...(type === 'asteroid' ? { '--rot': `${rot}deg` } as any : {})
+          }}
+        />
+      );
+    });
+  };
+
+  return (
+    <>
+      {/* Left Space Gutter */}
+      <div className="absolute top-0 bottom-0 left-0 w-[15vw] z-0 overflow-hidden pointer-events-none hidden lg:block opacity-60">
+        {generateParticles(40, 'star', 'left')}
+        {generateParticles(5, 'asteroid', 'left')}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/90"></div>
+      </div>
+      
+      {/* Right Space Gutter */}
+      <div className="absolute top-0 bottom-0 right-0 w-[15vw] z-0 overflow-hidden pointer-events-none hidden lg:block opacity-60">
+        {generateParticles(40, 'star', 'right')}
+        {generateParticles(5, 'asteroid', 'right')}
+        <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-black/90"></div>
+      </div>
+    </>
+  );
+};
+
+// Spherical Network zooming overlay
+const SphericalNetworkOverlay = ({ progress }: { progress: any }) => {
+  // As the user scrolls through the 1200vh, we continuously zoom into the network
+  const scale = useTransform(progress, [0, 1], [0.8, 15]);
+  const rotate = useTransform(progress, [0, 1], [0, 180]);
+  const opacity = useTransform(progress, [0, 0.1, 0.5, 0.9, 1], [0.1, 0.3, 0.3, 0.3, 0.1]);
+
+  return (
+    <motion.div 
+      className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"
+      style={{ scale, rotate, opacity, willChange: "transform" }}
+    >
+      <svg viewBox="0 0 800 800" className="w-[100vw] h-[100vw] max-w-[800px] max-h-[800px] text-[#00E5FF] opacity-30">
+        <circle cx="400" cy="400" r="390" fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray="10 5" />
+        <ellipse cx="400" cy="400" rx="390" ry="120" fill="none" stroke="currentColor" strokeWidth="1" />
+        <ellipse cx="400" cy="400" rx="120" ry="390" fill="none" stroke="currentColor" strokeWidth="1" />
+        <ellipse cx="400" cy="400" rx="390" ry="250" fill="none" stroke="currentColor" strokeWidth="0.5" />
+        <ellipse cx="400" cy="400" rx="250" ry="390" fill="none" stroke="currentColor" strokeWidth="0.5" />
+        
+        {/* Network Nodes */}
+        {Array.from({ length: 30 }).map((_, i) => {
+          // Generate somewhat spherical distribution
+          const angle = (i * Math.PI * 2) / 15 + (i * 0.5);
+          const r = 380 * Math.pow(Math.random(), 0.5); 
+          const cx = 400 + Math.cos(angle) * r;
+          const cy = 400 + Math.sin(angle) * r;
+          const cx_inner = 400 + Math.cos(angle + 1) * (r * 0.5);
+          const cy_inner = 400 + Math.sin(angle + 1) * (r * 0.5);
+          
+          return (
+            <g key={i}>
+              <circle cx={cx} cy={cy} r="3" fill="currentColor" />
+              <line x1={cx_inner} y1={cy_inner} x2={cx} y2={cy} stroke="currentColor" strokeWidth="0.5" opacity="0.6" />
+            </g>
+          )
+        })}
+      </svg>
+    </motion.div>
+  );
+};
+
 const LandingPage: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -96,6 +184,12 @@ const LandingPage: React.FC = () => {
       {/* The Sticky Viewport */}
       <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center pt-16">
         <AnimatedBackground />
+        
+        {/* Spherical Network Zoom Overlay */}
+        <SphericalNetworkOverlay progress={scrollYProgress} />
+        
+        {/* Deep Space Margins */}
+        <SpaceGutter />
         
         {/* Fixed Title Bar inside the sticky viewport */}
         <div className="absolute top-0 left-0 right-0 z-50">
