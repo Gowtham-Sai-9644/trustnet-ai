@@ -250,7 +250,7 @@ const LandingPage: React.FC = () => {
 
           {/* FINAL METRICS & CTA SECTION */}
           <motion.div 
-            className="absolute inset-0 flex flex-col items-center justify-center pointer-events-auto"
+            className="absolute inset-0 flex flex-col items-center md:justify-center justify-start overflow-y-auto overflow-x-hidden pointer-events-auto pt-24 pb-10 custom-scrollbar"
             style={{ display: finalDisplay, opacity: finalOpacity, scale: finalScale }}
           >
             <div className="w-full mt-20 pb-20 scale-90 md:scale-100">
