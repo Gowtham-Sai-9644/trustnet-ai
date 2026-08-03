@@ -1,20 +1,24 @@
 from typing import Dict, List, Any
 
 class ExplainabilityService:
-    def get_mock_shap_values(self, url_prob: float, nlp_prob: float, graph_prob: float) -> Dict[str, float]:
+    def calculate_feature_attribution(self, url_prob: float, nlp_prob: float, graph_prob: float) -> Dict[str, float]:
         """
-        Returns mock SHAP values representing feature impacts on the meta model output based on actual scores.
+        Calculates feature impacts on the meta model output dynamically based on actual scores.
         """
         shap_vals = {}
-        if url_prob > 0.0:
-            shap_vals["url_lexical_risk"] = url_prob * 0.45
-        if graph_prob > 0.0:
-            shap_vals["graph_centrality_risk"] = graph_prob * 0.35
-        if nlp_prob > 0.0:
-            shap_vals["nlp_lure_risk"] = nlp_prob * 0.42
+        total_risk = url_prob + nlp_prob + graph_prob
+        
+        if total_risk == 0:
+            shap_vals["base_value"] = 0.05
+            return shap_vals
             
-        # Add baseline check parameters
-        shap_vals["base_value"] = 0.10
+        if url_prob > 0.0:
+            shap_vals["url_lexical_risk"] = round(url_prob / total_risk, 3)
+        if graph_prob > 0.0:
+            shap_vals["graph_centrality_risk"] = round(graph_prob / total_risk, 3)
+        if nlp_prob > 0.0:
+            shap_vals["nlp_lure_risk"] = round(nlp_prob / total_risk, 3)
+            
         return shap_vals
 
     def generate_explanation(self, shap_values: Dict[str, float], evidence_trace: List[str]) -> str:

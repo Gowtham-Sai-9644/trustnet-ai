@@ -1,9 +1,13 @@
+import logging
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime
 import uuid
 
 from app.core.database import get_db
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+logger = logging.getLogger(__name__)
 from app.schemas.analyze_schema import (
     URLAnalysisRequest, URLAnalysisResponse,
     MessageAnalysisRequest, MessageAnalysisResponse,
@@ -70,7 +74,7 @@ async def analyze_fusion(payload: FusionAnalysisRequest, db: AsyncSession = Depe
         raw_hops = await graph_service.fetch_neighborhood(target_entity)
         
     trace = explain_service.format_evidence_path(raw_hops)
-    shap_vals = explain_service.get_mock_shap_values(
+    shap_vals = explain_service.calculate_feature_attribution(
         url_prob=url_prob if payload.url else 0.0,
         nlp_prob=nlp_prob if payload.message_text else 0.0,
         graph_prob=graph_prob if (payload.upi or payload.phone) else 0.0
@@ -78,13 +82,23 @@ async def analyze_fusion(payload: FusionAnalysisRequest, db: AsyncSession = Depe
     explanation = explain_service.generate_explanation(shap_vals, trace)
     
     # Assign category
-    pred_category = "Advance Payment Scam"
+    pred_category = "General Threat"
     if payload.message_text:
         pred_category, _ = ml_pipeline.predict_message(payload.message_text)
-    elif payload.url and fused_raw > 0.50:
-        pred_category = "Phishing / Credential Theft"
+    elif payload.url:
+        if fused_raw > 0.50:
+            pred_category = "Phishing / Credential Theft"
+        else:
+            pred_category = "Safe Domain"
         
     scan_id = str(uuid.uuid4())
+    
+    logger.info(f"[Fusion Analysis] Target: {payload.url or payload.message_text or payload.phone or payload.upi}")
+    logger.info(f"    - Extracted Probabilities -> URL: {url_prob:.3f}, NLP: {nlp_prob:.3f}, Graph: {graph_prob:.3f}")
+    logger.info(f"    - Feature Attributes -> {shap_vals}")
+    logger.info(f"    - Prediction Results -> Fused: {fused_raw:.3f}, Calibrated: {calib_prob:.3f} (Conf: {confidence:.3f})")
+    logger.info(f"    - Final Classification: {pred_category}")
+    logger.info(f"    - Explanation Generated: {explanation}")
     
     return FusionAnalysisResponse(
         scan_id=scan_id,
@@ -110,11 +124,18 @@ async def analyze_fusion(payload: FusionAnalysisRequest, db: AsyncSession = Depe
     )
 
 @router.get("/explainability", response_model=ExplainabilityResponse)
-async def get_explainability(scan_id: str = Query(..., description="ID of the scan transaction to explain")):
-    # Returns mock explainability vectors for visual rendering
-    shap_vals = {"url_lexical_risk": 0.12, "nlp_lure_risk": 0.45, "graph_centrality_risk": 0.38}
-    hops = ["olxdeals@upi -[ASSOCIATED_WITH]-> +919876543210"]
+async def get_explainability(
+    scan_id: str = Query(..., description="ID of the scan transaction to explain"),
+    url_prob: float = Query(0.0),
+    nlp_prob: float = Query(0.0),
+    graph_prob: float = Query(0.0)
+):
+    # Generates deterministic explainability based on provided probabilities
+    shap_vals = explain_service.calculate_feature_attribution(url_prob, nlp_prob, graph_prob)
+    hops = [] # Trace visualization requires actual graph entity queries
     narrative = explain_service.generate_explanation(shap_vals, hops)
+    
+    logger.info(f"[Explainability] Generated for scan {scan_id}")
     
     return ExplainabilityResponse(
         scan_id=scan_id,

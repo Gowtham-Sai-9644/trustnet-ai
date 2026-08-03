@@ -13,47 +13,62 @@ class MLService:
             - lexical_features (Dict[str, float]): Computed feature values.
         """
         url_lower = url.lower()
+        domain_part = url_lower.replace("http://", "").replace("https://", "").split("/")[0]
         
         # 1. Safe domain allowlist
         safe_domains = [
-            "google.com", "microsoft.com", "amazon.in", 
-            "github.com", "wikipedia.org", "linkedin.com"
+            "google.com", "microsoft.com", "amazon.in", "amazon.com",
+            "github.com", "wikipedia.org", "linkedin.com", "facebook.com",
+            "twitter.com", "x.com", "instagram.com", "apple.com", "netflix.com"
         ]
         
-        # Check if URL belongs to safe domain
-        domain_part = url_lower.replace("http://", "").replace("https://", "").split("/")[0]
-        if any(domain_part.endswith(safe) for safe in safe_domains):
-            return 0.15, {"is_safe": 1.0}
+        if any(domain_part == safe or domain_part.endswith("." + safe) for safe in safe_domains):
+            return 0.05, {"is_safe": 1.0, "risk_factors": 0.0}
 
         # 2. Risk Heuristics
-        brand_impersonation = ["sbi", "hdfc", "icici", "axis", "paytm", "phonepe", "gpay", "googlepay", "amazon", "flipkart"]
-        credential_keywords = ["login", "verify", "verification", "secure", "account", "update", "kyc", "otp", "password"]
-        scam_keywords = ["reward", "lottery", "refund", "prize", "claim", "urgent", "winner", "cashback"]
-        suspicious_tlds = [".xyz", ".win", ".cfd", ".top", ".click", ".loan", ".gq", ".tk"]
+        brand_impersonation = ["sbi", "hdfc", "icici", "axis", "paytm", "phonepe", "gpay", "googlepay", "amazon", "flipkart", "apple", "netflix"]
+        credential_keywords = ["login", "verify", "verification", "secure", "account", "update", "kyc", "otp", "password", "auth", "signin"]
+        scam_keywords = ["reward", "lottery", "refund", "prize", "claim", "urgent", "winner", "cashback", "free"]
+        suspicious_tlds = [".xyz", ".win", ".cfd", ".top", ".click", ".loan", ".gq", ".tk", ".cc", ".biz"]
+        safe_tlds = [".com", ".org", ".net", ".edu", ".gov", ".co.in", ".in", ".co.uk"]
 
-        risk_score = 0.20 # Base risk
+        risk_score = 0.15 # Base risk
         
         # Check TLD
         if any(domain_part.endswith(tld) for tld in suspicious_tlds):
-            risk_score += 0.40
+            risk_score += 0.45
+        elif any(domain_part.endswith(tld) for tld in safe_tlds):
+            risk_score -= 0.10 # Trusted TLD bonus
+            
+        # Check for IP address instead of domain
+        import re
+        if re.match(r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$", domain_part.split(':')[0]):
+            risk_score += 0.50 # Direct IP is highly suspicious
             
         # Check keywords
-        if any(brand in url_lower for brand in brand_impersonation):
+        has_brand = any(brand in url_lower for brand in brand_impersonation)
+        has_cred = any(cred in url_lower for cred in credential_keywords)
+        has_scam = any(scam in url_lower for scam in scam_keywords)
+        
+        if has_brand:
             risk_score += 0.35
-            
-        if any(cred in url_lower for cred in credential_keywords):
+        if has_cred:
             risk_score += 0.35
-            
-        if any(scam in url_lower for scam in scam_keywords):
+        if has_scam:
             risk_score += 0.30
+            
+        # Heavy penalty for combining brand + credential words on a non-allowlisted domain
+        if has_brand and has_cred:
+            risk_score += 0.25
 
         # Cap score
-        prob = min(risk_score, 0.98)
+        prob = max(0.05, min(risk_score, 0.98))
         
         features = {
             "length": float(len(url)),
-            "dots_count": float(url.count('.')),
-            "entropy": 3.5 + (len(url) % 5) / 10.0
+            "dots_count": float(domain_part.count('.')),
+            "entropy": 3.5 + (len(url) % 5) / 10.0,
+            "is_ip": 1.0 if re.match(r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$", domain_part.split(':')[0]) else 0.0
         }
         return prob, features
 
@@ -68,31 +83,44 @@ class MLService:
         """
         categories = [
             "Fake Job Scam", "Fake KYC Scam", "Lottery Scam", 
-            "Marketplace Scam", "Investment Scam", "Advance Payment Scam"
+            "Marketplace Scam", "Investment Scam", "Advance Payment Scam",
+            "Safe Communication"
         ]
         
-        # Determine label based on matching keywords
+        # Calculate scores deterministically based on keyword density
         text_lower = text.lower()
-        if "kyc" in text_lower or "paytm" in text_lower or "block" in text_lower:
-            pred = "Fake KYC Scam"
-        elif "lottery" in text_lower or "won" in text_lower or "prize" in text_lower:
-            pred = "Lottery Scam"
-        elif "job" in text_lower or "salary" in text_lower or "part-time" in text_lower:
-            pred = "Fake Job Scam"
-        elif "olx" in text_lower or "advance" in text_lower or "shipping" in text_lower:
-            pred = "Marketplace Scam"
-        elif "investment" in text_lower or "profit" in text_lower or "returns" in text_lower:
-            pred = "Investment Scam"
-        else:
-            pred = "Advance Payment Scam"
+        
+        scores = {cat: 0.05 for cat in categories} # Base noise
+        
+        if "kyc" in text_lower or "paytm" in text_lower or "block" in text_lower or "account suspended" in text_lower:
+            scores["Fake KYC Scam"] += 0.80
+        if "lottery" in text_lower or "won" in text_lower or "prize" in text_lower or "free gift" in text_lower:
+            scores["Lottery Scam"] += 0.85
+        if "job" in text_lower or "salary" in text_lower or "part-time" in text_lower or "work from home" in text_lower:
+            scores["Fake Job Scam"] += 0.75
+        if "olx" in text_lower or "advance" in text_lower or "shipping" in text_lower or "delivery fee" in text_lower:
+            scores["Marketplace Scam"] += 0.70
+        if "investment" in text_lower or "profit" in text_lower or "returns" in text_lower or "crypto" in text_lower:
+            scores["Investment Scam"] += 0.80
+        
+        if "urgent" in text_lower or "immediately" in text_lower or "pay" in text_lower:
+            scores["Advance Payment Scam"] += 0.60
             
-        # Distribute mock probabilities with bias to target pred
-        probs = {}
-        for cat in categories:
-            if cat == pred:
-                probs[cat] = 0.75
-            else:
-                probs[cat] = 0.05
+        # If no significant keywords, it's likely safe communication
+        if max(scores.values()) < 0.20:
+            scores["Safe Communication"] = 0.90
+            
+        # Normalize probabilities
+        total = sum(scores.values())
+        probs = {cat: round(score / total, 3) for cat, score in scores.items()}
+        
+        # Select the category with highest probability
+        pred = max(probs, key=probs.get)
+        
+        # If the text is extremely short and has no markers, default to safe
+        if len(text.strip()) < 5 and max(probs.values()) < 0.5:
+            pred = "Safe Communication"
+            
         return pred, probs
 
     def predict_graph(self, upi: str, phone: str) -> float:
@@ -101,15 +129,35 @@ class MLService:
             upi (str): Payment target UPI ID.
             phone (str): Sender phone.
         Output:
-            probability (float): Graph-level risk score.
+            probability (float): Graph-level risk score using deterministic heuristic.
         """
         if not upi and not phone:
             return 0.0
             
-        # Return elevated score for typical mock triggers
-        target = upi or phone or ""
-        hash_val = int(hashlib.md5(target.encode()).hexdigest(), 16)
-        return (hash_val % 100) / 100.0
+        risk_score = 0.10
+        
+        if phone:
+            # Check for suspicious country codes or premium numbers
+            if phone.startswith("+2") or phone.startswith("+3") or phone.startswith("+8") or phone.startswith("+44"):
+                risk_score += 0.45
+            elif phone.startswith("+91") or phone.startswith("91"):
+                # Standard Indian number base risk
+                risk_score += 0.05
+            if "0000" in phone or "9999" in phone:
+                risk_score += 0.20
+                
+        if upi:
+            upi_lower = upi.lower()
+            suspicious_upi_terms = ["refund", "claim", "prize", "cashback", "support", "kyc", "verify", "paytm", "gpay"]
+            if any(term in upi_lower for term in suspicious_upi_terms):
+                risk_score += 0.60
+            # Common mule handles or temporary UPI providers
+            if upi_lower.endswith("@ybl") or upi_lower.endswith("@ibl") or upi_lower.endswith("@paytm"):
+                risk_score += 0.15 # Just a slight modifier, not conclusive
+            if upi_lower.endswith(".cfd") or upi_lower.endswith(".top"):
+                risk_score += 0.80
+                
+        return min(risk_score, 0.99)
 
     def predict_fusion(self, url_prob: float, nlp_prob: float, graph_prob: float, has_url: bool, has_nlp: bool, has_graph: bool) -> float:
         """
