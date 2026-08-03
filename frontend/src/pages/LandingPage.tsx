@@ -82,14 +82,14 @@ const SpaceGutter = () => {
   return (
     <>
       {/* Left Space Gutter */}
-      <div className="absolute top-0 bottom-0 left-0 w-[15vw] z-0 overflow-hidden pointer-events-none hidden lg:block opacity-60">
+      <div className="absolute top-0 bottom-0 left-0 w-[25vw] md:w-[15vw] z-0 overflow-hidden pointer-events-none opacity-40 md:opacity-60">
         {generateParticles(40, 'star', 'left')}
         {generateParticles(5, 'asteroid', 'left')}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/90"></div>
       </div>
       
       {/* Right Space Gutter */}
-      <div className="absolute top-0 bottom-0 right-0 w-[15vw] z-0 overflow-hidden pointer-events-none hidden lg:block opacity-60">
+      <div className="absolute top-0 bottom-0 right-0 w-[25vw] md:w-[15vw] z-0 overflow-hidden pointer-events-none opacity-40 md:opacity-60">
         {generateParticles(40, 'star', 'right')}
         {generateParticles(5, 'asteroid', 'right')}
         <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-black/90"></div>
