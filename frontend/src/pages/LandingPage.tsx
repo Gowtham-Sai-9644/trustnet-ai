@@ -214,8 +214,8 @@ const LandingPage: React.FC = () => {
 
   // Create a spring-dampened smoothed progress value to prevent mobile/desktop scrolling jumps or lags
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 45,  // Slightly slower, highly luxurious catching-up movement
-    damping: 26,    // Balanced dampening to keep it floaty but stable
+    stiffness: isMobile ? 18 : 45,  // Much slower and gentler on mobile to keep transitions fully clear
+    damping: isMobile ? 28 : 26,    // High damping to keep it buttery smooth and stop overshoot
     restDelta: 0.001
   });
 
