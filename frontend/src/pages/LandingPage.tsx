@@ -200,7 +200,7 @@ const LandingPage: React.FC = () => {
           
           {/* HERO SECTION */}
           <motion.div 
-            className="absolute inset-0 items-center justify-center pointer-events-auto"
+            className="absolute inset-0 flex flex-col items-center md:justify-center justify-start overflow-y-auto overflow-x-hidden pointer-events-auto pt-24 pb-10 custom-scrollbar"
             style={{ display: heroDisplay, opacity: heroOpacity, scale: heroScale }}
           >
             <div className="w-full scale-90 md:scale-100 mt-[-10vh]">
@@ -210,7 +210,7 @@ const LandingPage: React.FC = () => {
 
           {/* BENTO GRID SECTION */}
           <motion.div 
-            className="absolute inset-0 flex flex-col items-center justify-center pointer-events-auto"
+            className="absolute inset-0 flex flex-col items-center md:justify-center justify-start overflow-y-auto overflow-x-hidden pointer-events-auto pt-24 pb-10 custom-scrollbar"
             style={{ display: bentoDisplay, opacity: bentoOpacity, scale: bentoScale }}
           >
             <div className="w-full pt-10 scale-90 md:scale-100">
@@ -220,7 +220,7 @@ const LandingPage: React.FC = () => {
 
           {/* HOW TO USE SECTION */}
           <motion.div 
-            className="absolute inset-0 flex flex-col items-center justify-center pointer-events-auto"
+            className="absolute inset-0 flex flex-col items-center md:justify-center justify-start overflow-y-auto overflow-x-hidden pointer-events-auto pt-24 pb-10 custom-scrollbar"
             style={{ display: howToDisplay, opacity: howToOpacity, scale: howToScale }}
           >
             <div className="w-full scale-90 md:scale-100">
@@ -230,7 +230,7 @@ const LandingPage: React.FC = () => {
 
           {/* DASHBOARD SECTION */}
           <motion.div 
-            className="absolute inset-0 items-center justify-center pointer-events-auto"
+            className="absolute inset-0 flex flex-col items-center md:justify-center justify-start overflow-y-auto overflow-x-hidden pointer-events-auto pt-24 pb-10 custom-scrollbar"
             style={{ display: dashDisplay, opacity: dashOpacity, scale: dashScale, rotateX: dashRotateX, perspective: "1500px" }}
           >
             <div className="w-full scale-[0.85] origin-center">
@@ -240,7 +240,7 @@ const LandingPage: React.FC = () => {
 
           {/* TEAM SECTION */}
           <motion.div 
-            className="absolute inset-0 flex flex-col items-center justify-center pointer-events-auto"
+            className="absolute inset-0 flex flex-col items-center md:justify-center justify-start overflow-y-auto overflow-x-hidden pointer-events-auto pt-24 pb-10 custom-scrollbar"
             style={{ display: teamDisplay, opacity: teamOpacity, scale: teamScale }}
           >
             <div className="w-full scale-90 md:scale-100">
