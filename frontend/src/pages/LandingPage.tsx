@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform, AnimatePresence, useSpring } from 'framer-motion';
 
 import { Navbar } from '../components/landing/Navbar';
 import { Footer } from '../components/landing/Footer';
@@ -118,10 +118,13 @@ const SpaceGutter = () => {
 };
 
 // Spherical Network zooming overlay
-const SphericalNetworkOverlay = ({ progress }: { progress: any }) => {
-  // Use SVG viewBox for infinite-resolution zoom without crashing mobile GPUs
+const SphericalNetworkOverlay = ({ progress, isMobile }: { progress: any; isMobile: boolean }) => {
+  // Use SVG viewBox for infinite-resolution zoom on desktop, CSS scale on mobile for performance
+  const maxScale = isMobile ? 3 : 15;
+  const scale = useTransform(progress, [0, 1], [0.8, maxScale]);
+  
   const viewBox = useTransform(progress, (p: number) => {
-    // We scale from 0.8 to 15
+    if (isMobile) return "0 0 800 800"; // Fixed viewBox, animate via scale on mobile
     const currentScale = 0.8 + (p * 14.2);
     const size = 800 / currentScale;
     const offset = (800 - size) / 2;
@@ -134,10 +137,15 @@ const SphericalNetworkOverlay = ({ progress }: { progress: any }) => {
   return (
     <motion.div 
       className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"
-      style={{ rotate, opacity, willChange: "transform" }}
+      style={{ 
+        scale: isMobile ? scale : undefined, 
+        rotate, 
+        opacity, 
+        willChange: "transform" 
+      }}
     >
       <motion.svg 
-        viewBox={viewBox} 
+        viewBox={isMobile ? undefined : viewBox} 
         className="w-[100vw] h-[100vw] max-w-[800px] max-h-[800px] text-[#00E5FF] opacity-30"
         style={{ willChange: "auto" }}
       >
@@ -204,40 +212,48 @@ const LandingPage: React.FC = () => {
     offset: ["start start", "end end"]
   });
 
-  // On mobile: use opacity-only fade transitions (scale stays at 1) for buttery 60fps
-  // On desktop: keep the full cinematic zoom effect
-  const mobileScale = 1; // No scaling on mobile = no GPU texture explosion
+  // Create a spring-dampened smoothed progress value to prevent mobile/desktop scrolling jumps or lags
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 45,  // Slightly slower, highly luxurious catching-up movement
+    damping: 26,    // Balanced dampening to keep it floaty but stable
+    restDelta: 0.001
+  });
+
+  // On mobile: keep card scale at exactly 1 (no zoom/clipping for text readability & 60fps performance)
+  // On desktop: keep the full cinematic card zoom bounds
+  const mobileEntry = 1;
+  const mobileExit = 1;
 
   // --- Hero Animations (0 to 0.15) ---
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
-  const heroScale = useTransform(scrollYProgress, [0, 0.15], [1, isMobile ? 1 : 1.3]); 
-  const heroDisplay = useTransform(scrollYProgress, [0, 0.15, 0.16], ["flex", "flex", "none"]);
+  const heroOpacity = useTransform(smoothProgress, [0, 0.1], [1, 0]);
+  const heroScale = useTransform(smoothProgress, [0, 0.15], [1, isMobile ? mobileExit : 1.3]); 
+  const heroDisplay = useTransform(smoothProgress, [0, 0.15, 0.16], ["flex", "flex", "none"]);
 
   // --- Bento Grid Animations (0.20 to 0.35) ---
-  const bentoOpacity = useTransform(scrollYProgress, [0.20, 0.25, 0.30, 0.35], [0, 1, 1, 0]);
-  const bentoScale = useTransform(scrollYProgress, [0.20, 0.25, 0.30, 0.35], [isMobile ? 1 : 0.9, 1, 1, isMobile ? 1 : 1.3]);
-  const bentoDisplay = useTransform(scrollYProgress, [0.19, 0.20, 0.35, 0.36], ["none", "flex", "flex", "none"]);
+  const bentoOpacity = useTransform(smoothProgress, [0.20, 0.25, 0.30, 0.35], [0, 1, 1, 0]);
+  const bentoScale = useTransform(smoothProgress, [0.20, 0.25, 0.30, 0.35], [isMobile ? mobileEntry : 0.9, 1, 1, isMobile ? mobileExit : 1.3]);
+  const bentoDisplay = useTransform(smoothProgress, [0.19, 0.20, 0.35, 0.36], ["none", "flex", "flex", "none"]);
 
   // --- How To Use Animations (0.40 to 0.55) ---
-  const howToOpacity = useTransform(scrollYProgress, [0.40, 0.45, 0.50, 0.55], [0, 1, 1, 0]);
-  const howToScale = useTransform(scrollYProgress, [0.40, 0.45, 0.50, 0.55], [isMobile ? 1 : 0.9, 1, 1, isMobile ? 1 : 1.3]);
-  const howToDisplay = useTransform(scrollYProgress, [0.39, 0.40, 0.55, 0.56], ["none", "flex", "flex", "none"]);
+  const howToOpacity = useTransform(smoothProgress, [0.40, 0.45, 0.50, 0.55], [0, 1, 1, 0]);
+  const howToScale = useTransform(smoothProgress, [0.40, 0.45, 0.50, 0.55], [isMobile ? mobileEntry : 0.9, 1, 1, isMobile ? mobileExit : 1.3]);
+  const howToDisplay = useTransform(smoothProgress, [0.39, 0.40, 0.55, 0.56], ["none", "flex", "flex", "none"]);
 
   // --- Dashboard Animations (0.60 to 0.75) ---
-  const dashOpacity = useTransform(scrollYProgress, [0.60, 0.65, 0.70, 0.75], [0, 1, 1, 0]);
-  const dashScale = useTransform(scrollYProgress, [0.60, 0.65, 0.70, 0.75], [isMobile ? 1 : 0.9, 1, 1, isMobile ? 1 : 1.3]);
-  const dashRotateX = useTransform(scrollYProgress, [0.60, 0.65], [isMobile ? 0 : 15, 0]); 
-  const dashDisplay = useTransform(scrollYProgress, [0.59, 0.60, 0.75, 0.76], ["none", "flex", "flex", "none"]);
+  const dashOpacity = useTransform(smoothProgress, [0.60, 0.65, 0.70, 0.75], [0, 1, 1, 0]);
+  const dashScale = useTransform(smoothProgress, [0.60, 0.65, 0.70, 0.75], [isMobile ? mobileEntry : 0.9, 1, 1, isMobile ? mobileExit : 1.3]);
+  const dashRotateX = useTransform(smoothProgress, [0.60, 0.65], [isMobile ? 0 : 15, 0]); 
+  const dashDisplay = useTransform(smoothProgress, [0.59, 0.60, 0.75, 0.76], ["none", "flex", "flex", "none"]);
 
   // --- Team Animations (0.75 to 0.90) ---
-  const teamOpacity = useTransform(scrollYProgress, [0.75, 0.80, 0.85, 0.90], [0, 1, 1, 0]);
-  const teamScale = useTransform(scrollYProgress, [0.75, 0.80, 0.85, 0.90], [isMobile ? 1 : 0.9, 1, 1, isMobile ? 1 : 1.3]);
-  const teamDisplay = useTransform(scrollYProgress, [0.74, 0.75, 0.90, 0.91], ["none", "flex", "flex", "none"]);
+  const teamOpacity = useTransform(smoothProgress, [0.75, 0.80, 0.85, 0.90], [0, 1, 1, 0]);
+  const teamScale = useTransform(smoothProgress, [0.75, 0.80, 0.85, 0.90], [isMobile ? mobileEntry : 0.9, 1, 1, isMobile ? mobileExit : 1.3]);
+  const teamDisplay = useTransform(smoothProgress, [0.74, 0.75, 0.90, 0.91], ["none", "flex", "flex", "none"]);
 
   // --- Metrics & CTA Animations (0.90 to 1) ---
-  const finalOpacity = useTransform(scrollYProgress, [0.90, 0.95, 1], [0, 1, 1]);
-  const finalScale = useTransform(scrollYProgress, [0.90, 0.95, 1], [isMobile ? 1 : 0.9, 1, 1]);
-  const finalDisplay = useTransform(scrollYProgress, [0.89, 0.90], ["none", "flex"]);
+  const finalOpacity = useTransform(smoothProgress, [0.90, 0.95, 1], [0, 1, 1]);
+  const finalScale = useTransform(smoothProgress, [0.90, 0.95, 1], [isMobile ? mobileEntry : 0.9, 1, 1]);
+  const finalDisplay = useTransform(smoothProgress, [0.89, 0.90], ["none", "flex"]);
 
   return (
     <div ref={containerRef} className={`relative bg-landing-bg text-landing-text ${isMobile ? 'h-[600vh]' : 'h-[1200vh]'}`}>
@@ -245,8 +261,8 @@ const LandingPage: React.FC = () => {
       <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center pt-16">
         <AnimatedBackground />
         
-        {/* Spherical Network Zoom Overlay — hidden on mobile for performance */}
-        {!isMobile && <SphericalNetworkOverlay progress={scrollYProgress} />}
+        {/* Spherical Network Zoom Overlay */}
+        <SphericalNetworkOverlay progress={smoothProgress} isMobile={isMobile} />
         
         {/* Deep Space Margins */}
         <SpaceGutter />
