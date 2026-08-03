@@ -7,6 +7,7 @@ import { Hero } from '../components/landing/Hero';
 import { BentoGrid } from '../components/landing/BentoGrid';
 import { HowToUse } from '../components/landing/HowToUse';
 import { DashboardPreview } from '../components/landing/DashboardPreview';
+import { Team } from '../components/landing/Team';
 import { Metrics } from '../components/landing/Metrics';
 import { CTA } from '../components/landing/CTA';
 
@@ -80,13 +81,18 @@ const LandingPage: React.FC = () => {
   const dashRotateX = useTransform(scrollYProgress, [0.60, 0.65], [45, 0]); 
   const dashDisplay = useTransform(scrollYProgress, [0.59, 0.60, 0.75, 0.76], ["none", "flex", "flex", "none"]);
 
-  // --- Metrics & CTA Animations (0.80 to 1) ---
-  const finalOpacity = useTransform(scrollYProgress, [0.80, 0.85, 1], [0, 1, 1]);
-  const finalScale = useTransform(scrollYProgress, [0.80, 0.85, 1], [0.8, 1, 1]);
-  const finalDisplay = useTransform(scrollYProgress, [0.79, 0.80], ["none", "flex"]);
+  // --- Team Animations (0.75 to 0.90) ---
+  const teamOpacity = useTransform(scrollYProgress, [0.75, 0.80, 0.85, 0.90], [0, 1, 1, 0]);
+  const teamScale = useTransform(scrollYProgress, [0.75, 0.80, 0.85, 0.90], [0.8, 1, 1, 2]);
+  const teamDisplay = useTransform(scrollYProgress, [0.74, 0.75, 0.90, 0.91], ["none", "flex", "flex", "none"]);
+
+  // --- Metrics & CTA Animations (0.90 to 1) ---
+  const finalOpacity = useTransform(scrollYProgress, [0.90, 0.95, 1], [0, 1, 1]);
+  const finalScale = useTransform(scrollYProgress, [0.90, 0.95, 1], [0.8, 1, 1]);
+  const finalDisplay = useTransform(scrollYProgress, [0.89, 0.90], ["none", "flex"]);
 
   return (
-    <div ref={containerRef} className="relative h-[1000vh] bg-landing-bg text-landing-text">
+    <div ref={containerRef} className="relative h-[1200vh] bg-landing-bg text-landing-text">
       {/* The Sticky Viewport */}
       <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center pt-16">
         <AnimatedBackground />
@@ -135,6 +141,16 @@ const LandingPage: React.FC = () => {
           >
             <div className="w-full scale-[0.85] origin-center">
               <DashboardPreview />
+            </div>
+          </motion.div>
+
+          {/* TEAM SECTION */}
+          <motion.div 
+            className="absolute inset-0 flex flex-col items-center justify-center pointer-events-auto"
+            style={{ display: teamDisplay, opacity: teamOpacity, scale: teamScale }}
+          >
+            <div className="w-full scale-90 md:scale-100">
+              <Team />
             </div>
           </motion.div>
 
