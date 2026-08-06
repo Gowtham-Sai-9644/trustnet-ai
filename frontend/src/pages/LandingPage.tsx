@@ -183,7 +183,7 @@ const Mobile3DSection = ({ children }: { children: React.ReactNode }) => {
     <motion.div
       initial={{ opacity: 0, y: 40, rotateX: 12, scale: 0.96 }}
       whileInView={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
-      viewport={{ once: true, margin: "-80px" }}
+      viewport={{ once: true, amount: 0.05 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
       style={{ perspective: "1200px", transformStyle: "preserve-3d" }}
       className="w-full"
@@ -197,58 +197,7 @@ const LandingPage: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
 
-  // Return standard flow with 3D reveal transitions on mobile
-  if (isMobile) {
-    return (
-      <div className="relative bg-landing-bg text-landing-text min-h-screen overflow-x-hidden">
-        {/* Fixed Animated Background & space gutter */}
-        <div className="fixed inset-0 z-0">
-          <AnimatedBackground />
-          <SpaceGutter />
-        </div>
-        
-        {/* Navbar */}
-        <div className="fixed top-0 left-0 right-0 z-50">
-          <Navbar />
-        </div>
-        
-        {/* Scroll flow */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 pt-24 pb-16 space-y-24 flex flex-col items-center">
-          <Mobile3DSection>
-            <div className="mt-4">
-              <Hero />
-            </div>
-          </Mobile3DSection>
-
-          <Mobile3DSection>
-            <BentoGrid />
-          </Mobile3DSection>
-
-          <Mobile3DSection>
-            <HowToUse />
-          </Mobile3DSection>
-
-          <Mobile3DSection>
-            <div className="scale-95 origin-center">
-              <DashboardPreview />
-            </div>
-          </Mobile3DSection>
-
-          <Mobile3DSection>
-            <Team />
-          </Mobile3DSection>
-
-          <Mobile3DSection>
-            <div className="space-y-16">
-              <Metrics />
-              <CTA />
-              <Footer />
-            </div>
-          </Mobile3DSection>
-        </div>
-      </div>
-    );
-  }
+  
   
   
   // Keyboard Navigation for Zoom Sections
@@ -341,8 +290,56 @@ const LandingPage: React.FC = () => {
   const finalTranslateY = useTransform(smoothProgress, [0.85, 0.88, 1], [entryY, 0, 0]);
   const finalDisplay = useTransform(smoothProgress, [0.83, 0.84], ["none", "flex"]);
 
-  return (
-    <div ref={containerRef} className={`relative bg-landing-bg text-landing-text ${isMobile ? 'h-[1200vh]' : 'h-[2400vh]'}`}>
+  return isMobile ? (
+    <div className="relative bg-landing-bg text-landing-text min-h-screen overflow-x-hidden">
+      {/* Fixed Animated Background & space gutter */}
+      <div className="fixed inset-0 z-0">
+        <AnimatedBackground />
+        <SpaceGutter />
+      </div>
+      
+      {/* Navbar */}
+      <div className="fixed top-0 left-0 right-0 z-50">
+        <Navbar />
+      </div>
+      
+      {/* Scroll flow */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 pt-24 pb-16 space-y-24 flex flex-col items-center">
+        <Mobile3DSection>
+          <div className="mt-4">
+            <Hero />
+          </div>
+        </Mobile3DSection>
+
+        <Mobile3DSection>
+          <BentoGrid />
+        </Mobile3DSection>
+
+        <Mobile3DSection>
+          <HowToUse />
+        </Mobile3DSection>
+
+        <Mobile3DSection>
+          <div className="scale-95 origin-center">
+            <DashboardPreview />
+          </div>
+        </Mobile3DSection>
+
+        <Mobile3DSection>
+          <Team />
+        </Mobile3DSection>
+
+        <Mobile3DSection>
+          <div className="space-y-16">
+            <Metrics />
+            <CTA />
+            <Footer />
+          </div>
+        </Mobile3DSection>
+      </div>
+    </div>
+  ) : (
+    <div ref={containerRef} className={`relative bg-landing-bg text-landing-text h-[2400vh]`}>
       {/* The Sticky Viewport */}
       <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center pt-16">
         <AnimatedBackground />
@@ -421,7 +418,6 @@ const LandingPage: React.FC = () => {
               <Footer />
             </div>
           </motion.div>
-
         </div>
       </div>
     </div>
