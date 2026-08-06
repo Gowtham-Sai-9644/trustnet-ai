@@ -214,49 +214,59 @@ const LandingPage: React.FC = () => {
 
   // Create a spring-dampened smoothed progress value to prevent mobile/desktop scrolling jumps or lags
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: isMobile ? 18 : 45,  // Much slower and gentler on mobile to keep transitions fully clear
-    damping: isMobile ? 28 : 26,    // High damping to keep it buttery smooth and stop overshoot
+    stiffness: isMobile ? 80 : 150,  // Fast, responsive movement to eliminate delay/lag
+    damping: isMobile ? 35 : 40,    // High damping to keep it smooth and absorb wheel steps
     restDelta: 0.001
   });
 
-  // On mobile: keep card scale at exactly 1 (no zoom/clipping for text readability & 60fps performance)
-  // On desktop: keep the full cinematic card zoom bounds
-  const mobileEntry = 1;
-  const mobileExit = 1;
-
-  // --- Hero Animations (0 to 0.15) ---
-  const heroOpacity = useTransform(smoothProgress, [0, 0.1], [1, 0]);
-  const heroScale = useTransform(smoothProgress, [0, 0.15], [1, isMobile ? mobileExit : 1.3]); 
+  // 3D transition parameters calibrated for mobile vs desktop screens
+  const entryRotate = isMobile ? -12 : -22;
+  const exitRotate = isMobile ? 12 : 22;
+  const entryY = isMobile ? 35 : 70;
+  const exitY = isMobile ? -35 : -70;  // --- Hero Animations (0 to 0.15) ---
+  const heroOpacity = useTransform(smoothProgress, [0, 0.1, 0.15], [1, 1, 0]);
+  const heroScale = useTransform(smoothProgress, [0, 0.15], [1, isMobile ? 1 : 1.1]); 
+  const heroRotateX = useTransform(smoothProgress, [0, 0.15], [0, exitRotate]);
+  const heroTranslateY = useTransform(smoothProgress, [0, 0.15], [0, exitY]);
   const heroDisplay = useTransform(smoothProgress, [0, 0.15, 0.16], ["flex", "flex", "none"]);
 
-  // --- Bento Grid Animations (0.20 to 0.35) ---
-  const bentoOpacity = useTransform(smoothProgress, [0.20, 0.25, 0.30, 0.35], [0, 1, 1, 0]);
-  const bentoScale = useTransform(smoothProgress, [0.20, 0.25, 0.30, 0.35], [isMobile ? mobileEntry : 0.9, 1, 1, isMobile ? mobileExit : 1.3]);
-  const bentoDisplay = useTransform(smoothProgress, [0.19, 0.20, 0.35, 0.36], ["none", "flex", "flex", "none"]);
+  // --- Bento Grid Animations (0.17 to 0.32) ---
+  const bentoOpacity = useTransform(smoothProgress, [0.16, 0.19, 0.30, 0.33], [0, 1, 1, 0]);
+  const bentoScale = useTransform(smoothProgress, [0.17, 0.20, 0.29, 0.32], [isMobile ? 1 : 0.95, 1, 1, isMobile ? 1 : 1.05]);
+  const bentoRotateX = useTransform(smoothProgress, [0.17, 0.20, 0.29, 0.32], [entryRotate, 0, 0, exitRotate]);
+  const bentoTranslateY = useTransform(smoothProgress, [0.17, 0.20, 0.29, 0.32], [entryY, 0, 0, exitY]);
+  const bentoDisplay = useTransform(smoothProgress, [0.15, 0.16, 0.32, 0.33], ["none", "flex", "flex", "none"]);
 
-  // --- How To Use Animations (0.40 to 0.55) ---
-  const howToOpacity = useTransform(smoothProgress, [0.40, 0.45, 0.50, 0.55], [0, 1, 1, 0]);
-  const howToScale = useTransform(smoothProgress, [0.40, 0.45, 0.50, 0.55], [isMobile ? mobileEntry : 0.9, 1, 1, isMobile ? mobileExit : 1.3]);
-  const howToDisplay = useTransform(smoothProgress, [0.39, 0.40, 0.55, 0.56], ["none", "flex", "flex", "none"]);
+  // --- How To Use Animations (0.34 to 0.49) ---
+  const howToOpacity = useTransform(smoothProgress, [0.33, 0.36, 0.47, 0.50], [0, 1, 1, 0]);
+  const howToScale = useTransform(smoothProgress, [0.34, 0.37, 0.46, 0.49], [isMobile ? 1 : 0.95, 1, 1, isMobile ? 1 : 1.05]);
+  const howToRotateX = useTransform(smoothProgress, [0.34, 0.37, 0.46, 0.49], [entryRotate, 0, 0, exitRotate]);
+  const howToTranslateY = useTransform(smoothProgress, [0.34, 0.37, 0.46, 0.49], [entryY, 0, 0, exitY]);
+  const howToDisplay = useTransform(smoothProgress, [0.32, 0.33, 0.49, 0.50], ["none", "flex", "flex", "none"]);
 
-  // --- Dashboard Animations (0.60 to 0.75) ---
-  const dashOpacity = useTransform(smoothProgress, [0.60, 0.65, 0.70, 0.75], [0, 1, 1, 0]);
-  const dashScale = useTransform(smoothProgress, [0.60, 0.65, 0.70, 0.75], [isMobile ? mobileEntry : 0.9, 1, 1, isMobile ? mobileExit : 1.3]);
-  const dashRotateX = useTransform(smoothProgress, [0.60, 0.65], [isMobile ? 0 : 15, 0]); 
-  const dashDisplay = useTransform(smoothProgress, [0.59, 0.60, 0.75, 0.76], ["none", "flex", "flex", "none"]);
+  // --- Dashboard Animations (0.51 to 0.66) ---
+  const dashOpacity = useTransform(smoothProgress, [0.50, 0.53, 0.64, 0.67], [0, 1, 1, 0]);
+  const dashScale = useTransform(smoothProgress, [0.51, 0.54, 0.63, 0.66], [isMobile ? 1 : 0.95, 1, 1, isMobile ? 1 : 1.05]);
+  const dashRotateX = useTransform(smoothProgress, [0.51, 0.54, 0.63, 0.66], [entryRotate, 0, 0, exitRotate]);
+  const dashTranslateY = useTransform(smoothProgress, [0.51, 0.54, 0.63, 0.66], [entryY, 0, 0, exitY]);
+  const dashDisplay = useTransform(smoothProgress, [0.49, 0.50, 0.66, 0.67], ["none", "flex", "flex", "none"]);
 
-  // --- Team Animations (0.75 to 0.90) ---
-  const teamOpacity = useTransform(smoothProgress, [0.75, 0.80, 0.85, 0.90], [0, 1, 1, 0]);
-  const teamScale = useTransform(smoothProgress, [0.75, 0.80, 0.85, 0.90], [isMobile ? mobileEntry : 0.9, 1, 1, isMobile ? mobileExit : 1.3]);
-  const teamDisplay = useTransform(smoothProgress, [0.74, 0.75, 0.90, 0.91], ["none", "flex", "flex", "none"]);
+  // --- Team Animations (0.68 to 0.83) ---
+  const teamOpacity = useTransform(smoothProgress, [0.67, 0.70, 0.81, 0.84], [0, 1, 1, 0]);
+  const teamScale = useTransform(smoothProgress, [0.68, 0.71, 0.80, 0.83], [isMobile ? 1 : 0.95, 1, 1, isMobile ? 1 : 1.05]);
+  const teamRotateX = useTransform(smoothProgress, [0.68, 0.71, 0.80, 0.83], [entryRotate, 0, 0, exitRotate]);
+  const teamTranslateY = useTransform(smoothProgress, [0.68, 0.71, 0.80, 0.83], [entryY, 0, 0, exitY]);
+  const teamDisplay = useTransform(smoothProgress, [0.66, 0.67, 0.83, 0.84], ["none", "flex", "flex", "none"]);
 
-  // --- Metrics & CTA Animations (0.90 to 1) ---
-  const finalOpacity = useTransform(smoothProgress, [0.90, 0.95, 1], [0, 1, 1]);
-  const finalScale = useTransform(smoothProgress, [0.90, 0.95, 1], [isMobile ? mobileEntry : 0.9, 1, 1]);
-  const finalDisplay = useTransform(smoothProgress, [0.89, 0.90], ["none", "flex"]);
+  // --- Metrics & CTA Animations (0.85 to 1) ---
+  const finalOpacity = useTransform(smoothProgress, [0.84, 0.87, 1], [0, 1, 1]);
+  const finalScale = useTransform(smoothProgress, [0.85, 0.88, 1], [isMobile ? 1 : 0.95, 1, 1]);
+  const finalRotateX = useTransform(smoothProgress, [0.85, 0.88, 1], [entryRotate, 0, 0]);
+  const finalTranslateY = useTransform(smoothProgress, [0.85, 0.88, 1], [entryY, 0, 0]);
+  const finalDisplay = useTransform(smoothProgress, [0.83, 0.84], ["none", "flex"]);
 
   return (
-    <div ref={containerRef} className={`relative bg-landing-bg text-landing-text ${isMobile ? 'h-[600vh]' : 'h-[1200vh]'}`}>
+    <div ref={containerRef} className={`relative bg-landing-bg text-landing-text ${isMobile ? 'h-[1200vh]' : 'h-[2400vh]'}`}>
       {/* The Sticky Viewport */}
       <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center pt-16">
         <AnimatedBackground />
@@ -277,7 +287,7 @@ const LandingPage: React.FC = () => {
           {/* HERO SECTION */}
           <motion.div 
             className="absolute inset-0 flex flex-col items-center md:justify-center justify-start overflow-y-auto overflow-x-hidden pointer-events-auto pt-24 pb-10 custom-scrollbar"
-            style={{ display: heroDisplay, opacity: heroOpacity, scale: heroScale }}
+            style={{ display: heroDisplay, opacity: heroOpacity, scale: heroScale, rotateX: heroRotateX, translateY: heroTranslateY, perspective: "1500px" }}
           >
             <div className="w-full scale-90 md:scale-100 mt-[-10vh]">
               <Hero />
@@ -287,7 +297,7 @@ const LandingPage: React.FC = () => {
           {/* BENTO GRID SECTION */}
           <motion.div 
             className="absolute inset-0 flex flex-col items-center md:justify-center justify-start overflow-y-auto overflow-x-hidden pointer-events-auto pt-24 pb-10 custom-scrollbar"
-            style={{ display: bentoDisplay, opacity: bentoOpacity, scale: bentoScale }}
+            style={{ display: bentoDisplay, opacity: bentoOpacity, scale: bentoScale, rotateX: bentoRotateX, translateY: bentoTranslateY, perspective: "1500px" }}
           >
             <div className="w-full pt-10 scale-90 md:scale-100">
               <BentoGrid />
@@ -297,7 +307,7 @@ const LandingPage: React.FC = () => {
           {/* HOW TO USE SECTION */}
           <motion.div 
             className="absolute inset-0 flex flex-col items-center md:justify-center justify-start overflow-y-auto overflow-x-hidden pointer-events-auto pt-24 pb-10 custom-scrollbar"
-            style={{ display: howToDisplay, opacity: howToOpacity, scale: howToScale }}
+            style={{ display: howToDisplay, opacity: howToOpacity, scale: howToScale, rotateX: howToRotateX, translateY: howToTranslateY, perspective: "1500px" }}
           >
             <div className="w-full scale-90 md:scale-100">
               <HowToUse />
@@ -307,7 +317,7 @@ const LandingPage: React.FC = () => {
           {/* DASHBOARD SECTION */}
           <motion.div 
             className="absolute inset-0 flex flex-col items-center md:justify-center justify-start overflow-y-auto overflow-x-hidden pointer-events-auto pt-24 pb-10 custom-scrollbar"
-            style={{ display: dashDisplay, opacity: dashOpacity, scale: dashScale, rotateX: dashRotateX, perspective: "1500px" }}
+            style={{ display: dashDisplay, opacity: dashOpacity, scale: dashScale, rotateX: dashRotateX, translateY: dashTranslateY, perspective: "1500px" }}
           >
             <div className="w-full scale-[0.85] origin-center">
               <DashboardPreview />
@@ -317,7 +327,7 @@ const LandingPage: React.FC = () => {
           {/* TEAM SECTION */}
           <motion.div 
             className="absolute inset-0 flex flex-col items-center md:justify-center justify-start overflow-y-auto overflow-x-hidden pointer-events-auto pt-24 pb-10 custom-scrollbar"
-            style={{ display: teamDisplay, opacity: teamOpacity, scale: teamScale }}
+            style={{ display: teamDisplay, opacity: teamOpacity, scale: teamScale, rotateX: teamRotateX, translateY: teamTranslateY, perspective: "1500px" }}
           >
             <div className="w-full scale-90 md:scale-100">
               <Team />
@@ -327,7 +337,7 @@ const LandingPage: React.FC = () => {
           {/* FINAL METRICS & CTA SECTION */}
           <motion.div 
             className="absolute inset-0 flex flex-col items-center md:justify-center justify-start overflow-y-auto overflow-x-hidden pointer-events-auto pt-24 pb-10 custom-scrollbar"
-            style={{ display: finalDisplay, opacity: finalOpacity, scale: finalScale }}
+            style={{ display: finalDisplay, opacity: finalOpacity, scale: finalScale, rotateX: finalRotateX, translateY: finalTranslateY, perspective: "1500px" }}
           >
             <div className="w-full mt-20 pb-20 scale-90 md:scale-100">
               <Metrics />
