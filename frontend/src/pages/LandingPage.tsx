@@ -120,7 +120,7 @@ const SpaceGutter = () => {
 // Spherical Network zooming overlay
 const SphericalNetworkOverlay = ({ progress, isMobile }: { progress: any; isMobile: boolean }) => {
   // Use SVG viewBox for infinite-resolution zoom on desktop, CSS scale on mobile for performance
-  const maxScale = isMobile ? 3 : 15;
+  const maxScale = isMobile ? 4.5 : 15;
   const scale = useTransform(progress, [0, 1], [0.8, maxScale]);
   
   const viewBox = useTransform(progress, (p: number) => {
@@ -145,7 +145,7 @@ const SphericalNetworkOverlay = ({ progress, isMobile }: { progress: any; isMobi
       }}
     >
       <motion.svg 
-        viewBox={isMobile ? undefined : viewBox} 
+        viewBox={isMobile ? "0 0 800 800" : viewBox} 
         className="w-[100vw] h-[100vw] max-w-[800px] max-h-[800px] text-[#00E5FF] opacity-30"
         style={{ willChange: "auto" }}
       >
@@ -223,44 +223,50 @@ const LandingPage: React.FC = () => {
   const entryRotate = isMobile ? -12 : -22;
   const exitRotate = isMobile ? 12 : 22;
   const entryY = isMobile ? 35 : 70;
-  const exitY = isMobile ? -35 : -70;  // --- Hero Animations (0 to 0.15) ---
+  const exitY = isMobile ? -35 : -70;
+  
+  // Scaling bounds to prevent text clipping while showing full zoom transitions
+  const entryScale = isMobile ? 0.96 : 0.95;
+  const exitScale = isMobile ? 1.06 : 1.10;
+
+  // --- Hero Animations (0 to 0.15) ---
   const heroOpacity = useTransform(smoothProgress, [0, 0.1, 0.15], [1, 1, 0]);
-  const heroScale = useTransform(smoothProgress, [0, 0.15], [1, isMobile ? 1 : 1.1]); 
+  const heroScale = useTransform(smoothProgress, [0, 0.15], [1, exitScale]); 
   const heroRotateX = useTransform(smoothProgress, [0, 0.15], [0, exitRotate]);
   const heroTranslateY = useTransform(smoothProgress, [0, 0.15], [0, exitY]);
   const heroDisplay = useTransform(smoothProgress, [0, 0.15, 0.16], ["flex", "flex", "none"]);
 
   // --- Bento Grid Animations (0.17 to 0.32) ---
   const bentoOpacity = useTransform(smoothProgress, [0.16, 0.19, 0.30, 0.33], [0, 1, 1, 0]);
-  const bentoScale = useTransform(smoothProgress, [0.17, 0.20, 0.29, 0.32], [isMobile ? 1 : 0.95, 1, 1, isMobile ? 1 : 1.05]);
+  const bentoScale = useTransform(smoothProgress, [0.17, 0.20, 0.29, 0.32], [entryScale, 1, 1, exitScale]);
   const bentoRotateX = useTransform(smoothProgress, [0.17, 0.20, 0.29, 0.32], [entryRotate, 0, 0, exitRotate]);
   const bentoTranslateY = useTransform(smoothProgress, [0.17, 0.20, 0.29, 0.32], [entryY, 0, 0, exitY]);
   const bentoDisplay = useTransform(smoothProgress, [0.15, 0.16, 0.32, 0.33], ["none", "flex", "flex", "none"]);
 
   // --- How To Use Animations (0.34 to 0.49) ---
   const howToOpacity = useTransform(smoothProgress, [0.33, 0.36, 0.47, 0.50], [0, 1, 1, 0]);
-  const howToScale = useTransform(smoothProgress, [0.34, 0.37, 0.46, 0.49], [isMobile ? 1 : 0.95, 1, 1, isMobile ? 1 : 1.05]);
+  const howToScale = useTransform(smoothProgress, [0.34, 0.37, 0.46, 0.49], [entryScale, 1, 1, exitScale]);
   const howToRotateX = useTransform(smoothProgress, [0.34, 0.37, 0.46, 0.49], [entryRotate, 0, 0, exitRotate]);
   const howToTranslateY = useTransform(smoothProgress, [0.34, 0.37, 0.46, 0.49], [entryY, 0, 0, exitY]);
   const howToDisplay = useTransform(smoothProgress, [0.32, 0.33, 0.49, 0.50], ["none", "flex", "flex", "none"]);
 
   // --- Dashboard Animations (0.51 to 0.66) ---
   const dashOpacity = useTransform(smoothProgress, [0.50, 0.53, 0.64, 0.67], [0, 1, 1, 0]);
-  const dashScale = useTransform(smoothProgress, [0.51, 0.54, 0.63, 0.66], [isMobile ? 1 : 0.95, 1, 1, isMobile ? 1 : 1.05]);
+  const dashScale = useTransform(smoothProgress, [0.51, 0.54, 0.63, 0.66], [entryScale, 1, 1, exitScale]);
   const dashRotateX = useTransform(smoothProgress, [0.51, 0.54, 0.63, 0.66], [entryRotate, 0, 0, exitRotate]);
   const dashTranslateY = useTransform(smoothProgress, [0.51, 0.54, 0.63, 0.66], [entryY, 0, 0, exitY]);
   const dashDisplay = useTransform(smoothProgress, [0.49, 0.50, 0.66, 0.67], ["none", "flex", "flex", "none"]);
 
   // --- Team Animations (0.68 to 0.83) ---
   const teamOpacity = useTransform(smoothProgress, [0.67, 0.70, 0.81, 0.84], [0, 1, 1, 0]);
-  const teamScale = useTransform(smoothProgress, [0.68, 0.71, 0.80, 0.83], [isMobile ? 1 : 0.95, 1, 1, isMobile ? 1 : 1.05]);
+  const teamScale = useTransform(smoothProgress, [0.68, 0.71, 0.80, 0.83], [entryScale, 1, 1, exitScale]);
   const teamRotateX = useTransform(smoothProgress, [0.68, 0.71, 0.80, 0.83], [entryRotate, 0, 0, exitRotate]);
   const teamTranslateY = useTransform(smoothProgress, [0.68, 0.71, 0.80, 0.83], [entryY, 0, 0, exitY]);
   const teamDisplay = useTransform(smoothProgress, [0.66, 0.67, 0.83, 0.84], ["none", "flex", "flex", "none"]);
 
   // --- Metrics & CTA Animations (0.85 to 1) ---
   const finalOpacity = useTransform(smoothProgress, [0.84, 0.87, 1], [0, 1, 1]);
-  const finalScale = useTransform(smoothProgress, [0.85, 0.88, 1], [isMobile ? 1 : 0.95, 1, 1]);
+  const finalScale = useTransform(smoothProgress, [0.85, 0.88, 1], [entryScale, 1, 1]);
   const finalRotateX = useTransform(smoothProgress, [0.85, 0.88, 1], [entryRotate, 0, 0]);
   const finalTranslateY = useTransform(smoothProgress, [0.85, 0.88, 1], [entryY, 0, 0]);
   const finalDisplay = useTransform(smoothProgress, [0.83, 0.84], ["none", "flex"]);
