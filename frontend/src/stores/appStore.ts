@@ -1,6 +1,14 @@
 import { create } from 'zustand';
 import { checkService, ragService, systemService } from '../services/api';
 
+export interface ThreatIntelligenceData {
+  retrieval_status: string;
+  query: string;
+  retrieved_documents: any[];
+  retrieved_evidence: string[];
+  evidence_strength: string;
+}
+
 export interface AnalysisResult {
   scan_id: string;
   timestamp: string;
@@ -16,11 +24,12 @@ export interface AnalysisResult {
     confidence_score: number;
     method: string;
   };
-  explainability: {
+  detection_evidence: {
     shap_values: Record<string, number>;
     evidence_trace: string[];
-    human_readable_explanation: string;
   };
+  threat_intelligence: ThreatIntelligenceData;
+  llm_explanation: string;
   graph_available: boolean;
 }
 

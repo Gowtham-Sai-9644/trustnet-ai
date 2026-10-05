@@ -56,6 +56,7 @@ interface Case {
   riskIndicators: string[];
   timeline: TimelineEvent[];
   evidence: EvidenceFile[];
+    threat_intelligence?: any;
 }
 
 export const InvestigationPage: React.FC = () => {
@@ -976,3 +977,6 @@ export const InvestigationPage: React.FC = () => {
 };
 
 export default InvestigationPage;
+
+
+

@@ -3,43 +3,45 @@ from typing import Dict, List, Any
 class ExplainabilityService:
     def calculate_feature_attribution(self, url_prob: float, nlp_prob: float, graph_prob: float) -> Dict[str, float]:
         """
-        Calculates feature impacts on the meta model output dynamically based on actual scores.
+        Calculates direct deterministic attribution rather than faking SHAP distributions.
+        Returns the exact calculated risk contributions mapped to schema.
         """
-        shap_vals = {}
+        attributions = {}
         total_risk = url_prob + nlp_prob + graph_prob
         
         if total_risk == 0:
-            shap_vals["base_value"] = 0.05
-            return shap_vals
+            return {"no_evidence_detected": 1.0}
             
+        # We preserve the schema keys ("url_lexical_risk") to avoid breaking frontend mapping, 
+        # but the logic is now strictly proportional to the actual heuristic trigger weight.
         if url_prob > 0.0:
-            shap_vals["url_lexical_risk"] = round(url_prob / total_risk, 3)
+            attributions["url_lexical_risk"] = round(url_prob / total_risk, 3)
         if graph_prob > 0.0:
-            shap_vals["graph_centrality_risk"] = round(graph_prob / total_risk, 3)
+            attributions["graph_centrality_risk"] = round(graph_prob / total_risk, 3)
         if nlp_prob > 0.0:
-            shap_vals["nlp_lure_risk"] = round(nlp_prob / total_risk, 3)
+            attributions["nlp_lure_risk"] = round(nlp_prob / total_risk, 3)
             
-        return shap_vals
+        return attributions
 
-    def generate_explanation(self, shap_values: Dict[str, float], evidence_trace: List[str]) -> str:
+    def generate_explanation(self, attributions: Dict[str, float], evidence_trace: List[str]) -> str:
         """
-        Translates raw SHAP weights and graph hops into a concise human-readable narrative.
+        Translates real feature attributions and graph hops into a concise narrative.
         """
         reasons = []
         
-        if shap_values.get("nlp_lure_risk", 0) > 0.30:
-            reasons.append("the messaging structure uses urgent lottery or prize-claim phrasing")
-        if shap_values.get("graph_centrality_risk", 0) > 0.30:
-            reasons.append("the payment identifier is linked to a cluster of recent complaints")
-        if shap_values.get("url_lexical_risk", 0) > 0.30:
-            reasons.append("the domain uses phishing keywords, brand impersonation, or suspicious top-level domains")
+        if attributions.get("nlp_lure_risk", 0) > 0.20:
+            reasons.append("suspicious NLP language indicators were detected")
+        if attributions.get("graph_centrality_risk", 0) > 0.20:
+            reasons.append("structural or contextual flags were found in the UPI/Phone identifier")
+        if attributions.get("url_lexical_risk", 0) > 0.20:
+            reasons.append("the domain exhibited typosquatting, brand impersonation, or high entropy")
             
         if not reasons:
-            reasons.append("no significant scam signatures were identified in this query")
+            return "No suspicious indicators were identified based on the provided inputs."
             
-        explanation = "Scam risk is heightened because: " + ", and ".join(reasons) + "." if "no significant" not in reasons[0] else reasons[0]
+        explanation = "Threat assessment influenced by: " + "; ".join(reasons) + "."
         if evidence_trace:
-            explanation += f" Graph analysis traced {len(evidence_trace)} direct path connections back to reported fraud networks."
+            explanation += f" Graph analysis traced {len(evidence_trace)} path connections."
             
         return explanation
 

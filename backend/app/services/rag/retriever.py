@@ -11,6 +11,8 @@ class LocalDocumentRetriever:
         self._initialized = False
         self.persist_dir = "datasets/processed/chroma_db"
         self.local_json_path = os.path.join(self.persist_dir, "local_store.json")
+        # Ensure threshold is configurable via env (default 0.15 for TF-IDF since exact match overlaps vary)
+        self.threshold = float(os.environ.get("RAG_SIMILARITY_THRESHOLD", "0.15"))
 
     def initialize_chromadb(self, texts: List[str], metadatas: List[Dict[str, Any]]):
         os.makedirs(self.persist_dir, exist_ok=True)
@@ -28,18 +30,7 @@ class LocalDocumentRetriever:
         except Exception as e:
             print(f"ChromaDB not available, using persistent local JSON fallback store: {e}")
             
-            # Load from persistent JSON store if exists
-            if os.path.exists(self.local_json_path):
-                try:
-                    with open(self.local_json_path, "r", encoding="utf-8") as f:
-                        self.documents = json.load(f)
-                    self._initialized = True
-                    print(f"Loaded {len(self.documents)} persistent documents from local JSON store.")
-                    return
-                except Exception as ex:
-                    print(f"Failed to read local persistent store: {ex}")
-
-            # If store doesn't exist or failed to load, write it
+            # Always re-index documents to catch new files and updates
             local_embedder.fit_tfidf(texts, force=True)
             self.documents = []
             for t, meta in zip(texts, metadatas):
@@ -72,14 +63,19 @@ class LocalDocumentRetriever:
             
         if self._vector_store:
             try:
-                docs = self._vector_store.similarity_search(query, k=k)
-                return [
-                    {
-                        "text": doc.page_content,
-                        "metadata": doc.metadata
-                    }
-                    for doc in docs
-                ]
+                # With chromadb, Langchain similarity search does not natively return scores without similarity_search_with_score
+                docs_with_scores = self._vector_store.similarity_search_with_score(query, k=k)
+                results = []
+                for doc, score in docs_with_scores:
+                    # Chroma distances are often L2. Smaller is better.
+                    # We will just map it roughly to relevance or fallback if thresholding is tricky in pure L2
+                    if score <= (1.0 - self.threshold): # Assuming cosine distance
+                        results.append({
+                            "text": doc.page_content,
+                            "metadata": doc.metadata,
+                            "relevance_score": round(1.0 - score, 3)
+                        })
+                return results
             except Exception as e:
                 print(f"ChromaDB search failed, falling back to local list: {e}")
 
@@ -92,13 +88,16 @@ class LocalDocumentRetriever:
             norm_q = np.linalg.norm(query_emb)
             norm_d = np.linalg.norm(doc_emb)
             score = dot / (norm_q * norm_d) if (norm_q > 0 and norm_d > 0) else 0.0
-            scores.append((score, doc))
+            
+            if score >= self.threshold:
+                scores.append((score, doc))
             
         scores.sort(key=lambda x: x[0], reverse=True)
         return [
             {
                 "text": item[1]["text"],
-                "metadata": item[1]["metadata"]
+                "metadata": item[1]["metadata"],
+                "relevance_score": round(item[0], 3)
             }
             for item in scores[:k]
         ]

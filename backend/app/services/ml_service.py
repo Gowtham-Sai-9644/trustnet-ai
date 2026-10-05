@@ -1,212 +1,199 @@
 import hashlib
 from typing import Dict, Any, Tuple
-from app.schemas.analyze_schema import CalibrationResult, ShapAttributions
+from app.schemas.analyze_schema import CalibrationResult, DeterministicExplainability
 
 class MLService:
-    def predict_url(self, url: str) -> Tuple[float, Dict[str, float]]:
+    def evaluate_evidence_hierarchy(self, structural_flags: int, contextual_flags: int, direct_match: bool) -> Tuple[float, str]:
         """
-        Input: 
-            url (str): Target URL string.
-        Output:
-            Tuple containing:
-            - probability (float): Model score between 0.0 and 1.0.
-            - lexical_features (Dict[str, float]): Computed feature values.
+        Calculates risk score based on the strict Evidence Hierarchy.
+        Level 1: Direct evidence (threat intelligence match) -> 0.90+
+        Level 2: Strong behavioral indicators (structural + contextual) -> 0.60-0.85
+        Level 3: Weak indicators (single keyword or structure) -> 0.20-0.45
+        Level 4: Unknown / Insufficient Evidence -> 0.05
         """
-        url_lower = url.lower()
+        if direct_match:
+            return 0.95, "Level 1 - Direct Evidence"
+        if structural_flags >= 1 and contextual_flags >= 1:
+            score = min(0.60 + (structural_flags * 0.1) + (contextual_flags * 0.05), 0.85)
+            return round(score, 3), "Level 2 - Strong Indicators"
+        if structural_flags >= 1 or contextual_flags >= 1:
+            score = min(0.20 + (structural_flags * 0.1) + (contextual_flags * 0.05), 0.45)
+            return round(score, 3), "Level 3 - Weak Indicators"
+        return 0.05, "Level 4 - Insufficient Evidence"
+
+    def predict_url(self, url: str) -> Tuple[float, Dict[str, Any], str]:
+        url_lower = url.lower().strip()
         domain_part = url_lower.replace("http://", "").replace("https://", "").split("/")[0]
         
-        # 1. Safe domain allowlist
         safe_domains = [
-            "google.com", "microsoft.com", "amazon.in", "amazon.com",
-            "github.com", "wikipedia.org", "linkedin.com", "facebook.com",
-            "twitter.com", "x.com", "instagram.com", "apple.com", "netflix.com"
+            "google.com", "microsoft.com", "amazon.in", "amazon.com", "github.com",
+            "wikipedia.org", "linkedin.com", "facebook.com", "twitter.com", "x.com",
+            "instagram.com", "apple.com", "netflix.com", "yahoo.com", "youtube.com",
+            "reddit.com", "flipkart.com", "irctc.co.in", "onlinesbi.sbi"
         ]
         
         if any(domain_part == safe or domain_part.endswith("." + safe) for safe in safe_domains):
-            return 0.05, {"is_safe": 1.0, "risk_factors": 0.0}
+            return 0.05, {"is_safe": 1.0, "evidence_strength": "Level 4 - Insufficient Evidence", "risk_factors": 0.0}, "DOMAIN" 
 
-        # 2. Risk Heuristics
-        brand_impersonation = ["sbi", "hdfc", "icici", "axis", "paytm", "phonepe", "gpay", "googlepay", "amazon", "flipkart", "apple", "netflix"]
-        credential_keywords = ["login", "verify", "verification", "secure", "account", "update", "kyc", "otp", "password", "auth", "signin"]
-        scam_keywords = ["reward", "lottery", "refund", "prize", "claim", "urgent", "winner", "cashback", "free"]
-        suspicious_tlds = [".xyz", ".win", ".cfd", ".top", ".click", ".loan", ".gq", ".tk", ".cc", ".biz"]
-        safe_tlds = [".com", ".org", ".net", ".edu", ".gov", ".co.in", ".in", ".co.uk"]
-
-        risk_score = 0.15 # Base risk
+        brand_targets = ["sbi", "hdfc", "icici", "axis", "paytm", "phonepe", "gpay", "google", "amazon", "flipkart", "apple", "netflix"]
+        urgency_kws = ["login", "verify", "verification", "secure", "account", "update", "kyc", "otp", "password", "auth"]
+        scam_kws = ["reward", "lottery", "refund", "prize", "claim", "urgent", "winner", "cashback"]
+        suspicious_tlds = [".xyz", ".win", ".cfd", ".top", ".click", ".loan", ".gq", ".tk"]
         
-        # Check TLD
-        if any(domain_part.endswith(tld) for tld in suspicious_tlds):
-            risk_score += 0.45
-        elif any(domain_part.endswith(tld) for tld in safe_tlds):
-            risk_score -= 0.10 # Trusted TLD bonus
-            
-        # Check for IP address instead of domain
         import re
+        import math
+        
+        structural_flags = 0
+        contextual_flags = 0
+        direct_match = False
+        
         if re.match(r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$", domain_part.split(':')[0]):
-            risk_score += 0.50 # Direct IP is highly suspicious
+            structural_flags += 2
+        if any(domain_part.endswith(tld) for tld in suspicious_tlds):
+            structural_flags += 1
             
-        # Check keywords
-        has_brand = any(brand in url_lower for brand in brand_impersonation)
-        has_cred = any(cred in url_lower for cred in credential_keywords)
-        has_scam = any(scam in url_lower for scam in scam_keywords)
-        
-        if has_brand:
-            risk_score += 0.35
-        if has_cred:
-            risk_score += 0.35
-        if has_scam:
-            risk_score += 0.30
+        entropy = sum(- (domain_part.count(c) / len(domain_part)) * math.log2(domain_part.count(c) / len(domain_part)) for c in set(domain_part))
+        if entropy > 4.0:
+            structural_flags += 1
             
-        # Heavy penalty for combining brand + credential words on a non-allowlisted domain
-        if has_brand and has_cred:
-            risk_score += 0.25
-
-        # Cap score
-        prob = max(0.05, min(risk_score, 0.98))
+        dash_count = domain_part.count("-")
+        dot_count = domain_part.count(".")
+        if dash_count >= 2: structural_flags += 1
+        if dot_count >= 3: structural_flags += 1
+            
+        has_brand = any(brand in domain_part for brand in brand_targets)
+        has_urgency = any(urg in url_lower for urg in urgency_kws)
+        has_scam = any(scam in url_lower for scam in scam_kws)
         
+        if has_brand: contextual_flags += 1
+        if has_urgency: contextual_flags += 1
+        if has_scam: contextual_flags += 2
+        
+        risk_score, strength = self.evaluate_evidence_hierarchy(structural_flags, contextual_flags, direct_match)
+        
+        input_type = "URL"
+        if re.match(r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$", domain_part.split(':')[0]):
+            input_type = "IP"
+        elif "/" not in url.replace("http://", "").replace("https://", ""):
+            input_type = "DOMAIN"
+            
         features = {
             "length": float(len(url)),
-            "dots_count": float(domain_part.count('.')),
-            "entropy": 3.5 + (len(url) % 5) / 10.0,
-            "is_ip": 1.0 if re.match(r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$", domain_part.split(':')[0]) else 0.0
+            "entropy": round(entropy, 2),
+            "evidence_strength": strength,
+            "structural_flags": structural_flags,
+            "contextual_flags": contextual_flags,
+            "is_typosquat": dash_count >= 2,
+            "has_scam": has_scam,
+            "has_urgency": has_urgency,
+            "suspicious_tld": any(domain_part.endswith(tld) for tld in suspicious_tlds)
         }
-        return prob, features
+        return risk_score, features, input_type
 
-    def predict_message(self, text: str) -> Tuple[str, Dict[str, float]]:
-        """
-        Input: 
-            text (str): Incoming message lure string.
-        Output:
-            Tuple containing:
-            - predicted_category (str): Target classification label.
-            - probabilities (Dict[str, float]): Category distributions.
-        """
+    def predict_message(self, text: str) -> Tuple[str, Dict[str, Any]]:
         categories = [
             "Fake Job Scam", "Fake KYC Scam", "Lottery Scam", 
             "Marketplace Scam", "Investment Scam", "Advance Payment Scam",
             "Safe Communication"
         ]
         
-        # Calculate scores deterministically based on keyword density
         text_lower = text.lower()
+        contextual_flags = 0
+        structural_flags = 0
         
-        scores = {cat: 0.05 for cat in categories} # Base noise
+        if any(kw in text_lower for kw in ["kyc", "account suspended", "blocked", "update account"]): contextual_flags += 2
+        if any(kw in text_lower for kw in ["lottery", "won", "prize", "free gift"]): contextual_flags += 2
+        if any(kw in text_lower for kw in ["part-time", "work from home", "salary"]): contextual_flags += 1
+        if any(kw in text_lower for kw in ["investment", "profit", "crypto", "returns"]): contextual_flags += 1
         
-        if "kyc" in text_lower or "paytm" in text_lower or "block" in text_lower or "account suspended" in text_lower:
-            scores["Fake KYC Scam"] += 0.80
-        if "lottery" in text_lower or "won" in text_lower or "prize" in text_lower or "free gift" in text_lower:
-            scores["Lottery Scam"] += 0.85
-        if "job" in text_lower or "salary" in text_lower or "part-time" in text_lower or "work from home" in text_lower:
-            scores["Fake Job Scam"] += 0.75
-        if "olx" in text_lower or "advance" in text_lower or "shipping" in text_lower or "delivery fee" in text_lower:
-            scores["Marketplace Scam"] += 0.70
-        if "investment" in text_lower or "profit" in text_lower or "returns" in text_lower or "crypto" in text_lower:
-            scores["Investment Scam"] += 0.80
+        # Urgency + Action combination
+        has_urgency = any(kw in text_lower for kw in ["urgent", "immediately", "today", "within 24 hours"])
+        has_action = any(kw in text_lower for kw in ["pay", "click", "otp", "password", "pin", "verify"])
         
-        if "urgent" in text_lower or "immediately" in text_lower or "pay" in text_lower:
-            scores["Advance Payment Scam"] += 0.60
+        if has_urgency: structural_flags += 1
+        if has_action: structural_flags += 1
+        
+        # Contextual negations (legitimate context)
+        if "delivery" in text_lower or "bill" in text_lower or "meeting" in text_lower or "coffee" in text_lower:
+            contextual_flags = 0
+            structural_flags = 0
             
-        # If no significant keywords, it's likely safe communication
-        if max(scores.values()) < 0.20:
+        risk_score, strength = self.evaluate_evidence_hierarchy(structural_flags, contextual_flags, False)
+        
+        scores = {cat: 0.05 for cat in categories}
+        if risk_score > 0.40:
+            if "kyc" in text_lower or "account" in text_lower: scores["Fake KYC Scam"] = risk_score
+            elif "lottery" in text_lower or "prize" in text_lower: scores["Lottery Scam"] = risk_score
+            elif "job" in text_lower or "part-time" in text_lower: scores["Fake Job Scam"] = risk_score
+            elif "investment" in text_lower: scores["Investment Scam"] = risk_score
+            else: scores["Advance Payment Scam"] = risk_score
+        else:
             scores["Safe Communication"] = 0.90
             
-        # Normalize probabilities
         total = sum(scores.values())
         probs = {cat: round(score / total, 3) for cat, score in scores.items()}
-        
-        # Select the category with highest probability
         pred = max(probs, key=probs.get)
         
-        # If the text is extremely short and has no markers, default to safe
-        if len(text.strip()) < 5 and max(probs.values()) < 0.5:
-            pred = "Safe Communication"
-            
-        return pred, probs
+        return pred, {"probabilities": probs, "evidence_strength": strength}
 
-    def predict_graph(self, upi: str, phone: str) -> float:
-        """
-        Input: 
-            upi (str): Payment target UPI ID.
-            phone (str): Sender phone.
-        Output:
-            probability (float): Graph-level risk score using deterministic heuristic.
-        """
+    def predict_graph(self, upi: str, phone: str) -> Tuple[float, str, Dict[str, Any]]:
         if not upi and not phone:
-            return 0.0
+            return 0.05, "Level 4 - Insufficient Evidence", {}
             
-        risk_score = 0.10
+        structural_flags = 0
+        contextual_flags = 0
+        features = {}
         
         if phone:
-            # Check for suspicious country codes or premium numbers
             if phone.startswith("+2") or phone.startswith("+3") or phone.startswith("+8") or phone.startswith("+44"):
-                risk_score += 0.45
-            elif phone.startswith("+91") or phone.startswith("91"):
-                # Standard Indian number base risk
-                risk_score += 0.05
+                structural_flags += 2
+                features["suspicious_country_code"] = True
             if "0000" in phone or "9999" in phone:
-                risk_score += 0.20
+                structural_flags += 1
+                features["sequential_digits"] = True
                 
         if upi:
             upi_lower = upi.lower()
-            suspicious_upi_terms = ["refund", "claim", "prize", "cashback", "support", "kyc", "verify", "paytm", "gpay"]
-            if any(term in upi_lower for term in suspicious_upi_terms):
-                risk_score += 0.60
-            # Common mule handles or temporary UPI providers
-            if upi_lower.endswith("@ybl") or upi_lower.endswith("@ibl") or upi_lower.endswith("@paytm"):
-                risk_score += 0.15 # Just a slight modifier, not conclusive
-            if upi_lower.endswith(".cfd") or upi_lower.endswith(".top"):
-                risk_score += 0.80
+            suspicious_upi_terms = ["refund", "claim", "prize", "cashback", "support", "kyc", "verify", "offer"]
+            
+            username_part = upi_lower.split("@")[0] if "@" in upi_lower else upi_lower
+            if any(term in username_part for term in suspicious_upi_terms):
+                contextual_flags += 1
+                features["refund_lure"] = True
                 
-        return min(risk_score, 0.99)
+            handle = upi_lower.split("@")[1] if "@" in upi_lower else ""
+            if "." in handle and not handle.endswith("sbi") and not handle.endswith("icici"):
+                if handle.endswith(".cfd") or handle.endswith(".top") or handle.endswith(".xyz"):
+                    structural_flags += 2
+                    features["suspicious_vpa"] = True
+                
+        score, strength = self.evaluate_evidence_hierarchy(structural_flags, contextual_flags, False)
+        return score, strength, features
 
     def predict_fusion(self, url_prob: float, nlp_prob: float, graph_prob: float, has_url: bool, has_nlp: bool, has_graph: bool) -> float:
         """
-        Input:
-            url_prob, nlp_prob, graph_prob: Model risks.
-            has_url, has_nlp, has_graph: Modality presence flags.
-        Output:
-            probability (float): Consolidated meta-model scam score.
+        Cross-Modality Correlation: If multiple modalities trigger Level 2+, amplify risk.
         """
-        # Dynamic weighted fusion average based only on present modalities
-        weights = {"url": 0.35, "nlp": 0.40, "graph": 0.25}
-        total_weight = 0.0
-        fused_score = 0.0
+        scores = []
+        if has_url: scores.append(url_prob)
+        if has_nlp: scores.append(nlp_prob)
+        if has_graph: scores.append(graph_prob)
         
-        if has_url:
-            total_weight += weights["url"]
-            fused_score += url_prob * weights["url"]
-        if has_nlp:
-            total_weight += weights["nlp"]
-            fused_score += nlp_prob * weights["nlp"]
-        if has_graph:
-            total_weight += weights["graph"]
-            fused_score += graph_prob * weights["graph"]
-            
-        if total_weight == 0:
-            return 0.0
-            
-        return fused_score / total_weight
+        if not scores: return 0.05
+        
+        base_fusion = sum(scores) / len(scores)
+        strong_signals = sum(1 for s in scores if s >= 0.60)
+        
+        if strong_signals >= 2:
+            return min(base_fusion + 0.20, 0.99) # Amplification due to cross-modality correlation
+        return base_fusion
 
     def calibrate_probability(self, raw_prob: float) -> Tuple[float, float, str]:
         """
-        Input:
-            raw_prob (float): Consolidated raw score.
-        Output:
-            Tuple containing:
-            - calibrated_probability (float)
-            - confidence_score (float)
-            - method (str)
+        No ML calibration model is currently trained, so we return the raw probability.
+        Confidence is explicitly set to 0.0 to prevent hallucinated frontend stats.
         """
-        # Avoid aggressive down-scaling. Ensure high risks stay high.
-        calibrated = raw_prob
-        # Add slight bump for probabilities very close to threshold to match required bounds
-        if raw_prob >= 0.8:
-            calibrated = min(raw_prob + 0.05, 0.99)
-        elif raw_prob <= 0.2:
-            calibrated = max(raw_prob - 0.05, 0.05)
-            
-        confidence = 0.90 + (raw_prob % 0.1)
-        return float(calibrated), float(confidence), "isotonic"
+        return float(raw_prob), 0.0, "not_calibrated"
 
     def predict_linkedin(self, profile_url: str = None, profile_text: str = None, claimed_company: str = None) -> Dict[str, Any]:
         import datetime
@@ -250,14 +237,17 @@ class MLService:
         for kws in lure_keywords.values():
             detected_lures.extend([kw for kw in kws if kw in text_lower])
         
-        # 2. Run Random Forest Inference
-        features = np.array([[f_typosquat, f_sus_tld, f_text_vol, f_off_platform, f_financial, f_urgency, f_fake_hr]])
-        # Predict probability of class 1 (Fake)
-        risk_score = self.linkedin_rf.predict_proba(features)[0][1]
+        # 2. Heuristic Scoring (Replacing missing RF model)
+        risk_score = 0.15 # base
+        if f_typosquat: risk_score += 0.40
+        if f_sus_tld: risk_score += 0.35
+        if f_off_platform: risk_score += 0.25
+        if f_financial: risk_score += 0.30
+        if f_urgency: risk_score += 0.20
+        if f_fake_hr: risk_score += 0.25
         
         # 3. Explainability - Feature Contributions
         risk_indicators = []
-        # In trees, feature importances measure global importance. We'll use a simplified attribution for the specific prediction.
         if f_typosquat: risk_indicators.append("Typosquatting LinkedIn domain detected")
         if f_sus_tld: risk_indicators.append("High-risk TLD detected in profile link")
         if f_off_platform: risk_indicators.append("Off-platform redirection lure detected")
@@ -281,30 +271,9 @@ class MLService:
         is_suspicious = risk_score >= 0.45
         
         explanation = (
-            f"LinkedIn Random Forest Classifier evaluated target '{target}' at a {int(risk_score * 100)}% risk probability ({risk_level}). "
-            + (f"Key ML feature triggers: {'; '.join(risk_indicators)}." if risk_indicators else "No high-risk ML features detected.")
+            f"Heuristic Detection Engine evaluated target '{target}' at a {int(risk_score * 100)}% risk probability ({risk_level}). "
+            + (f"Key heuristic triggers: {'; '.join(risk_indicators)}." if risk_indicators else "No high-risk ML features detected.")
         )
-        
-        now = datetime.datetime.utcnow()
-        t0 = (now - datetime.timedelta(seconds=120)).strftime("%H:%M:%S")
-        t1 = (now - datetime.timedelta(seconds=90)).strftime("%H:%M:%S")
-        t2 = (now - datetime.timedelta(seconds=60)).strftime("%H:%M:%S")
-        t3 = (now - datetime.timedelta(seconds=30)).strftime("%H:%M:%S")
-        t4 = now.strftime("%H:%M:%S")
-        
-        timeline = [
-            {"title": "Target Profile Ingest", "timestamp": t0, "description": f"Ingested LinkedIn target: {target}. Domain status: {'Official LinkedIn' if is_official else 'Non-Official/Typosquat'}.", "type": "INGEST"},
-            {"title": "Domain & WHOIS Validation", "timestamp": t1, "description": f"Domain lexical scan complete. Typosquat risk: {is_typosquat}. SSL & DNS records verified.", "type": "SIGNAL"},
-            {"title": "Recruiter Lure & NLP Entropy", "timestamp": t2, "description": f"Scanned bio text for fake job lures. Detected: {', '.join(detected_lures) if detected_lures else 'None'}.", "type": "CONNECTION"},
-            {"title": "Calibration & Stacking", "timestamp": t3, "description": f"Ensemble model calibrated threat index at {int(risk_score * 100)}%. Risk level: {risk_level}.", "type": "CALIBRATION"},
-            {"title": "Investigation Dispatched", "timestamp": t4, "description": f"Case cataloged as {risk_level}. Evidence hashes stored in audit trail.", "type": "DISPATCH"}
-        ]
-        
-        evidence = [
-            {"name": "linkedin_profile_whois.json", "type": "LOG", "size": "4 KB"},
-            {"name": "lure_nlp_entropy_analysis.log", "type": "TRANSCRIPT", "size": "12 KB"},
-            {"name": "profile_dom_snapshot.png", "type": "SCREENSHOT", "size": "1.4 MB"}
-        ]
         
         return {
             "scan_id": f"LN-{int(now.timestamp())}",
@@ -312,12 +281,12 @@ class MLService:
             "risk_level": risk_level,
             "risk_score": risk_score,
             "is_suspicious": is_suspicious,
-            "domain_analysis": {"is_official": is_official, "is_typosquat": is_typosquat, "url": url},
+            "domain_analysis": {"is_official": is_official, "is_typosquat": f_typosquat, "url": url},
             "lure_analysis": {"detected_lures": detected_lures, "text_length": len(text)},
             "risk_indicators": risk_indicators or ["No critical risk markers found"],
             "explanation": explanation,
-            "forensic_timeline": timeline,
-            "evidence_locker": evidence
+            "forensic_timeline": [],
+            "evidence_locker": []
         }
 
     def predict_qr(self, qr_payload: str = None, qr_image_b64: str = None) -> Dict[str, Any]:
@@ -326,21 +295,43 @@ class MLService:
         import urllib.parse
         import re
         
+        now = datetime.datetime.utcnow()
         decoded_text = (qr_payload or "").strip()
         
         if qr_image_b64 and not decoded_text:
+            import cv2
+            import numpy as np
             try:
                 raw_bytes = base64.b64decode(qr_image_b64.split(",")[-1])
-                urls = re.findall(rb'https?://[^\s<>"]+|upi://pay[^\s<>"]+', raw_bytes)
-                if urls:
-                    decoded_text = urls[0].decode('utf-8', errors='ignore')
+                nparr = np.frombuffer(raw_bytes, np.uint8)
+                img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+                detector = cv2.QRCodeDetector()
+                data, bbox, _ = detector.detectAndDecode(img)
+                if data:
+                    decoded_text = data
                 else:
-                    decoded_text = "upi://pay?pa=merchant-scam-24@ybl&pn=RefundBonus&am=4999&tn=ClaimRefund"
+                    decoded_text = ""
             except Exception:
-                decoded_text = "upi://pay?pa=merchant-scam-24@ybl&pn=RefundBonus&am=4999&tn=ClaimRefund"
+                decoded_text = ""
 
         if not decoded_text:
-            decoded_text = "https://rewards-claim-qr.top/verify"
+            # Return a graceful failure if no QR code could be read
+            now = datetime.datetime.utcnow()
+            return {
+                "scan_id": f"QR-{int(now.timestamp())}",
+                "target": "Unreadable / Empty QR Code",
+                "payload_type": "UNKNOWN",
+                "decoded_content": "",
+                "risk_level": "LOW",
+                "risk_score": 0.0,
+                "is_suspicious": False,
+                "upi_details": None,
+                "url_details": None,
+                "risk_indicators": ["Failed to detect or decode QR code from the provided image."],
+                "explanation": "The image provided did not contain a readable QR code. Analysis could not be performed.",
+                "forensic_timeline": [],
+                "evidence_locker": []
+            }
 
         target = decoded_text[:40] + ("..." if len(decoded_text) > 40 else "")
         risk_score = 0.15
@@ -379,7 +370,7 @@ class MLService:
                 
         elif decoded_lower.startswith("http://") or decoded_lower.startswith("https://"):
             payload_type = "PHISHING_URL"
-            url_prob, lexical = self.predict_url(decoded_text)
+            url_prob, lexical, _ = self.predict_url(decoded_text)
             risk_score = max(risk_score, url_prob)
             url_details = {"url": decoded_text, "lexical": lexical}
             if url_prob > 0.5:
@@ -408,27 +399,6 @@ class MLService:
             + (f"Triggers: {'; '.join(risk_indicators)}." if risk_indicators else "No high-risk payload anomalies found.")
         )
         
-        now = datetime.datetime.utcnow()
-        t0 = (now - datetime.timedelta(seconds=120)).strftime("%H:%M:%S")
-        t1 = (now - datetime.timedelta(seconds=90)).strftime("%H:%M:%S")
-        t2 = (now - datetime.timedelta(seconds=60)).strftime("%H:%M:%S")
-        t3 = (now - datetime.timedelta(seconds=30)).strftime("%H:%M:%S")
-        t4 = now.strftime("%H:%M:%S")
-        
-        timeline = [
-            {"title": "QR Matrix Decoding", "timestamp": t0, "description": f"Decoded QR payload type: {payload_type}. Target payload: {target}.", "type": "INGEST"},
-            {"title": "Payload Heuristics & UPI Scan", "timestamp": t1, "description": f"Analyzed payment parameters / URL safety. Identified {len(risk_indicators)} threat indicators.", "type": "SIGNAL"},
-            {"title": "VPA Graph & Redirection Trace", "timestamp": t2, "description": f"Cross-referenced payload against fraud database. Payload type: {payload_type}.", "type": "CONNECTION"},
-            {"title": "Calibration & Stacking", "timestamp": t3, "description": f"Calibrated risk fusion index at {int(risk_score * 100)}%. Risk Level: {risk_level}.", "type": "CALIBRATION"},
-            {"title": "Case Dispatched to Locker", "timestamp": t4, "description": f"Case logged under {risk_level} threat alert. Cryptographic hash recorded.", "type": "DISPATCH"}
-        ]
-        
-        evidence = [
-            {"name": "qr_matrix_decoded_raw.txt", "type": "LOG", "size": "2 KB"},
-            {"name": "payment_uri_parser.json", "type": "LOG", "size": "6 KB"},
-            {"name": "qr_code_source_image.png", "type": "SCREENSHOT", "size": "890 KB"}
-        ]
-        
         return {
             "scan_id": f"QR-{int(now.timestamp())}",
             "target": target,
@@ -439,10 +409,10 @@ class MLService:
             "is_suspicious": is_suspicious,
             "upi_details": upi_details,
             "url_details": url_details,
-            "risk_indicators": risk_indicators or ["Standard QR payload"],
+            "risk_indicators": risk_indicators or ["Standard QR payload, no threat indicators detected."],
             "explanation": explanation,
-            "forensic_timeline": timeline,
-            "evidence_locker": evidence
+            "forensic_timeline": [],
+            "evidence_locker": []
         }
 
 ml_pipeline = MLService()

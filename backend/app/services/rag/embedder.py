@@ -18,17 +18,17 @@ class LocalEmbedder:
         except Exception as e:
             print(f"HuggingFaceEmbeddings not available (due to PyTorch/Transformers issues), using real TF-IDF vectorizer fallback: {e}")
             self._is_tfidf = True
-            self._vectorizer = TfidfVectorizer(max_features=384, stop_words='english')
+            self._vectorizer = TfidfVectorizer(stop_words='english')
             self._fitted = False
 
     def fit_tfidf(self, texts: List[str], force: bool = False):
         if self._is_tfidf and (force or not getattr(self, "_fitted", False)):
             if texts:
-                self._vectorizer = TfidfVectorizer(max_features=384, stop_words='english')
+                self._vectorizer = TfidfVectorizer(stop_words='english')
                 self._vectorizer.fit(texts)
                 self._fitted = True
             else:
-                self._vectorizer = TfidfVectorizer(max_features=384, stop_words='english')
+                self._vectorizer = TfidfVectorizer(stop_words='english')
                 self._vectorizer.fit(["scam url upi phone block lottery job prize win kyc customer support bank card credentials otp"])
                 self._fitted = True
 
@@ -39,7 +39,7 @@ class LocalEmbedder:
             except Exception as e:
                 print(f"HuggingFace embedding failed, switching to TF-IDF: {e}")
                 self._is_tfidf = True
-                self._vectorizer = TfidfVectorizer(max_features=384, stop_words='english')
+                self._vectorizer = TfidfVectorizer(stop_words='english')
                 self._fitted = False
                 
         if self._is_tfidf:
@@ -47,11 +47,10 @@ class LocalEmbedder:
                 self.fit_tfidf([text])
             try:
                 vec = self._vectorizer.transform([text]).toarray()[0]
-                if np.linalg.norm(vec) == 0:
-                    vec = np.random.normal(0, 0.01, 384)
-                if len(vec) < 384:
-                    vec = np.pad(vec, (0, 384 - len(vec)), 'constant')
                 norm = np.linalg.norm(vec)
+                if norm == 0:
+                    # Return zero vector if no words match
+                    return [0.0] * len(vec)
                 return [float(x) for x in (vec / norm)]
             except Exception as e:
                 print(f"TF-IDF embedding failed: {e}")

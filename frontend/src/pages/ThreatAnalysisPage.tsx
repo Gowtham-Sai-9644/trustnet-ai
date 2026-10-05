@@ -358,7 +358,7 @@ const ThreatAnalysisPage: React.FC = () => {
                       Category: <span className="text-[#00E5FF] font-mono">{currentResult.scam_category}</span>
                     </p>
                     <p className="text-slate-400 text-[10px]">
-                      {currentResult.explainability?.human_readable_explanation || 'Evaluation completed across threat detection models.'}
+                      {currentResult.llm_explanation || 'Evaluation completed across threat detection models.'}
                     </p>
                   </div>
                 </AppCard>
@@ -370,7 +370,7 @@ const ThreatAnalysisPage: React.FC = () => {
                   </span>
 
                   <div className="space-y-2.5 font-mono text-[10px]">
-                    {Object.entries(currentResult.explainability?.shap_values || {}).map(([key, val]) => (
+                    {Object.entries(currentResult.detection_evidence?.shap_values || {}).map(([key, val]) => (
                       <div key={key} className="space-y-1">
                         <div className="flex justify-between text-slate-300">
                           <span className="capitalize">{key.replace(/_/g, ' ')}</span>
@@ -388,13 +388,13 @@ const ThreatAnalysisPage: React.FC = () => {
                 </AppCard>
 
                 {/* Evidence Trace Hops */}
-                {currentResult.explainability?.evidence_trace?.length > 0 && (
+                {currentResult.detection_evidence?.evidence_trace?.length > 0 && (
                   <AppCard className="p-4 space-y-2 font-mono text-[9px]">
                     <span className="text-slate-400 uppercase tracking-wider block border-b border-[#1E293B] pb-2 font-semibold">
                       EVIDENCE GRAPH TRACE HOPS
                     </span>
                     <div className="space-y-1.5 pt-1">
-                      {currentResult.explainability.evidence_trace.map((hop: string, idx: number) => (
+                      {currentResult.detection_evidence.evidence_trace.map((hop: string, idx: number) => (
                         <div key={idx} className="bg-[#050811] p-2 rounded-lg border border-[#1E293B] text-slate-300 font-mono">
                           {hop}
                         </div>

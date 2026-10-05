@@ -1,78 +1,84 @@
+import os
+import json
 from typing import List, Dict, Any
+from openai import OpenAI
 
 class PromptBuilder:
-    def build_qa_response(self, query: str, context_docs: List[Dict[str, Any]]) -> str:
+    def __init__(self):
+        # We will initialize the client dynamically if a key is provided
+        self.api_key = os.environ.get("OPENAI_API_KEY", "")
+        self.client = OpenAI(api_key=self.api_key) if self.api_key else None
+
+    def build_scam_explanation_response(self, query: str, detection_details: Dict[str, Any], context_docs: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
-        Compiles retrieved context blocks into an educational advisory response.
+        Uses an LLM to generate an explanation grounded ONLY in retrieved documents and detection details.
         """
         if not context_docs:
-            return "No official advisories or guidelines were found matching your query. Please cross-reference with official resources like cybercrime.gov.in."
+            return {
+                "explanation": "Insufficient threat intelligence was found. No relevant evidence retrieved.",
+                "prevention_steps": ["Exercise caution", "Verify identities through official channels"],
+                "references": []
+            }
             
-        primary_doc = context_docs[0]["text"]
-        source_name = context_docs[0]["metadata"].get("source", "Advisory Document")
+        retrieved_texts = "\n\n---\n\n".join([f"Source: {d['metadata'].get('source', 'Unknown')}\n{d['text']}" for d in context_docs])
         
-        # Emulate LLM RAG synthesis using context details
-        response = f"### Cyber Threat Advisory Analysis\n\n"
-        response += f"Based on research logs retrieved from `{source_name}`:\n\n"
+        system_prompt = (
+            "You are an explanation layer for a cybersecurity analysis system.\n"
+            "Do not independently decide whether the input is malicious.\n"
+            "Do not invent evidence.\n"
+            "Do not invent sources.\n"
+            "Do not invent threat intelligence.\n"
+            "Explain only the detection evidence and retrieved context provided to you.\n"
+            "If retrieved threat intelligence is unavailable, clearly state that no relevant threat intelligence was retrieved.\n"
+            "Distinguish detected indicators from confirmed threat intelligence.\n"
+            "Do not convert heuristic risk scores into probabilities.\n"
+            "Provide a concise, direct explanation of the threat based ONLY on the context."
+        )
         
-        # Extract sections of document text
-        lines = [line.strip() for line in primary_doc.split("\n") if line.strip()]
-        overview = ""
-        warning_signs = []
-        recommendations = []
+        user_prompt = (
+            f"DETECTION RESULTS:\n"
+            f"{json.dumps(detection_details, indent=2)}\n\n"
+            f"RETRIEVED THREAT INTELLIGENCE:\n"
+            f"{retrieved_texts}\n\n"
+            f"Based on the above, provide a human-readable explanation of the threat."
+        )
         
-        current_sec = None
-        for line in lines:
-            if line.startswith("#"):
-                continue
-            if "Overview" in line:
-                current_sec = "overview"
-                continue
-            elif "Warning Signs" in line:
-                current_sec = "warnings"
-                continue
-            elif "RBI Recommendations" in line or "Prevention Guidance" in line or "Safe Practices" in line:
-                current_sec = "prevention"
-                continue
-                
-            if current_sec == "overview" and not overview:
-                overview = line
-            elif current_sec == "warnings" and line.startswith("*"):
-                warning_signs.append(line.replace("*", "-"))
-            elif current_sec == "prevention" and line.startswith("*"):
-                recommendations.append(line.replace("*", "✔"))
+        if self.client:
+            try:
+                response = self.client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    temperature=0.0
+                )
+                explanation = response.choices[0].message.content
+            except Exception as e:
+                explanation = f"[LLM ERROR: {str(e)}]\n\nBased on retrieved intelligence: {context_docs[0]['text'][:500]}..."
+        else:
+            # Fallback if no API key is provided, so it doesn't break testing, but is still honest.
+            # We simply concatenate the retrieved intelligence into a readable block without pretending an LLM generated it.
+            explanation = (
+                "[Notice: LLM API key not configured. Returning raw retrieved threat intelligence.]\n\n"
+                f"The system detected the following features: {', '.join(detection_details.get('risk_indicators', []))}. "
+                "The following relevant threat intelligence was retrieved:\n\n"
+            )
+            for d in context_docs:
+                src = d['metadata'].get('source', 'Unknown')
+                explanation += f"From {src}:\n{d['text'][:400]}...\n\n"
 
-        if overview:
-            response += f"**Context & Luring Mechanism**:\n{overview}\n\n"
-        if warning_signs:
-            response += f"**Key Threat Indicators**:\n" + "\n".join(warning_signs) + "\n\n"
-        if recommendations:
-            response += f"**Official Safety Advisories & Actions**:\n" + "\n".join(recommendations) + "\n\n"
-            
-        response += "*Disclaimer: This information is sourced from certified guidelines to assist users in identifying pre-transaction scams.*"
-        return response
-
-    def build_scam_explanation_response(self, scam_type: str, context_docs: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """
-        Structures the explanation, steps, and sources for results pages.
-        """
-        qa_ans = self.build_qa_response(scam_type, context_docs)
-        
         steps = [
             "Do not transfer any money or share OTPs.",
-            "Verify caller identity by calling the bank's official support number directly.",
-            "Report the phone number, link, or UPI ID via the TrustNet Reporting console."
+            "Verify caller identity by calling the bank's official support number directly."
         ]
         
-        refs = [
-            "National Cyber Crime Reporting Portal (cybercrime.gov.in)",
-            "RBI Kehta Hai Official Security Awareness advisories"
-        ]
+        refs = [doc["metadata"].get("source", "Unknown") for doc in context_docs]
         
         return {
-            "explanation": qa_ans,
+            "explanation": explanation,
             "prevention_steps": steps,
-            "references": refs
+            "references": list(set(refs))
         }
 
 prompt_builder = PromptBuilder()

@@ -8,7 +8,13 @@ class URLAnalysisRequest(BaseModel):
 class URLAnalysisResponse(BaseModel):
     url: str
     prediction_probability: float
-    lexical_features: Dict[str, float]
+    lexical_features: Dict[str, Any]
+    input_type: str = "URL"
+    risk_level: str = "LOW"
+    risk_indicators: list = []
+    threat_intelligence: dict = {}
+    detection_evidence: dict = {}
+    llm_explanation: str = ""
 
 
 # Message Analysis
@@ -19,6 +25,12 @@ class MessageAnalysisResponse(BaseModel):
     raw_text: str
     category_probabilities: Dict[str, float]
     predicted_category: str
+    input_type: str = "MESSAGE"
+    risk_level: str = "LOW"
+    risk_indicators: list = []
+    threat_intelligence: dict = {}
+    detection_evidence: dict = {}
+    llm_explanation: str = ""
 
 
 # LinkedIn Analysis
@@ -58,6 +70,8 @@ class QRAnalysisResponse(BaseModel):
     url_details: Optional[Dict[str, Any]] = None
     risk_indicators: List[str]
     explanation: str
+    threat_intelligence: Optional[Dict[str, Any]] = None
+    detection_evidence: Optional[Dict[str, Any]] = None
     forensic_timeline: List[Dict[str, Any]]
     evidence_locker: List[Dict[str, Any]]
 
@@ -74,10 +88,17 @@ class CalibrationResult(BaseModel):
     confidence_score: float
     method: str
 
-class ShapAttributions(BaseModel):
-    shap_values: Dict[str, float]
+class DeterministicExplainability(BaseModel):
+    model_config = {"populate_by_name": True}
+    feature_attribution: Dict[str, float] = Field(..., alias="shap_values")
     evidence_trace: list
-    human_readable_explanation: str
+
+class ThreatIntelligence(BaseModel):
+    retrieval_status: str
+    query: str
+    retrieved_documents: list
+    retrieved_evidence: list
+    evidence_strength: str
 
 class FusionAnalysisResponse(BaseModel):
     scan_id: str
@@ -86,6 +107,9 @@ class FusionAnalysisResponse(BaseModel):
     raw_probabilities: Dict[str, float]
     fused_probability: float
     calibration: CalibrationResult
-    explainability: ShapAttributions
+    detection_evidence: DeterministicExplainability
+    threat_intelligence: ThreatIntelligence
+    llm_explanation: str
     graph_available: bool
+
 
