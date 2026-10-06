@@ -36,7 +36,7 @@ const ParallaxReveal = ({ children, offset = 50 }: { children: React.ReactNode, 
 
 const LandingPage: React.FC = () => {
   return (
-    <div className="relative bg-transparent text-white min-h-screen overflow-x-hidden selection:bg-teal-500/30 font-sans">
+    <div className="relative bg-transparent text-app-text min-h-screen overflow-x-hidden selection:bg-teal-500/30 font-sans">
       
       {/* Global Space Background */}
       <SpaceBackground />

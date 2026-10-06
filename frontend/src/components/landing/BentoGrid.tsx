@@ -48,7 +48,7 @@ export const BentoGrid: React.FC = () => {
             whileHover={{ y: -5 }}
             className="md:col-span-1 bg-landing-card border border-landing-border backdrop-blur-md rounded-3xl p-8 border border-landing-border shadow-[0_4px_20px_rgb(0,0,0,0.03)] relative overflow-hidden group"
           >
-             <div className="bg-emerald-100 text-emerald-600 p-3 rounded-xl inline-block mb-4">
+             <div className="bg-blue-100 text-blue-600 p-3 rounded-xl inline-block mb-4">
                 <Network className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-bold text-landing-text mb-3">RAG Search</h3>
@@ -60,10 +60,10 @@ export const BentoGrid: React.FC = () => {
           {/* Card 4 */}
           <motion.div   
             whileHover={{ y: -5 }}
-            className="md:col-span-2 bg-landing-accent text-white rounded-3xl p-8 border border-landing-border shadow-[0_12px_40px_rgb(0,0,0,0.06)] relative overflow-hidden group"
+            className="md:col-span-2 bg-landing-accent text-app-text rounded-3xl p-8 border border-landing-border shadow-[0_12px_40px_rgb(0,0,0,0.06)] relative overflow-hidden group"
           >
              <div className="relative z-10 w-2/3">
-              <div className="bg-landing-surface text-white p-3 rounded-xl inline-block mb-4 border border-landing-border">
+              <div className="bg-landing-surface text-app-text p-3 rounded-xl inline-block mb-4 border border-landing-border">
                 <ShieldCheck className="w-6 h-6" />
               </div>
               <h3 className="text-2xl font-bold mb-3">Trust Score Engine</h3>

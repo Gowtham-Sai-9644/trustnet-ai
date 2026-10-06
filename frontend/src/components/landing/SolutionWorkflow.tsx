@@ -11,7 +11,7 @@ export const SolutionWorkflow: React.FC = () => {
   ];
 
   return (
-    <section className="py-24 px-6 md:px-12 bg-landing-accent text-white relative overflow-hidden" id="solution">
+    <section className="py-24 px-6 md:px-12 bg-landing-accent text-app-text relative overflow-hidden" id="solution">
       {/* Subtle grid background */}
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
       

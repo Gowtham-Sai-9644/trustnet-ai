@@ -22,7 +22,7 @@ export const InteractiveDemo: React.FC = () => {
            <p className="text-landing-muted mb-8 max-w-xl mx-auto">
              Our live demo environment allows you to ingest mock product reviews, query the vector database, and visualize the SHAP explainability values directly in your browser.
            </p>
-           <Link to="/console" className="inline-flex items-center space-x-2 bg-violet-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold transition-colors shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+           <Link to="/console" className="inline-flex items-center space-x-2 bg-violet-600 hover:bg-blue-700 text-app-text px-8 py-4 rounded-xl font-semibold transition-colors shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
              <Play className="w-5 h-5" />
              <span>Launch Full Interactive Console</span>
            </Link>

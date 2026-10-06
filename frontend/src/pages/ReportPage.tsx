@@ -94,13 +94,13 @@ const ReportPage: React.FC = () => {
               <h3 className="font-sans font-bold text-sm text-slate-100 uppercase tracking-wider">
                 Incident Registered
               </h3>
-              <p className="text-slate-400 text-xs font-sans max-w-md leading-relaxed">
-                Reference: <code className="text-[#06B6D4] bg-[#070B14] px-2 py-0.5 border border-[#1E293B] rounded font-bold font-mono">{successResult.report_id}</code>
+              <p className="text-app-muted text-xs font-sans max-w-md leading-relaxed">
+                Reference: <code className="text-[#06B6D4] bg-[#070B14] px-2 py-0.5 border border-app-border rounded font-bold font-mono">{successResult.report_id}</code>
                 <br />The indicators have been linked to the active investigation graph.
               </p>
               <button 
                 onClick={() => setSuccessResult(null)}
-                className="bg-[#06B6D4] hover:bg-[#06B6D4]/90 text-slate-900 px-6 py-2.5 rounded-xl text-xs font-semibold transition-all active:scale-95 mt-2"
+                className="bg-[#06B6D4] hover:bg-[#06B6D4]/90 text-app-btn-text px-6 py-2.5 rounded-xl text-xs font-semibold transition-all active:scale-95 mt-2"
               >
                 Register Another Incident
               </button>
@@ -115,8 +115,8 @@ const ReportPage: React.FC = () => {
             onSubmit={handleSubmit}
           >
             <AppCard className="p-6 space-y-6">
-              <div className="flex justify-between items-center border-b border-[#1E293B] pb-3">
-                <h3 className="font-sans font-semibold text-xs text-slate-300 uppercase tracking-tight flex items-center space-x-1.5">
+              <div className="flex justify-between items-center border-b border-app-border pb-3">
+                <h3 className="font-sans font-semibold text-xs text-app-text uppercase tracking-tight flex items-center space-x-1.5">
                   <AlertOctagon className="w-4 h-4 text-[#EF4444]" />
                   <span>Fraud Incident Intake</span>
                 </h3>
@@ -127,36 +127,36 @@ const ReportPage: React.FC = () => {
                 {/* Coordinates Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] font-mono text-slate-400 uppercase tracking-wider">Scammer UPI</label>
+                    <label className="block text-[10px] font-mono text-app-muted uppercase tracking-wider">Scammer UPI</label>
                     <input
                       type="text"
                       name="reported_upi"
                       value={formData.reported_upi}
                       onChange={handleInputChange}
                       placeholder="e.g. transfer.rewards@ybl"
-                      className="w-full bg-[#0F172A] border border-[#1E293B] rounded-xl px-3.5 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4]/30 transition-all"
+                      className="w-full bg-[#0F172A] border border-app-border rounded-xl px-3.5 py-2.5 text-xs text-app-text placeholder-slate-500 focus:outline-none focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4]/30 transition-all"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] font-mono text-slate-400 uppercase tracking-wider">Scammer Phone</label>
+                    <label className="block text-[10px] font-mono text-app-muted uppercase tracking-wider">Scammer Phone</label>
                     <input
                       type="text"
                       name="reported_phone"
                       value={formData.reported_phone}
                       onChange={handleInputChange}
                       placeholder="e.g. +91 99887 76655"
-                      className="w-full bg-[#0F172A] border border-[#1E293B] rounded-xl px-3.5 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4]/30 transition-all"
+                      className="w-full bg-[#0F172A] border border-app-border rounded-xl px-3.5 py-2.5 text-xs text-app-text placeholder-slate-500 focus:outline-none focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4]/30 transition-all"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] font-mono text-slate-400 uppercase tracking-wider">Domain / URL</label>
+                    <label className="block text-[10px] font-mono text-app-muted uppercase tracking-wider">Domain / URL</label>
                     <input
                       type="text"
                       name="reported_url"
                       value={formData.reported_url}
                       onChange={handleInputChange}
                       placeholder="e.g. https://scam-lotto.net"
-                      className="w-full bg-[#0F172A] border border-[#1E293B] rounded-xl px-3.5 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4]/30 transition-all"
+                      className="w-full bg-[#0F172A] border border-app-border rounded-xl px-3.5 py-2.5 text-xs text-app-text placeholder-slate-500 focus:outline-none focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4]/30 transition-all"
                     />
                   </div>
                 </div>
@@ -164,12 +164,12 @@ const ReportPage: React.FC = () => {
                 {/* Category and Loss amount */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] font-mono text-slate-400 uppercase tracking-wider">Category</label>
+                    <label className="block text-[10px] font-mono text-app-muted uppercase tracking-wider">Category</label>
                     <select
                       name="scam_category"
                       value={formData.scam_category}
                       onChange={handleInputChange}
-                      className="w-full bg-[#0F172A] border border-[#1E293B] rounded-xl px-3 py-2.5 text-xs font-sans text-slate-100 focus:outline-none focus:border-[#06B6D4] transition-all"
+                      className="w-full bg-[#0F172A] border border-app-border rounded-xl px-3 py-2.5 text-xs font-sans text-slate-100 focus:outline-none focus:border-[#06B6D4] transition-all"
                     >
                       {categories.map((cat) => (
                         <option key={cat} value={cat}>{cat}</option>
@@ -177,28 +177,28 @@ const ReportPage: React.FC = () => {
                     </select>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] font-mono text-slate-400 uppercase tracking-wider">Estimated Loss (INR)</label>
+                    <label className="block text-[10px] font-mono text-app-muted uppercase tracking-wider">Estimated Loss (INR)</label>
                     <input
                       type="number"
                       name="loss_amount"
                       value={formData.loss_amount}
                       onChange={handleInputChange}
                       placeholder="e.g. 5000"
-                      className="w-full bg-[#0F172A] border border-[#1E293B] rounded-xl px-3.5 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4]/30 transition-all"
+                      className="w-full bg-[#0F172A] border border-app-border rounded-xl px-3.5 py-2.5 text-xs text-app-text placeholder-slate-500 focus:outline-none focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4]/30 transition-all"
                     />
                   </div>
                 </div>
 
                 {/* Incident Description */}
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-mono text-slate-400 uppercase tracking-wider">Detailed Description</label>
+                  <label className="block text-[10px] font-mono text-app-muted uppercase tracking-wider">Detailed Description</label>
                   <textarea
                     name="description"
                     rows={5}
                     value={formData.description}
                     onChange={handleInputChange}
                     placeholder="Describe the transaction sequence, communication handles used, payment gates, and how the scammer terminated contact..."
-                    className="w-full bg-[#0F172A] border border-[#1E293B] rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4]/30 resize-none font-sans transition-all"
+                    className="w-full bg-[#0F172A] border border-app-border rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4]/30 resize-none font-sans transition-all"
                   />
                 </div>
               </div>
@@ -212,7 +212,7 @@ const ReportPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-[#06B6D4] hover:bg-[#06B6D4]/90 text-slate-900 py-3 rounded-xl text-xs font-semibold flex items-center justify-center space-x-2 transition-all active:scale-[0.99] disabled:opacity-50"
+                className="w-full bg-[#06B6D4] hover:bg-[#06B6D4]/90 text-app-btn-text py-3 rounded-xl text-xs font-semibold flex items-center justify-center space-x-2 transition-all active:scale-[0.99] disabled:opacity-50"
               >
                 {isLoading ? (
                   <>

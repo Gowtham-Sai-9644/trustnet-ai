@@ -22,10 +22,10 @@ export const DashboardPreview: React.FC = () => {
              </div>
              <div className="flex-1 mt-6 flex items-end space-x-4">
                 <div className="w-1/2 bg-violet-500 rounded-t-lg relative group" style={{ height: '80%' }}>
-                   <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-landing-accent text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">80%</div>
+                   <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-landing-accent text-app-text text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">80%</div>
                 </div>
                 <div className="w-1/2 bg-amber-500 rounded-t-lg relative group" style={{ height: '20%' }}>
-                   <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-landing-accent text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">20%</div>
+                   <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-landing-accent text-app-text text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">20%</div>
                 </div>
              </div>
              <div className="flex justify-between mt-4 text-xs font-semibold text-landing-muted opacity-70 uppercase">
@@ -42,7 +42,7 @@ export const DashboardPreview: React.FC = () => {
              {/* Abstract wave or bar visualization */}
              <div className="flex-1 mt-6 flex items-end justify-between space-x-1">
                 {[20, 30, 45, 60, 80, 95, 85, 70, 50, 40, 25, 15].map((h, i) => (
-                  <div key={i} className="flex-1 bg-emerald-400 rounded-t-sm hover:bg-landing-accent transition-colors cursor-pointer" style={{ height: `${h}%` }} />
+                  <div key={i} className="flex-1 bg-blue-400 rounded-t-sm hover:bg-landing-accent transition-colors cursor-pointer" style={{ height: `${h}%` }} />
                 ))}
              </div>
           </div>

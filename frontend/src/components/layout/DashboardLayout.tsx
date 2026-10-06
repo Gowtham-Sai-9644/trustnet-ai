@@ -6,7 +6,7 @@ import { useAppStore } from '../../stores/appStore';
 import { useTheme } from '../../contexts/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SearchCommandPalette } from '../ui/SearchCommandPalette';
-import { BackgroundSlider } from '../landing/BackgroundSlider';
+
 
 interface StreamEvent {
   id: string;
@@ -283,7 +283,7 @@ const DashboardLayout: React.FC = () => {
                 { label: 'NEO4J', ok: systemHealth?.neo4j }
               ].map(s => (
                 <div key={s.label} className="flex items-center gap-1">
-                  <span className={`w-1.5 h-1.5 rounded-full ${s.ok ? 'bg-emerald-400' : 'bg-red-500'}`} />
+                  <span className={`w-1.5 h-1.5 rounded-full ${s.ok ? 'bg-blue-400' : 'bg-red-500'}`} />
                   <span style={{ color: 'var(--theme-text)' }}>{s.label}</span>
                 </div>
               ))}
@@ -314,7 +314,7 @@ const DashboardLayout: React.FC = () => {
         {/* ── Main Content Wrapper ── */}
         <div className="flex-1 relative overflow-hidden bg-transparent">
           {/* ── Dynamic Background (Local to Main) ── */}
-          <BackgroundSlider themeContext={theme} />
+          
           
           <main
             className="absolute inset-0 overflow-y-auto p-6"

@@ -113,11 +113,11 @@ const VivaPage: React.FC = () => {
         
         {/* Card 1: Problem Statement */}
         <AppCard className="p-5 space-y-3">
-          <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest block border-b border-[#1E293B] pb-2 flex items-center space-x-1.5">
+          <span className="text-[10px] font-mono text-app-muted uppercase tracking-widest block border-b border-app-border pb-2 flex items-center space-x-1.5">
             <BookOpen className="w-3.5 h-3.5 text-[#06B6D4]" />
             <span>1. Problem Statement</span>
           </span>
-          <div className="space-y-2 text-slate-300 leading-relaxed font-sans">
+          <div className="space-y-2 text-app-text leading-relaxed font-sans">
             <p>
               Scam detection on digital payment pathways (UPI, phone, and URLs) is heavily constrained by <strong>single-modal limitations</strong> and a <strong>lack of calibrated thresholds</strong>.
             </p>
@@ -129,24 +129,24 @@ const VivaPage: React.FC = () => {
 
         {/* Card 2: Architecture */}
         <AppCard className="p-5 space-y-3">
-          <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest block border-b border-[#1E293B] pb-2 flex items-center space-x-1.5">
+          <span className="text-[10px] font-mono text-app-muted uppercase tracking-widest block border-b border-app-border pb-2 flex items-center space-x-1.5">
             <Layers className="w-3.5 h-3.5 text-[#06B6D4]" />
             <span>2. Architecture Overview</span>
           </span>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 text-center font-mono text-[9px] text-slate-300 pt-1.5">
-            <div className="bg-[#0F172A] border border-[#1E293B] rounded-xl p-2 flex flex-col justify-between h-20">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 text-center font-mono text-[9px] text-app-text pt-1.5">
+            <div className="bg-[#0F172A] border border-app-border rounded-xl p-2 flex flex-col justify-between h-20">
               <span className="text-[#06B6D4] font-bold">INGESTION</span>
-              <p className="text-[8px] text-slate-500">Multimodal features</p>
+              <p className="text-[8px] text-app-muted">Multimodal features</p>
             </div>
-            <div className="bg-[#0F172A] border border-[#1E293B] rounded-xl p-2 flex flex-col justify-between h-20">
+            <div className="bg-[#0F172A] border border-app-border rounded-xl p-2 flex flex-col justify-between h-20">
               <span className="text-[#06B6D4] font-bold">BASE CLF</span>
-              <p className="text-[8px] text-slate-500">XGB, SVM, PageRank</p>
+              <p className="text-[8px] text-app-muted">XGB, SVM, PageRank</p>
             </div>
-            <div className="bg-[#0F172A] border border-[#1E293B] rounded-xl p-2 flex flex-col justify-between h-20">
+            <div className="bg-[#0F172A] border border-app-border rounded-xl p-2 flex flex-col justify-between h-20">
               <span className="text-[#06B6D4] font-bold">STACK FUSION</span>
-              <p className="text-[8px] text-slate-500">XGB Meta Learner</p>
+              <p className="text-[8px] text-app-muted">XGB Meta Learner</p>
             </div>
-            <div className="bg-[#0F172A] border border-[#1E293B] rounded-xl p-2 flex flex-col justify-between h-20">
+            <div className="bg-[#0F172A] border border-app-border rounded-xl p-2 flex flex-col justify-between h-20">
               <span className="text-[#22C55E] font-bold">CALIBRATION</span>
               <p className="text-[8px] text-[#22C55E]/60">Isotonic Mapping</p>
             </div>
@@ -155,22 +155,22 @@ const VivaPage: React.FC = () => {
 
         {/* Card 3: Datasets */}
         <AppCard className="p-5 space-y-3 md:col-span-2">
-          <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest block border-b border-[#1E293B] pb-2 flex items-center space-x-1.5">
+          <span className="text-[10px] font-mono text-app-muted uppercase tracking-widest block border-b border-app-border pb-2 flex items-center space-x-1.5">
             <Database className="w-3.5 h-3.5 text-[#06B6D4]" />
             <span>3. Evaluation Datasets</span>
           </span>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {datasetStats.map((ds, idx) => (
-              <div key={idx} className="bg-[#0F172A] border border-[#1E293B] rounded-xl p-3.5 flex flex-col justify-between hover:border-[#06B6D4]/30 transition-colors">
-                <span className="font-bold text-slate-200">{ds.name}</span>
+              <div key={idx} className="bg-[#0F172A] border border-app-border rounded-xl p-3.5 flex flex-col justify-between hover:border-[#06B6D4]/30 transition-colors">
+                <span className="font-bold text-app-text">{ds.name}</span>
                 <div className="flex justify-between items-end mt-4">
-                  <div className="text-[10px] text-slate-400">
-                    <span className="text-slate-500 uppercase text-[8px] block">Source</span>
+                  <div className="text-[10px] text-app-muted">
+                    <span className="text-app-muted uppercase text-[8px] block">Source</span>
                     {ds.source}
                   </div>
                   <div className="text-right">
                     <span className="text-xl font-bold text-[#06B6D4] block">{ds.count.toLocaleString()}</span>
-                    <span className="text-[8px] text-slate-500 uppercase font-mono">Records</span>
+                    <span className="text-[8px] text-app-muted uppercase font-mono">Records</span>
                   </div>
                 </div>
               </div>
@@ -180,19 +180,19 @@ const VivaPage: React.FC = () => {
 
         {/* Card 4: Models */}
         <AppCard className="p-5 space-y-3 md:col-span-2">
-          <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest block border-b border-[#1E293B] pb-2 flex items-center space-x-1.5">
+          <span className="text-[10px] font-mono text-app-muted uppercase tracking-widest block border-b border-app-border pb-2 flex items-center space-x-1.5">
             <Cpu className="w-3.5 h-3.5 text-[#06B6D4]" />
             <span>4. Model Card Details</span>
           </span>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {modelCards.map((mc, idx) => (
-              <div key={idx} className="bg-[#0F172A] border border-[#1E293B] rounded-xl p-3.5 flex flex-col justify-between space-y-3 hover:border-[#06B6D4]/30 transition-colors">
-                <span className="font-bold text-slate-200">{mc.name}</span>
-                <div className="space-y-1.5 text-[9px] text-slate-500 font-mono">
-                  <div>ARCH: <span className="text-slate-400">{mc.architecture}</span></div>
-                  <div>INPUTS: <span className="text-slate-400">{mc.inputSize}</span></div>
+              <div key={idx} className="bg-[#0F172A] border border-app-border rounded-xl p-3.5 flex flex-col justify-between space-y-3 hover:border-[#06B6D4]/30 transition-colors">
+                <span className="font-bold text-app-text">{mc.name}</span>
+                <div className="space-y-1.5 text-[9px] text-app-muted font-mono">
+                  <div>ARCH: <span className="text-app-muted">{mc.architecture}</span></div>
+                  <div>INPUTS: <span className="text-app-muted">{mc.inputSize}</span></div>
                 </div>
-                <div className="bg-[#070B14] p-2.5 rounded-xl border border-[#1E293B] text-[9px] text-slate-400">
+                <div className="bg-[#070B14] p-2.5 rounded-xl border border-app-border text-[9px] text-app-muted">
                   {mc.useCase}
                 </div>
               </div>
@@ -202,7 +202,7 @@ const VivaPage: React.FC = () => {
 
         {/* Card 5: Results */}
         <AppCard className="p-5 space-y-3 md:col-span-2">
-          <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest block border-b border-[#1E293B] pb-2 flex items-center space-x-1.5">
+          <span className="text-[10px] font-mono text-app-muted uppercase tracking-widest block border-b border-app-border pb-2 flex items-center space-x-1.5">
             <BarChart3 className="w-3.5 h-3.5 text-[#06B6D4]" />
             <span>5. Performance Results</span>
           </span>
@@ -240,15 +240,15 @@ const VivaPage: React.FC = () => {
 
         {/* Card 6: Threats To Validity */}
         <AppCard className="p-5 space-y-3">
-          <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest block border-b border-[#1E293B] pb-2 flex items-center space-x-1.5">
+          <span className="text-[10px] font-mono text-app-muted uppercase tracking-widest block border-b border-app-border pb-2 flex items-center space-x-1.5">
             <AlertTriangle className="w-3.5 h-3.5 text-[#06B6D4]" />
             <span>6. Threats to Validity</span>
           </span>
           <div className="space-y-3">
             {threatsToValidity.map((threat, idx) => (
-              <div key={idx} className="bg-[#0F172A] p-2.5 rounded-xl border border-[#1E293B] space-y-1 hover:border-[#06B6D4]/30 transition-colors">
-                <span className="font-semibold text-slate-200 block">{threat.title}</span>
-                <p className="text-[9px] text-slate-400 pl-3.5 border-l border-[#06B6D4] leading-relaxed uppercase tracking-wide">
+              <div key={idx} className="bg-[#0F172A] p-2.5 rounded-xl border border-app-border space-y-1 hover:border-[#06B6D4]/30 transition-colors">
+                <span className="font-semibold text-app-text block">{threat.title}</span>
+                <p className="text-[9px] text-app-muted pl-3.5 border-l border-[#06B6D4] leading-relaxed uppercase tracking-wide">
                   {threat.mitigation}
                 </p>
               </div>
@@ -258,20 +258,20 @@ const VivaPage: React.FC = () => {
 
         {/* Card 7: Contributions */}
         <AppCard className="p-5 space-y-3">
-          <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest block border-b border-[#1E293B] pb-2 flex items-center space-x-1.5">
+          <span className="text-[10px] font-mono text-app-muted uppercase tracking-widest block border-b border-app-border pb-2 flex items-center space-x-1.5">
             <Award className="w-3.5 h-3.5 text-[#06B6D4]" />
             <span>7. Core Contributions</span>
           </span>
-          <div className="space-y-2 text-slate-300 leading-relaxed font-sans">
-            <div className="flex items-start space-x-2 bg-[#0F172A] p-2.5 rounded-xl border border-[#1E293B]">
+          <div className="space-y-2 text-app-text leading-relaxed font-sans">
+            <div className="flex items-start space-x-2 bg-[#0F172A] p-2.5 rounded-xl border border-app-border">
               <CheckCircle className="w-4 h-4 text-[#22C55E] mt-0.5 flex-shrink-0" />
               <span>Fully reproducible benchmark log structures (model cards, seeds registry).</span>
             </div>
-            <div className="flex items-start space-x-2 bg-[#0F172A] p-2.5 rounded border border-[#1E293B]">
+            <div className="flex items-start space-x-2 bg-[#0F172A] p-2.5 rounded border border-app-border">
               <CheckCircle className="w-4 h-4 text-[#22C55E] mt-0.5 flex-shrink-0" />
               <span>Reduced Expected Calibration Error (ECE) below 0.01% via Isotonic regression.</span>
             </div>
-            <div className="flex items-start space-x-2 bg-[#0F172A] p-2.5 rounded border border-[#1E293B]">
+            <div className="flex items-start space-x-2 bg-[#0F172A] p-2.5 rounded border border-app-border">
               <CheckCircle className="w-4 h-4 text-[#22C55E] mt-0.5 flex-shrink-0" />
               <span>Offline RAG-citations framework providing educational safety checklists.</span>
             </div>
@@ -282,7 +282,7 @@ const VivaPage: React.FC = () => {
 
       {/* Interactive audit QA accordion */}
       <AppCard className="p-5 space-y-4">
-        <h3 className="font-sans font-semibold text-xs text-slate-300 uppercase tracking-tight border-b border-[#1E293B] pb-3 flex items-center space-x-1.5">
+        <h3 className="font-sans font-semibold text-xs text-app-text uppercase tracking-tight border-b border-app-border pb-3 flex items-center space-x-1.5">
           <HelpCircle className="w-4 h-4 text-[#06B6D4]" />
           <span>AUDIT & COMPLIANCE PLAYBOOK</span>
         </h3>
@@ -290,9 +290,9 @@ const VivaPage: React.FC = () => {
           {auditQA.map((qa, index) => {
             const isActive = activeQA === index;
             return (
-              <div key={index} className="bg-[#0F172A] border border-[#1E293B] rounded-xl p-4 space-y-2 hover:border-[#06B6D4]/30 transition-colors">
+              <div key={index} className="bg-[#0F172A] border border-app-border rounded-xl p-4 space-y-2 hover:border-[#06B6D4]/30 transition-colors">
                 <div className="flex justify-between items-start">
-                  <span className="font-semibold text-slate-200 pr-4">{qa.q}</span>
+                  <span className="font-semibold text-app-text pr-4">{qa.q}</span>
                   <button
                     onClick={() => setActiveQA(isActive ? null : index)}
                     className="text-[9px] font-mono text-[#06B6D4] border border-[#06B6D4]/20 px-2 py-0.5 rounded cursor-pointer hover:bg-[#06B6D4]/5"
@@ -306,7 +306,7 @@ const VivaPage: React.FC = () => {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="text-[10px] text-slate-400 leading-relaxed border-t border-[#1E293B] pt-2 mt-2 font-mono uppercase tracking-wide"
+                      className="text-[10px] text-app-muted leading-relaxed border-t border-app-border pt-2 mt-2 font-mono uppercase tracking-wide"
                     >
                       {qa.a}
                     </motion.div>

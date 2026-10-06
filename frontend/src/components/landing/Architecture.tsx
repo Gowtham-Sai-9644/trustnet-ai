@@ -43,7 +43,7 @@ export const Architecture: React.FC = () => {
              {/* Output */}
              <div className="w-full md:w-1/4 space-y-4">
                 <div className="bg-fuchsia-50 border border-purple-200 shadow-[0_4px_20px_rgb(0,0,0,0.03)] p-4 rounded-xl text-center font-bold text-purple-900 mb-2">LLM Engine</div>
-                <div className="bg-emerald-50 border border-emerald-200 shadow-[0_4px_20px_rgb(0,0,0,0.03)] p-4 rounded-xl text-center font-bold text-emerald-900">Trust Score Output</div>
+                <div className="bg-blue-50 border border-blue-200 shadow-[0_4px_20px_rgb(0,0,0,0.03)] p-4 rounded-xl text-center font-bold text-blue-900">Trust Score Output</div>
              </div>
              
           </div>

@@ -11,7 +11,7 @@ export const AppSkeleton: React.FC<AppSkeletonProps> = ({ variant = 'text', clas
     text: "h-3 rounded w-3/4",
     rect: "h-20 rounded-xl w-full",
     circle: "h-10 w-10 rounded-full",
-    card: "p-5 border border-[#1E293B] rounded-2xl bg-[#111827] space-y-3"
+    card: "p-5 border border-app-border rounded-2xl bg-app-card space-y-3"
   };
 
   if (variant === 'card') {

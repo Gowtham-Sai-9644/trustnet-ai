@@ -30,7 +30,7 @@ export const RiskVisualization: React.FC = () => {
               />
             </svg>
             <div className="text-center">
-              <div className="text-6xl font-black text-white">78<span className="text-2xl text-gray-500">%</span></div>
+              <div className="text-6xl font-black text-app-text">78<span className="text-2xl text-gray-500">%</span></div>
               <div className="text-red-500 font-bold tracking-widest mt-1">HIGH</div>
             </div>
           </div>

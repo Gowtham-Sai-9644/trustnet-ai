@@ -41,14 +41,14 @@ export const AppDropdown: React.FC<AppDropdownProps> = ({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full bg-[#0F172A] border border-[#1E293B] rounded-xl px-3.5 py-2 text-slate-200 hover:bg-[#1E293B]/50 focus:outline-none focus:border-[#06B6D4] transition-all"
+        className="flex items-center justify-between w-full bg-[#0F172A] border border-app-border rounded-xl px-3.5 py-2 text-app-text hover:bg-[#1E293B]/50 focus:outline-none focus:border-[#06B6D4] transition-all"
       >
         <span className="truncate">{selectedOption ? selectedOption.label : placeholder}</span>
-        <ChevronDown className={`w-3.5 h-3.5 text-slate-500 ml-2.5 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-3.5 h-3.5 text-app-muted ml-2.5 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-1 w-full min-w-[160px] bg-[#111827] border border-[#1E293B] rounded-xl shadow-xl z-30 py-1 overflow-hidden">
+        <div className="absolute right-0 mt-1 w-full min-w-[160px] bg-app-card border border-app-border rounded-xl shadow-xl z-30 py-1 overflow-hidden">
           {options.map((option) => (
             <button
               key={option.value}
@@ -57,7 +57,7 @@ export const AppDropdown: React.FC<AppDropdownProps> = ({
                 onChange(option.value);
                 setIsOpen(false);
               }}
-              className={`flex items-center w-full px-3.5 py-2 text-left text-slate-300 hover:bg-[#1E293B] hover:text-slate-100 transition-colors ${
+              className={`flex items-center w-full px-3.5 py-2 text-left text-app-text hover:bg-[#1E293B] hover:text-slate-100 transition-colors ${
                 selectedValue === option.value ? 'bg-[#1E293B]/70 text-[#06B6D4] font-semibold' : ''
               }`}
             >

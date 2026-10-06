@@ -19,7 +19,7 @@ export const RagSection: React.FC = () => {
               "Similarity Threshold Filtering",
               "Grounded Narrative Generation"
             ].map((feature, i) => (
-              <div key={i} className="flex items-center gap-4 text-sm font-medium text-white/70">
+              <div key={i} className="flex items-center gap-4 text-sm font-medium text-app-text/70">
                 <div className="w-6 h-px bg-teal-500" /> {feature}
               </div>
             ))}
@@ -45,7 +45,7 @@ export const RagSection: React.FC = () => {
               <div className="w-px h-12 bg-gradient-to-b from-white/20 to-transparent relative">
                 <motion.div animate={{ y: [0, 48] }} transition={{ duration: 1, repeat: Infinity }} className="absolute w-1 h-3 bg-teal-400 left-1/2 -translate-x-1/2 rounded-full" />
               </div>
-              <Database className="w-10 h-10 text-white/40 my-4" />
+              <Database className="w-10 h-10 text-app-text/40 my-4" />
               <div className="w-px h-12 bg-gradient-to-t from-white/20 to-transparent relative">
                 <motion.div animate={{ y: [48, 0] }} transition={{ duration: 1, repeat: Infinity, delay: 0.5 }} className="absolute w-1 h-3 bg-blue-400 left-1/2 -translate-x-1/2 rounded-full" />
               </div>

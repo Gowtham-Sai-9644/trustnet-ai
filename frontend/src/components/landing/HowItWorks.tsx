@@ -32,7 +32,7 @@ export const HowItWorks: React.FC = () => {
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               className="absolute -top-20 left-10 p-4 bg-white/5 border border-white/10 rounded-xl backdrop-blur-md shadow-2xl z-20"
             >
-              <div className="text-[10px] uppercase font-mono text-white/50 mb-2">Lexical Entropy</div>
+              <div className="text-[10px] uppercase font-mono text-app-text/50 mb-2">Lexical Entropy</div>
               <div className="text-xl font-bold font-mono">3.83</div>
             </motion.div>
 
@@ -52,7 +52,7 @@ export const HowItWorks: React.FC = () => {
               className="absolute -bottom-10 right-10 p-6 bg-black border border-white/10 rounded-2xl backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-30"
             >
               <div className="text-[10px] uppercase font-mono text-teal-500 mb-2">Absolute Risk</div>
-              <div className="text-4xl font-bold font-mono">85<span className="text-lg text-white/30">%</span></div>
+              <div className="text-4xl font-bold font-mono">85<span className="text-lg text-app-text/30">%</span></div>
             </motion.div>
           </div>
         </div>

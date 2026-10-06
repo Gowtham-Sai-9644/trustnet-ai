@@ -38,10 +38,10 @@ export const CTA: React.FC = () => {
           viewport={{ once: true }}
           className="w-20 h-20 mx-auto mb-8 bg-gradient-to-br from-teal-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-teal-500/20"
         >
-          <ScanLine className="w-10 h-10 text-white" />
+          <ScanLine className="w-10 h-10 text-app-text" />
         </motion.div>
 
-        <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter mb-6">
+        <h2 className="text-4xl md:text-6xl font-black text-app-text tracking-tighter mb-6">
           Ready to verify?
         </h2>
         <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
@@ -51,13 +51,13 @@ export const CTA: React.FC = () => {
         <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
           <Link 
             to="/console" 
-            className="group w-full sm:w-auto bg-white text-black px-10 py-5 rounded-full text-sm uppercase tracking-widest font-bold transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-105 flex items-center justify-center space-x-3 overflow-hidden relative"
+            className="group w-full sm:w-auto bg-white text-app-btn-text px-10 py-5 rounded-full text-sm uppercase tracking-widest font-bold transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-105 flex items-center justify-center space-x-3 overflow-hidden relative"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
             <span>Start Analysis</span>
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
-          <a href="https://github.com/Gowtham-Sai-9644/trustnet-ai" target="_blank" rel="noreferrer" className="w-full sm:w-auto bg-white/5 border border-white/10 text-white hover:bg-white/10 px-8 py-5 rounded-full text-sm uppercase tracking-widest font-bold transition-all flex items-center justify-center space-x-3">
+          <a href="https://github.com/Gowtham-Sai-9644/trustnet-ai" target="_blank" rel="noreferrer" className="w-full sm:w-auto bg-white/5 border border-white/10 text-app-text hover:bg-white/10 px-8 py-5 rounded-full text-sm uppercase tracking-widest font-bold transition-all flex items-center justify-center space-x-3">
             <Github className="w-5 h-5" />
             <span>GitHub</span>
           </a>

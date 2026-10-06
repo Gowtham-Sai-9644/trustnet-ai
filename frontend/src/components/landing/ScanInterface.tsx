@@ -67,7 +67,7 @@ export const ScanInterface: React.FC = () => {
                 className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-300 ${
                   isActive 
                     ? 'bg-teal-500/20 text-teal-400 border border-teal-500/50' 
-                    : 'bg-white/5 text-gray-500 border border-white/5 hover:bg-white/10 hover:text-white'
+                    : 'bg-white/5 text-gray-500 border border-white/5 hover:bg-white/10 hover:text-app-text'
                 }`}
               >
                 <type.icon className="w-4 h-4" />
@@ -98,12 +98,12 @@ export const ScanInterface: React.FC = () => {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     placeholder={activeType.placeholder}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-6 pl-16 pr-40 text-lg text-white placeholder-gray-600 focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/50 transition-all font-mono"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-6 pl-16 pr-40 text-lg text-app-text placeholder-gray-600 focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/50 transition-all font-mono"
                   />
                   <button
                     type="submit"
                     disabled={!inputValue}
-                    className="absolute right-3 bg-teal-500 text-black px-6 py-3 rounded-xl font-bold text-sm tracking-widest uppercase hover:bg-teal-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="absolute right-3 bg-teal-500 text-app-btn-text px-6 py-3 rounded-xl font-bold text-sm tracking-widest uppercase hover:bg-teal-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
                     Analyze <ArrowRight className="w-4 h-4" />
                   </button>

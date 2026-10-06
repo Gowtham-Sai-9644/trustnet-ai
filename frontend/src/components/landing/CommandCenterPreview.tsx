@@ -7,7 +7,7 @@ export const CommandCenterPreview: React.FC = () => {
   return (
     <section className="relative w-full py-40 overflow-hidden flex flex-col items-center">
       <div className="text-center relative z-20 mb-16">
-        <h2 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 text-white">
+        <h2 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 text-app-text">
           <span className="block text-gray-500 font-light text-4xl mb-2">FROM DETECTION</span>
           TO INVESTIGATION.
         </h2>
@@ -17,7 +17,7 @@ export const CommandCenterPreview: React.FC = () => {
         
         <Link 
           to="/console" 
-          className="group inline-flex items-center gap-3 px-8 py-4 rounded-full border border-teal-500/50 bg-teal-500/10 text-sm font-bold uppercase tracking-widest text-teal-400 hover:bg-teal-500 hover:text-black transition-colors backdrop-blur-md z-30 relative"
+          className="group inline-flex items-center gap-3 px-8 py-4 rounded-full border border-teal-500/50 bg-teal-500/10 text-sm font-bold uppercase tracking-widest text-teal-400 hover:bg-teal-500 hover:text-app-btn-text transition-colors backdrop-blur-md z-30 relative"
         >
           ENTER COMMAND CENTER <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </Link>

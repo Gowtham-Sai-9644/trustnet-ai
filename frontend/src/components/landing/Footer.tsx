@@ -9,7 +9,7 @@ export const Footer: React.FC = () => {
         <div className="md:col-span-1">
           <Link to="/" className="flex items-center space-x-2 mb-6">
             <div className="bg-landing-primary p-1.5 rounded-lg">
-              <ShieldCheck className="w-5 h-5 text-white" />
+              <ShieldCheck className="w-5 h-5 text-app-text" />
             </div>
             <span className="font-bold text-xl tracking-tight text-landing-text">TrustNet AI</span>
           </Link>

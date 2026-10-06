@@ -67,18 +67,18 @@ const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ isOpen, onClose, 
             <div
               className="p-2 rounded-xl flex-shrink-0 transition-all group-hover:scale-105"
               style={{
-                background: 'linear-gradient(135deg, var(--theme-accent-start, #00E5FF), var(--theme-accent-end, #8B5CF6))',
-                boxShadow: '0 0 16px color-mix(in srgb, var(--theme-accent-start, #00E5FF) 30%, transparent)'
+                background: 'linear-gradient(135deg, var(--theme-accent-start, #3B82F6), var(--theme-accent-end, #8B5CF6))',
+                boxShadow: '0 0 16px color-mix(in srgb, var(--theme-accent-start, #3B82F6) 30%, transparent)'
               }}
             >
-              <ShieldAlert className="w-4.5 h-4.5 text-white w-[18px] h-[18px]" />
+              <ShieldAlert className="w-4.5 h-4.5 text-app-text w-[18px] h-[18px]" />
             </div>
             {!isCollapsed && (
               <div className="text-left overflow-hidden">
                 <h1
                   className="font-display font-extrabold text-sm tracking-tight truncate bg-clip-text text-transparent"
                   style={{
-                    backgroundImage: 'linear-gradient(90deg, var(--theme-accent-start, #00E5FF), var(--theme-accent-end, #8B5CF6))',
+                    backgroundImage: 'linear-gradient(90deg, var(--theme-accent-start, #3B82F6), var(--theme-accent-end, #8B5CF6))',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent'
                   }}

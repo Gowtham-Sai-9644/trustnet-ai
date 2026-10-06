@@ -96,7 +96,7 @@ const ThreatAnalysisPage: React.FC = () => {
     };
   }, [showResults, currentResult, score]);
 
-  const inputStyle = "w-full bg-[#050811] border border-[#1E293B] rounded-xl px-3.5 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-[#00E5FF] focus:ring-1 focus:ring-[#00E5FF]/30 transition-all font-sans";
+  const inputStyle = "w-full bg-app-bg border border-app-border rounded-xl px-3.5 py-2.5 text-xs text-app-text placeholder-slate-500 focus:outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6]/30 transition-all font-sans";
 
   return (
     <div className="space-y-4 text-left font-sans">
@@ -115,17 +115,17 @@ const ThreatAnalysisPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Left Side Input Panel */}
         <div className="lg:col-span-7 space-y-4">
-          <AppCard className="p-5 space-y-5 border-l-4 border-l-[#00E5FF]">
-            <div className="border-b border-[#1E293B] pb-3 flex justify-between items-center">
-              <span className="font-sans font-bold text-xs text-slate-200 uppercase tracking-wider flex items-center space-x-2">
-                <Fingerprint className="w-4 h-4 text-[#00E5FF]" />
+          <AppCard className="p-5 space-y-5 border-l-4 border-l-[#3B82F6]">
+            <div className="border-b border-app-border pb-3 flex justify-between items-center">
+              <span className="font-sans font-bold text-xs text-app-text uppercase tracking-wider flex items-center space-x-2">
+                <Fingerprint className="w-4 h-4 text-[#3B82F6]" />
                 <span>Select Target Indicator</span>
               </span>
-              <span className="text-[10px] font-mono text-slate-500 uppercase font-semibold">1-Click Verification</span>
+              <span className="text-[10px] font-mono text-app-muted uppercase font-semibold">1-Click Verification</span>
             </div>
 
             {/* Tabs Selector */}
-            <div className="flex space-x-1 bg-[#050811] p-1 rounded-xl border border-[#1E293B] text-xs font-mono font-bold">
+            <div className="flex space-x-1 bg-app-bg p-1 rounded-xl border border-app-border text-xs font-mono font-bold">
               {[
                 { id: 'url', label: 'Domain Link' },
                 { id: 'upi', label: 'UPI Handle' },
@@ -140,8 +140,8 @@ const ThreatAnalysisPage: React.FC = () => {
                   }}
                   className={`flex-1 py-2 rounded-lg font-bold transition-all cursor-pointer ${
                     activeTab === tab.id
-                      ? 'bg-[#00E5FF] text-slate-900 shadow'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-[#3B82F6] text-app-btn-text shadow'
+                      : 'text-app-muted hover:text-app-text'
                   }`}
                 >
                   {tab.label}
@@ -153,7 +153,7 @@ const ThreatAnalysisPage: React.FC = () => {
             <div className="space-y-4 min-h-[140px] flex flex-col justify-center">
               {activeTab === 'url' && (
                 <div className="space-y-2">
-                  <label className="block text-[10px] font-mono text-slate-400 uppercase tracking-wider font-semibold">Target Website URL</label>
+                  <label className="block text-[10px] font-mono text-app-muted uppercase tracking-wider font-semibold">Target Website URL</label>
                   <input
                     type="text"
                     name="url"
@@ -162,7 +162,7 @@ const ThreatAnalysisPage: React.FC = () => {
                     placeholder="e.g. https://lotto-rewards-claim.cfd or https://sbi-verify-kyc.top"
                     className={inputStyle}
                   />
-                  <p className="text-[10px] text-slate-500 font-sans">
+                  <p className="text-[10px] text-app-muted font-sans">
                     Checks domain age, WHOIS registrar reputation, SSL encryption, and typosquatting scam patterns.
                   </p>
                 </div>
@@ -170,7 +170,7 @@ const ThreatAnalysisPage: React.FC = () => {
 
               {activeTab === 'upi' && (
                 <div className="space-y-2">
-                  <label className="block text-[10px] font-mono text-slate-400 uppercase tracking-wider font-semibold">UPI Payment Address (VPA)</label>
+                  <label className="block text-[10px] font-mono text-app-muted uppercase tracking-wider font-semibold">UPI Payment Address (VPA)</label>
                   <input
                     type="text"
                     name="upi"
@@ -179,7 +179,7 @@ const ThreatAnalysisPage: React.FC = () => {
                     placeholder="e.g. merchant-scam-24@ybl or payout.refund@icici"
                     className={inputStyle}
                   />
-                  <p className="text-[10px] text-slate-500 font-sans">
+                  <p className="text-[10px] text-app-muted font-sans">
                     Cross-references merchant handles against national financial intelligence fraud database.
                   </p>
                 </div>
@@ -187,7 +187,7 @@ const ThreatAnalysisPage: React.FC = () => {
 
               {activeTab === 'phone' && (
                 <div className="space-y-2">
-                  <label className="block text-[10px] font-mono text-slate-400 uppercase tracking-wider font-semibold">Phone / WhatsApp Number</label>
+                  <label className="block text-[10px] font-mono text-app-muted uppercase tracking-wider font-semibold">Phone / WhatsApp Number</label>
                   <input
                     type="text"
                     name="phone"
@@ -196,7 +196,7 @@ const ThreatAnalysisPage: React.FC = () => {
                     placeholder="e.g. +91 90876 54321"
                     className={inputStyle}
                   />
-                  <p className="text-[10px] text-slate-500 font-sans">
+                  <p className="text-[10px] text-app-muted font-sans">
                     Scans vishing call complaint registries and WhatsApp emergency suspension bait texts.
                   </p>
                 </div>
@@ -204,7 +204,7 @@ const ThreatAnalysisPage: React.FC = () => {
 
               {activeTab === 'message' && (
                 <div className="space-y-2">
-                  <label className="block text-[10px] font-mono text-slate-400 uppercase tracking-wider font-semibold">Message Body / Lure Text</label>
+                  <label className="block text-[10px] font-mono text-app-muted uppercase tracking-wider font-semibold">Message Body / Lure Text</label>
                   <textarea
                     name="messageText"
                     rows={4}
@@ -213,7 +213,7 @@ const ThreatAnalysisPage: React.FC = () => {
                     placeholder="e.g. Dear Customer, your electricity connection will be suspended today. Pay immediately to avoid disconnection..."
                     className={`${inputStyle} resize-none`}
                   />
-                  <p className="text-[10px] text-slate-500 font-sans">
+                  <p className="text-[10px] text-app-muted font-sans">
                     Uses AI Natural Language Processing to detect coercive urgency, lottery claims, or fake KYC lures.
                   </p>
                 </div>
@@ -228,11 +228,11 @@ const ThreatAnalysisPage: React.FC = () => {
             )}
 
             {/* Submit & reset */}
-            <div className="flex space-x-3 pt-3 border-t border-[#1E293B]">
+            <div className="flex space-x-3 pt-3 border-t border-app-border">
               <button
                 onClick={executeAnalysis}
                 disabled={isLoading || isScanning}
-                className="flex-1 bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-slate-900 py-2.5 rounded-xl text-xs font-mono font-bold flex items-center justify-center space-x-2 transition-all active:scale-[0.99] disabled:opacity-50 cursor-pointer shadow-md"
+                className="flex-1 bg-[#3B82F6] hover:bg-[#3B82F6]/90 text-app-btn-text py-2.5 rounded-xl text-xs font-mono font-bold flex items-center justify-center space-x-2 transition-all active:scale-[0.99] disabled:opacity-50 cursor-pointer shadow-md"
               >
                 {isScanning ? (
                   <>
@@ -253,7 +253,7 @@ const ThreatAnalysisPage: React.FC = () => {
                   setIsScanning(false);
                   setScanStep(0);
                 }}
-                className="bg-[#050811] hover:bg-[#1E293B]/80 border border-[#1E293B] text-slate-300 px-5 py-2.5 rounded-xl text-xs font-mono font-medium flex items-center space-x-1.5 transition-all cursor-pointer"
+                className="bg-app-bg hover:bg-[#1E293B]/80 border border-app-border text-app-text px-5 py-2.5 rounded-xl text-xs font-mono font-medium flex items-center space-x-1.5 transition-all cursor-pointer"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>Reset</span>
@@ -263,9 +263,9 @@ const ThreatAnalysisPage: React.FC = () => {
 
           {/* Progressive Scanning Steps Panel */}
           {isScanning && (
-            <AppCard className="p-4 space-y-3 font-mono text-[10px] border border-[#00E5FF]/30 bg-[#050811]">
-              <span className="text-[#00E5FF] uppercase tracking-widest block border-b border-[#1E293B] pb-1.5 mb-2 font-bold flex items-center space-x-2">
-                <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#00E5FF]" />
+            <AppCard className="p-4 space-y-3 font-mono text-[10px] border border-[#3B82F6]/30 bg-app-bg">
+              <span className="text-[#3B82F6] uppercase tracking-widest block border-b border-app-border pb-1.5 mb-2 font-bold flex items-center space-x-2">
+                <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#3B82F6]" />
                 <span>AI THREAT ANALYSIS IN PROGRESS</span>
               </span>
               <div className="space-y-3">
@@ -282,11 +282,11 @@ const ThreatAnalysisPage: React.FC = () => {
                     <div 
                       key={step.id} 
                       className={`flex items-start space-x-2.5 transition-colors ${
-                        isActive ? 'text-[#00E5FF] font-bold' : isCompleted ? 'text-slate-500' : 'text-slate-600'
+                        isActive ? 'text-[#3B82F6] font-bold' : isCompleted ? 'text-app-muted' : 'text-slate-600'
                       }`}
                     >
                       <div className="mt-1 flex-shrink-0">
-                        <div className={`w-2 h-2 rounded-full ${isActive ? 'bg-[#00E5FF] animate-ping' : isCompleted ? 'bg-slate-500' : 'bg-slate-700'}`} />
+                        <div className={`w-2 h-2 rounded-full ${isActive ? 'bg-[#3B82F6] animate-ping' : isCompleted ? 'bg-slate-500' : 'bg-slate-700'}`} />
                       </div>
                       <div>
                         <span className="font-bold uppercase tracking-wider text-[9px] block mb-0.5">{step.label}</span>
@@ -313,7 +313,7 @@ const ThreatAnalysisPage: React.FC = () => {
               >
                 {/* Threat Dial Gauge Card */}
                 <AppCard className="p-5 flex flex-col items-center justify-center text-center space-y-3 relative overflow-hidden">
-                  <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block font-semibold">
+                  <span className="text-[10px] font-mono text-app-muted uppercase tracking-wider block font-semibold">
                     CALIBRATED RISK PROBABILITY
                   </span>
 
@@ -347,17 +347,17 @@ const ThreatAnalysisPage: React.FC = () => {
                       <span className={`text-3xl font-bold font-mono ${isHighRisk ? 'text-[#EF4444]' : 'text-[#22C55E]'}`}>
                         {animatedRisk.toFixed(1)}%
                       </span>
-                      <span className="text-[9px] font-mono text-slate-500 uppercase mt-0.5 font-bold">
+                      <span className="text-[9px] font-mono text-app-muted uppercase mt-0.5 font-bold">
                         {isHighRisk ? 'HIGH RISK' : 'LOW RISK'}
                       </span>
                     </div>
                   </div>
 
-                  <div className="bg-[#050811] p-3 rounded-xl border border-[#1E293B]/60 text-[10px] text-slate-300 w-full leading-normal text-left font-sans">
-                    <p className="font-semibold text-slate-200 mb-1">
-                      Category: <span className="text-[#00E5FF] font-mono">{currentResult.scam_category}</span>
+                  <div className="bg-app-bg p-3 rounded-xl border border-app-border/60 text-[10px] text-app-text w-full leading-normal text-left font-sans">
+                    <p className="font-semibold text-app-text mb-1">
+                      Category: <span className="text-[#3B82F6] font-mono">{currentResult.scam_category}</span>
                     </p>
-                    <p className="text-slate-400 text-[10px]">
+                    <p className="text-app-muted text-[10px]">
                       {currentResult.llm_explanation || 'Evaluation completed across threat detection models.'}
                     </p>
                   </div>
@@ -365,20 +365,20 @@ const ThreatAnalysisPage: React.FC = () => {
 
                 {/* SHAP Attributions Breakdown */}
                 <AppCard className="p-4 space-y-3">
-                  <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block border-b border-[#1E293B] pb-2 font-semibold">
+                  <span className="text-[10px] font-mono text-app-muted uppercase tracking-wider block border-b border-app-border pb-2 font-semibold">
                     SHAP FEATURE RISK ATTRIBUTIONS
                   </span>
 
                   <div className="space-y-2.5 font-mono text-[10px]">
                     {Object.entries(currentResult.detection_evidence?.shap_values || {}).map(([key, val]) => (
                       <div key={key} className="space-y-1">
-                        <div className="flex justify-between text-slate-300">
+                        <div className="flex justify-between text-app-text">
                           <span className="capitalize">{key.replace(/_/g, ' ')}</span>
-                          <span className="font-bold text-[#00E5FF]">{((val as number) * 100).toFixed(0)}%</span>
+                          <span className="font-bold text-[#3B82F6]">{((val as number) * 100).toFixed(0)}%</span>
                         </div>
-                        <div className="w-full bg-[#050811] h-1.5 rounded-full overflow-hidden border border-[#1E293B]">
+                        <div className="w-full bg-app-bg h-1.5 rounded-full overflow-hidden border border-app-border">
                           <div 
-                            className="bg-[#00E5FF] h-full rounded-full transition-all duration-700" 
+                            className="bg-[#3B82F6] h-full rounded-full transition-all duration-700" 
                             style={{ width: `${Math.min(100, (val as number) * 100)}%` }} 
                           />
                         </div>
@@ -390,12 +390,12 @@ const ThreatAnalysisPage: React.FC = () => {
                 {/* Evidence Trace Hops */}
                 {currentResult.detection_evidence?.evidence_trace?.length > 0 && (
                   <AppCard className="p-4 space-y-2 font-mono text-[9px]">
-                    <span className="text-slate-400 uppercase tracking-wider block border-b border-[#1E293B] pb-2 font-semibold">
+                    <span className="text-app-muted uppercase tracking-wider block border-b border-app-border pb-2 font-semibold">
                       EVIDENCE GRAPH TRACE HOPS
                     </span>
                     <div className="space-y-1.5 pt-1">
                       {currentResult.detection_evidence.evidence_trace.map((hop: string, idx: number) => (
-                        <div key={idx} className="bg-[#050811] p-2 rounded-lg border border-[#1E293B] text-slate-300 font-mono">
+                        <div key={idx} className="bg-app-bg p-2 rounded-lg border border-app-border text-app-text font-mono">
                           {hop}
                         </div>
                       ))}
@@ -404,12 +404,12 @@ const ThreatAnalysisPage: React.FC = () => {
                 )}
               </motion.div>
             ) : (
-              <AppCard className="p-6 flex flex-col items-center justify-center text-center space-y-3 min-h-[420px] text-slate-500">
+              <AppCard className="p-6 flex flex-col items-center justify-center text-center space-y-3 min-h-[420px] text-app-muted">
                 <ShieldCheck className="w-12 h-12 text-slate-600 opacity-40" />
-                <h4 className="text-xs font-mono font-bold text-slate-300 uppercase">
+                <h4 className="text-xs font-mono font-bold text-app-text uppercase">
                   Awaiting Threat Ingestion
                 </h4>
-                <p className="text-[10px] text-slate-400 max-w-xs leading-relaxed font-sans">
+                <p className="text-[10px] text-app-muted max-w-xs leading-relaxed font-sans">
                   Enter a URL domain, UPI handle, phone number, or message lure on the left panel and click "Run Multi-Modal Scam Scan".
                 </p>
               </AppCard>

@@ -8,7 +8,7 @@ export const ThreatRadar: React.FC = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-teal-900/5 to-transparent pointer-events-none" />
       
       <div className="text-center relative z-10 mb-20">
-        <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-white">Live Global Radar.</h2>
+        <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-app-text">Live Global Radar.</h2>
         <p className="text-gray-400 font-light max-w-2xl mx-auto mb-4">
           Continuously scanning the threat horizon. Monitoring interconnected signals across telecommunications, infrastructure, and financial networks.
         </p>

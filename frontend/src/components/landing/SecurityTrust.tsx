@@ -33,9 +33,9 @@ export const SecurityTrust: React.FC = () => {
               className="flex flex-col items-center text-center p-6"
             >
               <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6">
-                <s.icon className="w-8 h-8 text-white" />
+                <s.icon className="w-8 h-8 text-app-text" />
               </div>
-              <h3 className="text-sm font-bold tracking-widest uppercase mb-3 text-white">{s.title}</h3>
+              <h3 className="text-sm font-bold tracking-widest uppercase mb-3 text-app-text">{s.title}</h3>
               <p className="text-sm text-gray-500 font-light leading-relaxed">{s.desc}</p>
             </motion.div>
           ))}

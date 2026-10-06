@@ -35,7 +35,7 @@ export const Hero: React.FC = () => {
             transition={{ duration: 1 }}
             className="flex flex-col gap-2 text-[9px] font-mono tracking-widest text-teal-500/70 mb-6 bg-black/40 p-4 rounded-xl border border-teal-500/10 backdrop-blur-md"
           >
-            <div className="text-white font-bold mb-1">TRUSTNET AI // INTELLIGENCE CORE</div>
+            <div className="text-app-text font-bold mb-1">TRUSTNET AI // INTELLIGENCE CORE</div>
             <div className="flex flex-wrap lg:flex-col gap-x-4 gap-y-2 justify-center lg:justify-start">
               <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-teal-400"/> SYSTEM OPERATIONAL</span>
               <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-teal-400"/> MULTIMODAL ANALYSIS</span>
@@ -50,7 +50,7 @@ export const Hero: React.FC = () => {
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
             className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05] mb-6 drop-shadow-2xl"
           >
-            <span className="block text-white">SEE THE THREAT.</span>
+            <span className="block text-app-text">SEE THE THREAT.</span>
             <span className="block bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-blue-600">BEFORE IT BECOMES</span>
             <span className="block text-gray-500">AN INCIDENT.</span>
           </motion.h1>
@@ -72,14 +72,14 @@ export const Hero: React.FC = () => {
           >
             <a 
               href="#vectors" 
-              className="w-full sm:w-auto group relative px-6 py-4 bg-teal-500 text-black rounded-full font-bold uppercase tracking-widest text-[11px] hover:bg-teal-400 transition-all duration-500 flex items-center justify-center gap-3 overflow-hidden shadow-[0_0_30px_rgba(45,212,191,0.3)] whitespace-nowrap"
+              className="w-full sm:w-auto group relative px-6 py-4 bg-teal-500 text-app-btn-text rounded-full font-bold uppercase tracking-widest text-[11px] hover:bg-teal-400 transition-all duration-500 flex items-center justify-center gap-3 overflow-hidden shadow-[0_0_30px_rgba(45,212,191,0.3)] whitespace-nowrap"
             >
               <ScanLine className="w-4 h-4" />
               <span>SCAN A THREAT &rarr;</span>
             </a>
             <Link 
               to="/console" 
-              className="w-full sm:w-auto group flex items-center justify-center gap-2 px-6 py-4 rounded-full border border-white/20 bg-black/50 text-[11px] font-bold uppercase tracking-widest text-white hover:bg-white/10 transition-colors backdrop-blur-xl whitespace-nowrap"
+              className="w-full sm:w-auto group flex items-center justify-center gap-2 px-6 py-4 rounded-full border border-white/20 bg-black/50 text-[11px] font-bold uppercase tracking-widest text-app-text hover:bg-white/10 transition-colors backdrop-blur-xl whitespace-nowrap"
             >
               ENTER COMMAND CENTER &rarr;
             </Link>

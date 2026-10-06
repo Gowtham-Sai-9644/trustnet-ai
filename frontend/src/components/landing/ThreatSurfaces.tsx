@@ -38,8 +38,8 @@ export const ThreatSurfaces: React.FC = () => {
           >
             <div className="absolute inset-0 bg-gradient-to-br from-teal-500/[0.05] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             
-            <surface.icon className="w-8 h-8 text-white/50 mb-6 group-hover:text-teal-400 transition-colors" />
-            <h3 className="text-xl font-medium mb-3 text-white/90 group-hover:text-white transition-colors">{surface.name}</h3>
+            <surface.icon className="w-8 h-8 text-app-text/50 mb-6 group-hover:text-teal-400 transition-colors" />
+            <h3 className="text-xl font-medium mb-3 text-app-text/90 group-hover:text-app-text transition-colors">{surface.name}</h3>
             <p className="text-sm text-gray-500 font-light leading-relaxed group-hover:text-gray-400 transition-colors">{surface.desc}</p>
 
             <div className="absolute top-0 right-0 p-8 opacity-0 group-hover:opacity-10 transition-opacity duration-500 translate-x-4 group-hover:translate-x-0">

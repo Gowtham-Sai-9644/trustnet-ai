@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect } from 'react';
 
 // Console is locked to Emerald theme
-export type Theme = 'emerald';
+export type Theme = 'light' | 'sapphire' | 'velvet' | 'dark' | 'emerald';
 
 interface ThemeContextType {
   theme: Theme;
@@ -11,17 +11,17 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Always emerald — no switching
-  const theme: Theme = 'emerald';
+  // Always blue — no switching
+  const theme: Theme = 'light';
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const setTheme = (_newTheme: Theme) => {
-    // No-op: theme is locked to emerald
+    // No-op: theme is locked to blue
   };
 
   useEffect(() => {
-    document.body.setAttribute('data-theme', 'emerald');
-    localStorage.setItem('app-theme', 'emerald');
+    document.body.setAttribute('data-theme', 'light');
+    localStorage.setItem('app-theme', 'light');
   }, []);
 
   return (

@@ -75,6 +75,21 @@
   }
 
   /* Classic Dark */
+  
+  /* Professional SaaS Light Theme */
+  [data-theme="light"] {
+    --theme-bg: #F8FAFC;
+    --theme-surface: #FFFFFF;
+    --theme-card: #FFFFFF;
+    --theme-text: #0F172A;
+    --theme-text-muted: #64748B;
+    --theme-border: #E2E8F0;
+    --theme-accent-start: #2563EB;
+    --theme-accent-end: #3B82F6;
+    --theme-btn-bg: #2563EB;
+    --theme-btn-text: #FFFFFF;
+  }
+
   [data-theme="dark"] {
     --theme-bg: #050811;
     --theme-surface: #0B1220;
@@ -201,3 +216,4 @@
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 ::selection { background: rgba(0,229,255,0.2); color: #F1F5F9; }
+

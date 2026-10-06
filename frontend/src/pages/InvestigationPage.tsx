@@ -128,11 +128,11 @@ export const InvestigationPage: React.FC = () => {
   };
 
   const getStepIconColor = (type: TimelineEvent['type'], isPassed: boolean) => {
-    if (!isPassed) return 'bg-[#1E293B] border-slate-600 text-slate-500';
-    if (type === 'INGEST') return 'bg-[#0B1220] border-[#00E5FF] text-[#00E5FF]';
-    if (type === 'SIGNAL') return 'bg-[#0B1220] border-[#F59E0B] text-[#F59E0B]';
-    if (type === 'CONNECTION') return 'bg-[#0B1220] border-[#6366F1] text-[#6366F1]';
-    if (type === 'CALIBRATION') return 'bg-[#0B1220] border-[#22C55E] text-[#22C55E]';
+    if (!isPassed) return 'bg-[#1E293B] border-slate-600 text-app-muted';
+    if (type === 'INGEST') return 'bg-app-surface border-[#3B82F6] text-[#3B82F6]';
+    if (type === 'SIGNAL') return 'bg-app-surface border-[#F59E0B] text-[#F59E0B]';
+    if (type === 'CONNECTION') return 'bg-app-surface border-[#6366F1] text-[#6366F1]';
+    if (type === 'CALIBRATION') return 'bg-app-surface border-[#22C55E] text-[#22C55E]';
     return 'bg-[#EF4444] border-[#EF4444] text-slate-100';
   };
 
@@ -386,24 +386,24 @@ export const InvestigationPage: React.FC = () => {
       />
 
       {/* Top Section: Live Investigation Launchpad */}
-      <AppCard className="p-5 border-l-4 border-l-[#00E5FF]">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-[#1E293B] mb-4">
+      <AppCard className="p-5 border-l-4 border-l-[#3B82F6]">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-app-border mb-4">
           <div className="flex items-center space-x-3">
-            <div className="p-2.5 rounded-xl bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/20">
+            <div className="p-2.5 rounded-xl bg-[#3B82F6]/10 text-[#3B82F6] border border-[#3B82F6]/20">
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
               <h3 className="text-xs font-mono font-bold text-slate-100 uppercase tracking-wider">
                 Launch Target Investigation
               </h3>
-              <p className="text-[10px] text-slate-400 font-sans mt-0.5">
+              <p className="text-[10px] text-app-muted font-sans mt-0.5">
                 Select a specialized detector below to analyze live indicators against the TrustNet AI backend.
               </p>
             </div>
           </div>
 
           {/* Detector Mode Selector */}
-          <div className="flex space-x-2 bg-[#050811] p-1 rounded-xl border border-[#1E293B]">
+          <div className="flex space-x-2 bg-app-bg p-1 rounded-xl border border-app-border">
             <button
               onClick={() => {
                 setActiveTab('linkedin');
@@ -411,8 +411,8 @@ export const InvestigationPage: React.FC = () => {
               }}
               className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer ${
                 activeTab === 'linkedin' 
-                  ? 'bg-[#00E5FF] text-slate-900 shadow' 
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#3B82F6] text-app-btn-text shadow' 
+                  : 'text-app-muted hover:text-app-text'
               }`}
             >
               <UserCheck className="w-3.5 h-3.5" />
@@ -422,8 +422,8 @@ export const InvestigationPage: React.FC = () => {
               onClick={() => setActiveTab('qr')}
               className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer ${
                 activeTab === 'qr' 
-                  ? 'bg-[#00E5FF] text-slate-900 shadow' 
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#3B82F6] text-app-btn-text shadow' 
+                  : 'text-app-muted hover:text-app-text'
               }`}
             >
               <QrCode className="w-3.5 h-3.5" />
@@ -437,7 +437,7 @@ export const InvestigationPage: React.FC = () => {
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
-                <label className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block mb-1">
+                <label className="text-[10px] font-mono text-app-muted uppercase tracking-wider block mb-1">
                   LinkedIn Profile / Job URL
                 </label>
                 <input 
@@ -445,11 +445,11 @@ export const InvestigationPage: React.FC = () => {
                   placeholder="https://www.linkedin.com/in/username or https://www.linkedn-verify.top/..."
                   value={linkedinUrl}
                   onChange={(e) => setLinkedinUrl(e.target.value)}
-                  className="w-full bg-[#050811] border border-[#1E293B] rounded-xl px-3 py-2 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-[#00E5FF] transition-all font-mono"
+                  className="w-full bg-app-bg border border-app-border rounded-xl px-3 py-2 text-xs text-app-text placeholder-slate-600 focus:outline-none focus:border-[#3B82F6] transition-all font-mono"
                 />
               </div>
               <div>
-                <label className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block mb-1">
+                <label className="text-[10px] font-mono text-app-muted uppercase tracking-wider block mb-1">
                   Claimed Company / Employer
                 </label>
                 <input 
@@ -457,13 +457,13 @@ export const InvestigationPage: React.FC = () => {
                   placeholder="e.g. Microsoft, Google, or Crypto Ventures Ltd"
                   value={linkedinCompany}
                   onChange={(e) => setLinkedinCompany(e.target.value)}
-                  className="w-full bg-[#050811] border border-[#1E293B] rounded-xl px-3 py-2 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-[#00E5FF] transition-all font-sans"
+                  className="w-full bg-app-bg border border-app-border rounded-xl px-3 py-2 text-xs text-app-text placeholder-slate-600 focus:outline-none focus:border-[#3B82F6] transition-all font-sans"
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block mb-1">
+              <label className="text-[10px] font-mono text-app-muted uppercase tracking-wider block mb-1">
                 Profile Bio / Connection Message / Job Offer Lure
               </label>
               <textarea 
@@ -471,13 +471,13 @@ export const InvestigationPage: React.FC = () => {
                 placeholder="Paste the profile bio, connection request text, or job offer details..."
                 value={linkedinText}
                 onChange={(e) => setLinkedinText(e.target.value)}
-                className="w-full bg-[#050811] border border-[#1E293B] rounded-xl p-3 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-[#00E5FF] transition-all font-sans resize-none"
+                className="w-full bg-app-bg border border-app-border rounded-xl p-3 text-xs text-app-text placeholder-slate-600 focus:outline-none focus:border-[#3B82F6] transition-all font-sans resize-none"
               />
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
               <div className="flex items-center space-x-2">
-                <span className="text-[9px] font-mono text-slate-500">Sample Test Presets:</span>
+                <span className="text-[9px] font-mono text-app-muted">Sample Test Presets:</span>
                 <button
                   onClick={() => applyLinkedInPreset('fake')}
                   className="px-2.5 py-1 bg-[#EF4444]/10 border border-[#EF4444]/30 text-[#EF4444] rounded-lg text-[9px] font-mono hover:bg-[#EF4444]/20 cursor-pointer"
@@ -495,7 +495,7 @@ export const InvestigationPage: React.FC = () => {
               <button
                 onClick={runLinkedInInvestigation}
                 disabled={loading || (!linkedinUrl && !linkedinText && !linkedinCompany)}
-                className="bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-slate-900 font-mono font-bold text-xs px-5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-2 active:scale-95 disabled:opacity-40"
+                className="bg-[#3B82F6] hover:bg-[#3B82F6]/90 text-app-btn-text font-mono font-bold text-xs px-5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-2 active:scale-95 disabled:opacity-40"
               >
                 {loading ? (
                   <>
@@ -517,7 +517,7 @@ export const InvestigationPage: React.FC = () => {
         {activeTab === 'qr' && (
           <div className="space-y-4">
             {/* Input Method Switcher */}
-            <div className="flex items-center justify-between bg-[#050811] p-1.5 rounded-xl border border-[#1E293B]">
+            <div className="flex items-center justify-between bg-app-bg p-1.5 rounded-xl border border-app-border">
               <div className="flex space-x-2">
                 <button
                   onClick={() => {
@@ -526,8 +526,8 @@ export const InvestigationPage: React.FC = () => {
                   }}
                   className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer ${
                     qrInputMode === 'laptop'
-                      ? 'bg-[#1E293B] text-[#00E5FF] border border-[#00E5FF]/30'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-[#1E293B] text-[#3B82F6] border border-[#3B82F6]/30'
+                      : 'text-app-muted hover:text-app-text'
                   }`}
                 >
                   <Upload className="w-3.5 h-3.5" />
@@ -540,8 +540,8 @@ export const InvestigationPage: React.FC = () => {
                   }}
                   className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer ${
                     qrInputMode === 'camera'
-                      ? 'bg-[#1E293B] text-[#00E5FF] border border-[#00E5FF]/30'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-[#1E293B] text-[#3B82F6] border border-[#3B82F6]/30'
+                      : 'text-app-muted hover:text-app-text'
                   }`}
                 >
                   <Video className="w-3.5 h-3.5" />
@@ -550,7 +550,7 @@ export const InvestigationPage: React.FC = () => {
               </div>
 
               {decodeStatus && (
-                <span className="text-[9px] font-mono text-[#00E5FF] truncate max-w-[320px] px-2 flex items-center space-x-1">
+                <span className="text-[9px] font-mono text-[#3B82F6] truncate max-w-[320px] px-2 flex items-center space-x-1">
                   <CheckCircle className="w-3 h-3 text-[#22C55E]" />
                   <span>{decodeStatus}</span>
                 </span>
@@ -559,36 +559,36 @@ export const InvestigationPage: React.FC = () => {
 
             {/* Mode A: Live Laptop Camera */}
             {qrInputMode === 'camera' && (
-              <div className="bg-[#050811] border border-[#1E293B] p-4 rounded-xl flex flex-col items-center justify-center space-y-3 relative overflow-hidden">
+              <div className="bg-app-bg border border-app-border p-4 rounded-xl flex flex-col items-center justify-center space-y-3 relative overflow-hidden">
                 <canvas ref={canvasRef} className="hidden" />
 
                 {isCameraActive ? (
-                  <div className="relative w-full max-w-md h-56 bg-black rounded-xl overflow-hidden border-2 border-[#00E5FF]/50 shadow-lg flex items-center justify-center">
+                  <div className="relative w-full max-w-md h-56 bg-black rounded-xl overflow-hidden border-2 border-[#3B82F6]/50 shadow-lg flex items-center justify-center">
                     <video ref={videoRef} className="w-full h-full object-cover" />
                     {/* Scanning animation overlay */}
-                    <div className="absolute inset-0 border-2 border-[#00E5FF]/30 rounded-xl pointer-events-none flex items-center justify-center">
-                      <div className="w-48 h-48 border-2 border-dashed border-[#00E5FF] rounded-lg animate-pulse relative">
-                        <div className="absolute inset-x-0 top-1/2 h-0.5 bg-[#00E5FF] shadow-[0_0_8px_#00E5FF]" />
+                    <div className="absolute inset-0 border-2 border-[#3B82F6]/30 rounded-xl pointer-events-none flex items-center justify-center">
+                      <div className="w-48 h-48 border-2 border-dashed border-[#3B82F6] rounded-lg animate-pulse relative">
+                        <div className="absolute inset-x-0 top-1/2 h-0.5 bg-[#3B82F6] shadow-[0_0_8px_#3B82F6]" />
                       </div>
                     </div>
-                    <span className="absolute bottom-2 left-2 bg-black/70 text-[#00E5FF] px-2 py-0.5 rounded text-[8px] font-mono">
+                    <span className="absolute bottom-2 left-2 bg-black/70 text-[#3B82F6] px-2 py-0.5 rounded text-[8px] font-mono">
                       LIVE CAMERA SCANNING...
                     </span>
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center p-6 text-center space-y-2">
                     <Video className="w-10 h-10 text-slate-600" />
-                    <p className="text-xs font-mono text-slate-300">Live Camera Scanner</p>
+                    <p className="text-xs font-mono text-app-text">Live Camera Scanner</p>
                     {cameraError ? (
                       <p className="text-[10px] font-mono text-[#EF4444] max-w-sm">{cameraError}</p>
                     ) : (
-                      <p className="text-[10px] text-slate-500 font-mono">
+                      <p className="text-[10px] text-app-muted font-mono">
                         Point your device camera directly at any physical or digital QR code.
                       </p>
                     )}
                     <button
                       onClick={startCamera}
-                      className="mt-2 bg-[#00E5FF]/10 border border-[#00E5FF]/30 text-[#00E5FF] hover:bg-[#00E5FF]/20 px-4 py-1.5 rounded-xl text-[10px] font-mono font-bold flex items-center space-x-1.5 cursor-pointer"
+                      className="mt-2 bg-[#3B82F6]/10 border border-[#3B82F6]/30 text-[#3B82F6] hover:bg-[#3B82F6]/20 px-4 py-1.5 rounded-xl text-[10px] font-mono font-bold flex items-center space-x-1.5 cursor-pointer"
                     >
                       <Video className="w-3.5 h-3.5" />
                       <span>Start Camera Scanner</span>
@@ -612,7 +612,7 @@ export const InvestigationPage: React.FC = () => {
             {qrInputMode === 'laptop' && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block mb-1">
+                  <label className="text-[10px] font-mono text-app-muted uppercase tracking-wider block mb-1">
                     Upload QR Image File from Laptop
                   </label>
                   <div className="relative">
@@ -625,19 +625,19 @@ export const InvestigationPage: React.FC = () => {
                     />
                     <label 
                       htmlFor="qr-upload-input"
-                      className="w-full bg-[#050811] border border-dashed border-[#1E293B] hover:border-[#00E5FF]/60 rounded-xl p-4 text-xs text-slate-300 flex flex-col items-center justify-center space-y-2 cursor-pointer transition-all h-[100px]"
+                      className="w-full bg-app-bg border border-dashed border-app-border hover:border-[#3B82F6]/60 rounded-xl p-4 text-xs text-app-text flex flex-col items-center justify-center space-y-2 cursor-pointer transition-all h-[100px]"
                     >
-                      <Upload className="w-6 h-6 text-[#00E5FF]" />
-                      <span className="font-mono text-[10px] text-slate-300 font-bold">
+                      <Upload className="w-6 h-6 text-[#3B82F6]" />
+                      <span className="font-mono text-[10px] text-app-text font-bold">
                         {qrFileName ? `File: ${qrFileName}` : 'Drop QR Image or Click to Browse Laptop...'}
                       </span>
-                      <span className="text-[8px] font-mono text-slate-500">Supports PNG, JPG, JPEG, WEBP</span>
+                      <span className="text-[8px] font-mono text-app-muted">Supports PNG, JPG, JPEG, WEBP</span>
                     </label>
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block mb-1">
+                  <label className="text-[10px] font-mono text-app-muted uppercase tracking-wider block mb-1">
                     Decoded QR Payload String / UPI Handle
                   </label>
                   <textarea 
@@ -645,7 +645,7 @@ export const InvestigationPage: React.FC = () => {
                     placeholder="Auto-populated upon scanning camera/file, or paste payload directly (e.g. upi://pay?pa=scammer@ybl...)"
                     value={qrPayload}
                     onChange={(e) => setQrPayload(e.target.value)}
-                    className="w-full bg-[#050811] border border-[#1E293B] rounded-xl p-2.5 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-[#00E5FF] transition-all font-mono h-[100px] resize-none"
+                    className="w-full bg-app-bg border border-app-border rounded-xl p-2.5 text-xs text-app-text placeholder-slate-600 focus:outline-none focus:border-[#3B82F6] transition-all font-mono h-[100px] resize-none"
                   />
                 </div>
               </div>
@@ -653,7 +653,7 @@ export const InvestigationPage: React.FC = () => {
 
             <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
               <div className="flex items-center space-x-2">
-                <span className="text-[9px] font-mono text-slate-500">Sample Test Presets:</span>
+                <span className="text-[9px] font-mono text-app-muted">Sample Test Presets:</span>
                 <button
                   onClick={() => applyQRPreset('upi')}
                   className="px-2.5 py-1 bg-[#EF4444]/10 border border-[#EF4444]/30 text-[#EF4444] rounded-lg text-[9px] font-mono hover:bg-[#EF4444]/20 cursor-pointer"
@@ -677,7 +677,7 @@ export const InvestigationPage: React.FC = () => {
               <button
                 onClick={runQRInvestigation}
                 disabled={loading || (!qrPayload && !qrImageB64)}
-                className="bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-slate-900 font-mono font-bold text-xs px-5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-2 active:scale-95 disabled:opacity-40"
+                className="bg-[#3B82F6] hover:bg-[#3B82F6]/90 text-app-btn-text font-mono font-bold text-xs px-5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-2 active:scale-95 disabled:opacity-40"
               >
                 {loading ? (
                   <>
@@ -701,18 +701,18 @@ export const InvestigationPage: React.FC = () => {
         {/* Left Column: Incident Directory */}
         <div className="lg:col-span-3 space-y-4">
           <AppCard className="p-4 flex flex-col h-[540px]">
-            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest block border-b border-[#1E293B] pb-2 mb-3 flex items-center justify-between">
+            <span className="text-[10px] font-mono text-app-muted uppercase tracking-widest block border-b border-app-border pb-2 mb-3 flex items-center justify-between">
               <span className="flex items-center space-x-2">
-                <FolderOpen className="w-3.5 h-3.5 text-[#00E5FF]" />
+                <FolderOpen className="w-3.5 h-3.5 text-[#3B82F6]" />
                 <span>INCIDENT DIRECTORY</span>
               </span>
-              <span className="text-[9px] font-mono text-[#00E5FF]">{cases.length}</span>
+              <span className="text-[9px] font-mono text-[#3B82F6]">{cases.length}</span>
             </span>
 
             <div className="flex-1 overflow-y-auto space-y-2 pr-1">
               {cases.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-center p-4 text-slate-500 space-y-2">
-                  <FolderOpen className="w-8 h-8 opacity-30 text-slate-400" />
+                <div className="flex flex-col items-center justify-center h-full text-center p-4 text-app-muted space-y-2">
+                  <FolderOpen className="w-8 h-8 opacity-30 text-app-muted" />
                   <p className="text-xs font-mono">No Active Cases</p>
                   <p className="text-[9px] text-slate-600 leading-normal">
                     Launch a new investigation using the LinkedIn or QR Scam Detector above.
@@ -727,20 +727,20 @@ export const InvestigationPage: React.FC = () => {
                       onClick={() => handleCaseSelect(c)}
                       className={`p-3 rounded-xl border cursor-pointer transition-all text-left ${
                         isActive 
-                          ? 'bg-[#1E293B] border-[#00E5FF]/40 shadow-md' 
-                          : 'bg-[#0B1220] border-[#1E293B] hover:border-[#1E293B]/80'
+                          ? 'bg-[#1E293B] border-[#3B82F6]/40 shadow-md' 
+                          : 'bg-app-surface border-app-border hover:border-app-border/80'
                       }`}
                     >
                       <div className="flex justify-between items-center mb-1">
-                        <span className={`text-[10px] font-mono font-bold ${isActive ? 'text-[#00E5FF]' : 'text-slate-300'}`}>
+                        <span className={`text-[10px] font-mono font-bold ${isActive ? 'text-[#3B82F6]' : 'text-app-text'}`}>
                           {c.id}
                         </span>
                         <AppBadge color={getStatusColor(c.risk)} className="scale-75 origin-right">
                           {c.risk}
                         </AppBadge>
                       </div>
-                      <div className="text-[10px] font-mono text-slate-400 truncate mb-1.5">{c.target}</div>
-                      <div className="flex justify-between text-[8px] font-mono text-slate-500">
+                      <div className="text-[10px] font-mono text-app-muted truncate mb-1.5">{c.target}</div>
+                      <div className="flex justify-between text-[8px] font-mono text-app-muted">
                         <span>TYPE: {c.targetType}</span>
                         <span>{c.timeCreated}</span>
                       </div>
@@ -759,13 +759,13 @@ export const InvestigationPage: React.FC = () => {
               <>
                 <div className="space-y-4 flex-1 overflow-y-auto pr-1">
                   {/* Header Details */}
-                  <div className="border-b border-[#1E293B] pb-3 text-left">
+                  <div className="border-b border-app-border pb-3 text-left">
                     <div className="flex justify-between items-start">
                       <div>
-                        <span className="text-[9px] font-mono text-slate-500 uppercase">ACTIVE FORENSIC METADATA</span>
-                        <h3 className="text-sm font-bold text-slate-200 mt-0.5 flex items-center space-x-2">
+                        <span className="text-[9px] font-mono text-app-muted uppercase">ACTIVE FORENSIC METADATA</span>
+                        <h3 className="text-sm font-bold text-app-text mt-0.5 flex items-center space-x-2">
                           <span>{selectedCase.id}:</span>
-                          <span className="text-[#00E5FF] font-mono text-xs truncate max-w-[280px]">
+                          <span className="text-[#3B82F6] font-mono text-xs truncate max-w-[280px]">
                             {selectedCase.target}
                           </span>
                         </h3>
@@ -775,7 +775,7 @@ export const InvestigationPage: React.FC = () => {
                       </AppBadge>
                     </div>
                     
-                    <p className="text-[10px] text-slate-300 mt-2 leading-relaxed font-sans bg-[#050811] p-2.5 rounded-xl border border-[#1E293B]/60">
+                    <p className="text-[10px] text-app-text mt-2 leading-relaxed font-sans bg-app-bg p-2.5 rounded-xl border border-app-border/60">
                       {selectedCase.description}
                     </p>
 
@@ -793,7 +793,7 @@ export const InvestigationPage: React.FC = () => {
                   </div>
 
                   {/* Event timeline replay display */}
-                  <div className="relative border-l border-[#1E293B] ml-4 pl-6 space-y-5 py-2 min-h-[220px]">
+                  <div className="relative border-l border-app-border ml-4 pl-6 space-y-5 py-2 min-h-[220px]">
                     {selectedCase.timeline.map((step, idx) => {
                       const isPassed = currentStep >= idx;
                       const isActive = currentStep === idx;
@@ -812,12 +812,12 @@ export const InvestigationPage: React.FC = () => {
                           </span>
 
                           <div className="flex justify-between items-center text-[10px] font-mono">
-                            <span className={`font-bold ${isActive ? 'text-[#00E5FF]' : 'text-slate-200'}`}>
+                            <span className={`font-bold ${isActive ? 'text-[#3B82F6]' : 'text-app-text'}`}>
                               {step.title}
                             </span>
-                            <span className="text-slate-500">{step.timestamp}</span>
+                            <span className="text-app-muted">{step.timestamp}</span>
                           </div>
-                          <p className="text-[9px] text-slate-400 mt-1 font-mono tracking-tight leading-relaxed">{step.description}</p>
+                          <p className="text-[9px] text-app-muted mt-1 font-mono tracking-tight leading-relaxed">{step.description}</p>
                         </motion.div>
                       );
                     })}
@@ -825,9 +825,9 @@ export const InvestigationPage: React.FC = () => {
                 </div>
 
                 {/* Playback Controls & Scrubber */}
-                <div className="border-t border-[#1E293B] pt-3 space-y-2.5 mt-2">
+                <div className="border-t border-app-border pt-3 space-y-2.5 mt-2">
                   {/* Scrubber track */}
-                  <div className="flex items-center space-x-3 text-[9px] font-mono text-slate-400">
+                  <div className="flex items-center space-x-3 text-[9px] font-mono text-app-muted">
                     <span>1</span>
                     <input 
                       type="range"
@@ -838,7 +838,7 @@ export const InvestigationPage: React.FC = () => {
                         setCurrentStep(Number(e.target.value));
                         setIsPlaying(false);
                       }}
-                      className="flex-1 accent-[#00E5FF] bg-[#050811] h-1 rounded-full cursor-pointer appearance-none border border-[#1E293B]"
+                      className="flex-1 accent-[#3B82F6] bg-app-bg h-1 rounded-full cursor-pointer appearance-none border border-app-border"
                     />
                     <span>{selectedCase.timeline.length}</span>
                   </div>
@@ -852,8 +852,8 @@ export const InvestigationPage: React.FC = () => {
                           onClick={() => setPlaySpeed(speed)}
                           className={`px-2 py-1 rounded font-mono text-[9px] border cursor-pointer ${
                             playSpeed === speed 
-                              ? 'bg-[#00E5FF]/15 border-[#00E5FF]/30 text-[#00E5FF]' 
-                              : 'bg-[#111827] border-[#1E293B] text-slate-500'
+                              ? 'bg-[#3B82F6]/15 border-[#3B82F6]/30 text-[#3B82F6]' 
+                              : 'bg-app-card border-app-border text-app-muted'
                           }`}
                         >
                           {speed}x
@@ -868,9 +868,9 @@ export const InvestigationPage: React.FC = () => {
                           setIsPlaying(false);
                         }}
                         disabled={currentStep === 0}
-                        className="p-2 rounded-xl bg-[#111827] border border-[#1E293B] hover:border-slate-700 disabled:opacity-30 cursor-pointer"
+                        className="p-2 rounded-xl bg-app-card border border-app-border hover:border-slate-700 disabled:opacity-30 cursor-pointer"
                       >
-                        <ChevronLeft className="w-4 h-4 text-slate-300" />
+                        <ChevronLeft className="w-4 h-4 text-app-text" />
                       </button>
                       <button
                         onClick={() => {
@@ -881,7 +881,7 @@ export const InvestigationPage: React.FC = () => {
                             setIsPlaying(prev => !prev);
                           }
                         }}
-                        className="p-2.5 rounded-xl bg-[#00E5FF] text-slate-900 hover:bg-[#00E5FF]/90 cursor-pointer"
+                        className="p-2.5 rounded-xl bg-[#3B82F6] text-app-btn-text hover:bg-[#3B82F6]/90 cursor-pointer"
                       >
                         {isPlaying ? (
                           <Pause className="w-4 h-4 fill-slate-900" />
@@ -895,25 +895,25 @@ export const InvestigationPage: React.FC = () => {
                           setIsPlaying(false);
                         }}
                         disabled={currentStep === selectedCase.timeline.length - 1}
-                        className="p-2 rounded-xl bg-[#111827] border border-[#1E293B] hover:border-slate-700 disabled:opacity-30 cursor-pointer"
+                        className="p-2 rounded-xl bg-app-card border border-app-border hover:border-slate-700 disabled:opacity-30 cursor-pointer"
                       >
-                        <ChevronRight className="w-4 h-4 text-slate-300" />
+                        <ChevronRight className="w-4 h-4 text-app-text" />
                       </button>
                     </div>
 
-                    <span className="text-[9px] font-mono text-slate-500">
+                    <span className="text-[9px] font-mono text-app-muted">
                       STEP {currentStep + 1} OF {selectedCase.timeline.length}
                     </span>
                   </div>
                 </div>
               </>
             ) : (
-              <div className="flex flex-col items-center justify-center h-full text-center space-y-3 p-6 text-slate-500">
+              <div className="flex flex-col items-center justify-center h-full text-center space-y-3 p-6 text-app-muted">
                 <Search className="w-10 h-10 text-slate-600 opacity-40" />
-                <h4 className="text-xs font-mono font-bold text-slate-300 uppercase">
+                <h4 className="text-xs font-mono font-bold text-app-text uppercase">
                   No Active Case Selected
                 </h4>
-                <p className="text-[10px] text-slate-400 max-w-sm leading-normal">
+                <p className="text-[10px] text-app-muted max-w-sm leading-normal">
                   Use the top launchpad form to enter a LinkedIn profile link or QR code payload and click "Run Deep Investigation".
                 </p>
               </div>
@@ -924,7 +924,7 @@ export const InvestigationPage: React.FC = () => {
         {/* Right Column: Evidence Locker Sidebar */}
         <div className="lg:col-span-3 space-y-4">
           <AppCard className="p-4 flex flex-col h-[540px]">
-            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest block border-b border-[#1E293B] pb-2 mb-3 flex items-center space-x-2">
+            <span className="text-[10px] font-mono text-app-muted uppercase tracking-widest block border-b border-app-border pb-2 mb-3 flex items-center space-x-2">
               <Database className="w-3.5 h-3.5 text-[#22C55E]" />
               <span>EVIDENCE LOCKER</span>
             </span>
@@ -935,34 +935,34 @@ export const InvestigationPage: React.FC = () => {
                   {selectedCase.evidence.map((file, idx) => (
                     <div
                       key={idx}
-                      className="bg-[#0B1220] border border-[#1E293B] p-3 rounded-xl flex items-center justify-between hover:border-slate-700 transition-all"
+                      className="bg-app-surface border border-app-border p-3 rounded-xl flex items-center justify-between hover:border-slate-700 transition-all"
                     >
                       <div className="flex items-center space-x-2.5 min-w-0">
-                        <div className="bg-[#111827] p-2 rounded-lg border border-[#1E293B]">
-                          {file.type === 'LOG' && <FileText className="w-4 h-4 text-[#00E5FF]" />}
+                        <div className="bg-app-card p-2 rounded-lg border border-app-border">
+                          {file.type === 'LOG' && <FileText className="w-4 h-4 text-[#3B82F6]" />}
                           {file.type === 'SCREENSHOT' && <Camera className="w-4 h-4 text-[#6366F1]" />}
                           {file.type === 'TRANSCRIPT' && <PhoneCall className="w-4 h-4 text-[#F59E0B]" />}
                         </div>
                         <div className="min-w-0">
-                          <h4 className="text-[10px] font-mono text-slate-300 truncate font-semibold">
+                          <h4 className="text-[10px] font-mono text-app-text truncate font-semibold">
                             {file.name}
                           </h4>
-                          <span className="text-[8px] font-mono text-slate-500 block uppercase">{file.size} • {file.type}</span>
+                          <span className="text-[8px] font-mono text-app-muted block uppercase">{file.size} • {file.type}</span>
                         </div>
                       </div>
-                      <ChevronRight className="w-3.5 h-3.5 text-slate-500 flex-shrink-[#00E5FF]" />
+                      <ChevronRight className="w-3.5 h-3.5 text-app-muted flex-shrink-[#3B82F6]" />
                     </div>
                   ))}
                 </div>
                 
-                <div className="bg-[#050811] p-3 rounded-xl border border-[#1E293B]/60 text-[9px] font-mono text-slate-500 mt-3 leading-normal text-left">
-                  <Info className="w-3.5 h-3.5 text-[#00E5FF] mb-1" />
+                <div className="bg-app-bg p-3 rounded-xl border border-app-border/60 text-[9px] font-mono text-app-muted mt-3 leading-normal text-left">
+                  <Info className="w-3.5 h-3.5 text-[#3B82F6] mb-1" />
                   <span>All evidence items are cryptographically signed with SHA-256 hashes to maintain court-admissible integrity chains.</span>
                 </div>
               </>
             ) : (
-              <div className="flex flex-col items-center justify-center h-full text-center p-4 text-slate-500 space-y-2">
-                <Database className="w-8 h-8 opacity-30 text-slate-400" />
+              <div className="flex flex-col items-center justify-center h-full text-center p-4 text-app-muted space-y-2">
+                <Database className="w-8 h-8 opacity-30 text-app-muted" />
                 <p className="text-xs font-mono">Evidence Empty</p>
                 <p className="text-[9px] text-slate-600 leading-normal">
                   Evidence files will be generated once an investigation is executed.

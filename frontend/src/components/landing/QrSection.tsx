@@ -25,7 +25,7 @@ export const QrSection: React.FC = () => {
             <div className="relative">
               {/* QR Scanner Animation */}
               <div className="w-64 h-64 border border-white/20 rounded-3xl flex items-center justify-center relative overflow-hidden bg-black/50 backdrop-blur-xl">
-                <QrCode className="w-32 h-32 text-white/20" />
+                <QrCode className="w-32 h-32 text-app-text/20" />
                 
                 {/* Scanning line */}
                 <motion.div 

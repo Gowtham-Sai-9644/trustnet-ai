@@ -35,7 +35,7 @@ export const IntelligenceVisual: React.FC = () => {
               transition={{ delay: i * 0.1 }}
               className="flex items-center justify-end w-32 relative"
             >
-              <span className="text-[10px] font-mono tracking-widest text-white/50 bg-white/5 px-3 py-1 rounded-full border border-white/10 z-10">{type}</span>
+              <span className="text-[10px] font-mono tracking-widest text-app-text/50 bg-white/5 px-3 py-1 rounded-full border border-white/10 z-10">{type}</span>
               {/* Connecting line to center */}
               <div className="absolute right-0 top-1/2 w-48 h-px bg-gradient-to-r from-transparent via-white/20 to-teal-500/50 transform translate-x-full" style={{ rotate: `${(i - 3) * 10}deg`, transformOrigin: "left center" }} />
               
@@ -64,7 +64,7 @@ export const IntelligenceVisual: React.FC = () => {
           />
           <div className="absolute inset-8 bg-black rounded-full shadow-[0_0_80px_rgba(45,212,191,0.2)] flex items-center justify-center border border-white/10 backdrop-blur-xl">
             <div className="text-center">
-              <Shield className="w-10 h-10 text-white mx-auto mb-2" />
+              <Shield className="w-10 h-10 text-app-text mx-auto mb-2" />
               <div className="font-bold tracking-widest text-sm">TRUSTNET</div>
               <div className="text-[9px] text-teal-400 font-mono mt-1">CORE ENGINE</div>
             </div>
@@ -93,9 +93,9 @@ export const IntelligenceVisual: React.FC = () => {
                   transition={{ delay: 0.5 + (i * 0.2), type: "spring" }}
                   className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center backdrop-blur-md"
                 >
-                  <stage.icon className="w-5 h-5 text-white/70" />
+                  <stage.icon className="w-5 h-5 text-app-text/70" />
                 </motion.div>
-                <div className="text-[9px] font-mono tracking-widest text-white/50">{stage.label}</div>
+                <div className="text-[9px] font-mono tracking-widest text-app-text/50">{stage.label}</div>
               </div>
             ))}
           </div>

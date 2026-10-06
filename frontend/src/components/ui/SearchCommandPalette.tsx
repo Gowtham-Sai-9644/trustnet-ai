@@ -111,7 +111,7 @@ export const SearchCommandPalette: React.FC<SearchCommandPaletteProps> = ({ isOp
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-[#050811]/70 backdrop-blur-sm"
+            className="fixed inset-0 bg-app-bg/70 backdrop-blur-sm"
           />
 
           {/* Modal Content */}
@@ -120,11 +120,11 @@ export const SearchCommandPalette: React.FC<SearchCommandPaletteProps> = ({ isOp
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.98 }}
             transition={{ duration: 0.15, ease: [0.4, 0, 0.2, 1] }}
-            className="w-full max-w-xl bg-[#0B1220] border border-[#1E293B] rounded-2xl shadow-2xl overflow-hidden relative z-10 flex flex-col font-sans"
+            className="w-full max-w-xl bg-app-surface border border-app-border rounded-2xl shadow-2xl overflow-hidden relative z-10 flex flex-col font-sans"
           >
             {/* Search Input Bar */}
-            <div className="flex items-center px-4 py-3 border-b border-[#1E293B]">
-              <Search className="w-4 h-4 text-slate-500 mr-3 flex-shrink-0" />
+            <div className="flex items-center px-4 py-3 border-b border-app-border">
+              <Search className="w-4 h-4 text-app-muted mr-3 flex-shrink-0" />
               <input 
                 ref={inputRef}
                 type="text" 
@@ -138,7 +138,7 @@ export const SearchCommandPalette: React.FC<SearchCommandPaletteProps> = ({ isOp
               />
               <button 
                 onClick={onClose}
-                className="text-slate-500 hover:text-slate-300 transition-colors p-1"
+                className="text-app-muted hover:text-app-text transition-colors p-1"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -147,7 +147,7 @@ export const SearchCommandPalette: React.FC<SearchCommandPaletteProps> = ({ isOp
             {/* Actions List */}
             <div className="max-h-64 overflow-y-auto p-2 space-y-1">
               {filteredActions.length === 0 ? (
-                <div className="py-8 text-center text-slate-500 text-xs font-mono">
+                <div className="py-8 text-center text-app-muted text-xs font-mono">
                   No matching operations discovered.
                 </div>
               ) : (
@@ -161,17 +161,17 @@ export const SearchCommandPalette: React.FC<SearchCommandPaletteProps> = ({ isOp
                       onMouseEnter={() => setSelectedIndex(idx)}
                       className={`flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer transition-all ${
                         isSelected 
-                          ? 'bg-[#1E293B] text-[#00E5FF]' 
-                          : 'text-slate-400 hover:text-slate-200'
+                          ? 'bg-[#1E293B] text-[#3B82F6]' 
+                          : 'text-app-muted hover:text-app-text'
                       }`}
                     >
                       <div className="flex items-center space-x-3 text-xs">
-                        <Icon className={`w-4 h-4 ${isSelected ? 'text-[#00E5FF]' : 'text-slate-500'}`} />
+                        <Icon className={`w-4 h-4 ${isSelected ? 'text-[#3B82F6]' : 'text-app-muted'}`} />
                         <span className="font-medium tracking-tight text-[11px]">{action.label}</span>
                       </div>
                       
                       {isSelected && (
-                        <div className="flex items-center space-x-1 text-[8px] font-mono text-slate-500 bg-[#050811] px-1.5 py-0.5 rounded border border-[#1E293B]">
+                        <div className="flex items-center space-x-1 text-[8px] font-mono text-app-muted bg-app-bg px-1.5 py-0.5 rounded border border-app-border">
                           <span>enter</span>
                           <CornerDownLeft className="w-2.5 h-2.5" />
                         </div>
@@ -183,13 +183,13 @@ export const SearchCommandPalette: React.FC<SearchCommandPaletteProps> = ({ isOp
             </div>
 
             {/* Modal Footer */}
-            <div className="bg-[#050811] px-4 py-2 border-t border-[#1E293B]/60 flex items-center justify-between text-[8px] font-mono text-slate-500">
+            <div className="bg-app-bg px-4 py-2 border-t border-app-border/60 flex items-center justify-between text-[8px] font-mono text-app-muted">
               <div className="flex space-x-3">
                 <span>↑↓ navigate</span>
                 <span>↵ select</span>
                 <span>esc close</span>
               </div>
-              <span className="uppercase text-[#00E5FF]/60 font-bold">TrustNet AI Command Console</span>
+              <span className="uppercase text-[#3B82F6]/60 font-bold">TrustNet AI Command Console</span>
             </div>
           </motion.div>
         </div>

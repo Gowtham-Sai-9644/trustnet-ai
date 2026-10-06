@@ -235,7 +235,7 @@ export const ResearchPage: React.FC = () => {
 
     return (
       <svg width={width} height={height} className="overflow-visible">
-        <path d={pathData} fill="none" stroke="#00E5FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d={pathData} fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     );
   };
@@ -247,9 +247,9 @@ export const ResearchPage: React.FC = () => {
     const pointsActual = data.map((d) => `${(d.ideal / 100) * size},${size - (d.actual / 100) * size}`).join(' ');
 
     return (
-      <svg width={size} height={size} className="border border-[#1E293B] bg-[#050811] overflow-visible rounded">
+      <svg width={size} height={size} className="border border-app-border bg-app-bg overflow-visible rounded">
         <polyline points={pointsIdeal} fill="none" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="1" strokeDasharray="2 2" />
-        <polyline points={pointsActual} fill="none" stroke="#00E5FF" strokeWidth="2" />
+        <polyline points={pointsActual} fill="none" stroke="#3B82F6" strokeWidth="2" />
       </svg>
     );
   };
@@ -263,7 +263,7 @@ export const ResearchPage: React.FC = () => {
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setShowCitationModal(true)}
-              className="bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-slate-900 font-mono font-bold text-xs px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 active:scale-95 shadow-md"
+              className="bg-[#3B82F6] hover:bg-[#3B82F6]/90 text-app-btn-text font-mono font-bold text-xs px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 active:scale-95 shadow-md"
             >
               <BookOpen className="w-3.5 h-3.5" />
               <span>Cite Article (IEEE)</span>
@@ -273,34 +273,34 @@ export const ResearchPage: React.FC = () => {
       />
 
       {/* IEEE Xplore Peer-Reviewed Header Banner */}
-      <AppCard className="p-4 bg-gradient-to-r from-[#0B1220] via-[#111827] to-[#0B1220] border-[#00E5FF]/30">
+      <AppCard className="p-4 bg-gradient-to-r from-[#0B1220] via-[#111827] to-[#0B1220] border-[#3B82F6]/30">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="space-y-1.5">
             <div className="flex items-center space-x-2">
-              <span className="bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/30 text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+              <span className="bg-[#3B82F6]/10 text-[#3B82F6] border border-[#3B82F6]/30 text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                 IEEE Peer-Reviewed Publication
               </span>
-              <span className="text-slate-400 font-mono text-xs">DOI: 10.1109/TRUSTNET.2026.1098421</span>
+              <span className="text-app-muted font-mono text-xs">DOI: 10.1109/TRUSTNET.2026.1098421</span>
             </div>
             <h3 className="text-base font-display font-bold text-slate-100">
               TrustNet AI: Multi-Modal Cyber Threat Prevention & Isotonic Risk Calibration Architecture
             </h3>
-            <p className="text-xs text-slate-400 font-sans">
-              Author: <strong className="text-slate-200">Gowtham Sai</strong> (Lead Systems Engineer) | IEEE Transactions on Dependable and Secure Computing (TDSC)
+            <p className="text-xs text-app-muted font-sans">
+              Author: <strong className="text-app-text">Gowtham Sai</strong> (Lead Systems Engineer) | IEEE Transactions on Dependable and Secure Computing (TDSC)
             </p>
           </div>
 
-          <div className="flex items-center space-x-4 border-l border-[#1E293B] pl-4 flex-shrink-0 font-mono text-center">
+          <div className="flex items-center space-x-4 border-l border-app-border pl-4 flex-shrink-0 font-mono text-center">
             <div>
-              <span className="text-[10px] text-slate-500 block uppercase font-bold">IEEE Downloads</span>
+              <span className="text-[10px] text-app-muted block uppercase font-bold">IEEE Downloads</span>
               <span className="text-sm font-bold text-slate-100">4,821</span>
             </div>
             <div>
-              <span className="text-[10px] text-slate-500 block uppercase font-bold">IEEE Citations</span>
-              <span className="text-sm font-bold text-[#00E5FF]">38</span>
+              <span className="text-[10px] text-app-muted block uppercase font-bold">IEEE Citations</span>
+              <span className="text-sm font-bold text-[#3B82F6]">38</span>
             </div>
             <div>
-              <span className="text-[10px] text-slate-500 block uppercase font-bold">Impact Factor</span>
+              <span className="text-[10px] text-app-muted block uppercase font-bold">Impact Factor</span>
               <span className="text-sm font-bold text-[#22C55E]">99.7%</span>
             </div>
           </div>
@@ -316,19 +316,19 @@ export const ResearchPage: React.FC = () => {
             <div
               key={idx}
               onClick={() => setSelectedModelIdx(idx)}
-              className={`bg-[#0B1220] border rounded-2xl p-4 flex flex-col justify-between h-[160px] cursor-pointer transition-all ${
+              className={`bg-app-surface border rounded-2xl p-4 flex flex-col justify-between h-[160px] cursor-pointer transition-all ${
                 isSelected 
-                  ? 'border-[#00E5FF] shadow-lg shadow-cyan-500/10' 
-                  : 'border-[#1E293B] hover:border-slate-700'
+                  ? 'border-[#3B82F6] shadow-lg shadow-cyan-500/10' 
+                  : 'border-app-border hover:border-slate-700'
               }`}
             >
               {/* Card Header */}
               <div className="flex justify-between items-start">
                 <div className="min-w-0">
-                  <h4 className="text-xs font-display font-bold text-slate-200 uppercase tracking-wide truncate">
+                  <h4 className="text-xs font-display font-bold text-app-text uppercase tracking-wide truncate">
                     {model.name}
                   </h4>
-                  <span className="text-[9px] font-mono text-slate-500 uppercase mt-0.5 block">MODEL ID: IEEE-RF-V{idx + 1}</span>
+                  <span className="text-[9px] font-mono text-app-muted uppercase mt-0.5 block">MODEL ID: IEEE-RF-V{idx + 1}</span>
                 </div>
                 <AppBadge color={isActive ? 'success' : 'muted'}>
                   {model.status}
@@ -338,14 +338,14 @@ export const ResearchPage: React.FC = () => {
               {/* F1 Score & Sparkline */}
               <div className="flex justify-between items-center py-2">
                 <div className="text-left">
-                  <span className="text-[9px] font-mono text-slate-400 uppercase block leading-none font-semibold">F1-Score</span>
+                  <span className="text-[9px] font-mono text-app-muted uppercase block leading-none font-semibold">F1-Score</span>
                   <span className="text-2xl font-bold font-mono text-slate-100">{model.f1}%</span>
                 </div>
                 {renderSparkline(model.sparkline)}
               </div>
 
               {/* Card Footer: Calibration indicator */}
-              <div className="border-t border-[#1E293B] pt-2 flex justify-between items-center text-[10px] font-mono text-slate-400">
+              <div className="border-t border-app-border pt-2 flex justify-between items-center text-[10px] font-mono text-app-muted">
                 <span>Calibration Curve:</span>
                 {renderMiniCalibration(model.calibrationData)}
               </div>
@@ -360,12 +360,12 @@ export const ResearchPage: React.FC = () => {
           
           {/* Model Drift Monitor */}
           <AppCard className="p-5">
-            <div className="flex justify-between items-center border-b border-[#1E293B] pb-3 mb-4">
-              <span className="font-bold text-xs text-slate-200 uppercase tracking-wider flex items-center space-x-1.5">
-                <Activity className="w-4 h-4 text-[#00E5FF] animate-pulse" />
+            <div className="flex justify-between items-center border-b border-app-border pb-3 mb-4">
+              <span className="font-bold text-xs text-app-text uppercase tracking-wider flex items-center space-x-1.5">
+                <Activity className="w-4 h-4 text-[#3B82F6] animate-pulse" />
                 <span>IEEE Model Drift Monitor (Past 30 Days)</span>
               </span>
-              <span className="text-[10px] font-mono font-bold text-[#00E5FF] bg-[#00E5FF]/10 border border-[#00E5FF]/30 px-2.5 py-0.5 rounded-full">
+              <span className="text-[10px] font-mono font-bold text-[#3B82F6] bg-[#3B82F6]/10 border border-[#3B82F6]/30 px-2.5 py-0.5 rounded-full">
                 CALIBRATION STABLE
               </span>
             </div>
@@ -378,7 +378,7 @@ export const ResearchPage: React.FC = () => {
                   <YAxis stroke="#94A3B8" tick={{ fontSize: 10 }} domain={[0, 0.03]} />
                   <Tooltip contentStyle={{ backgroundColor: '#0B1220', borderColor: '#1E293B' }} />
                   <Legend wrapperStyle={{ fontSize: 10 }} />
-                  <Line type="monotone" dataKey="DistilBERT" stroke="#00E5FF" strokeWidth={2} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="DistilBERT" stroke="#3B82F6" strokeWidth={2} dot={{ r: 3 }} />
                   <Line type="monotone" dataKey="IndiaScam" stroke="#6366F1" strokeWidth={2} dot={{ r: 3 }} />
                   <Line type="monotone" dataKey="VisionAI" stroke="#EF4444" strokeWidth={2} dot={{ r: 3 }} />
                 </LineChart>
@@ -389,26 +389,26 @@ export const ResearchPage: React.FC = () => {
           {/* Model specific Details tab */}
           <AppCard className="p-5 grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
             <div className="md:col-span-2 space-y-3">
-              <span className="text-xs font-mono text-slate-400 uppercase tracking-wider block border-b border-[#1E293B] pb-2 font-bold">
+              <span className="text-xs font-mono text-app-muted uppercase tracking-wider block border-b border-app-border pb-2 font-bold">
                 Technical Specifications: {activeModel.name}
               </span>
-              <p className="text-slate-300 leading-relaxed font-sans text-xs">{activeModel.description}</p>
+              <p className="text-app-text leading-relaxed font-sans text-xs">{activeModel.description}</p>
               
               <div className="grid grid-cols-2 gap-3 pt-1">
-                <div className="bg-[#050811] p-3 rounded-xl border border-[#1E293B] font-mono text-[10px] space-y-1">
-                  <span className="text-slate-400 block font-semibold">PRECISION RATE</span>
+                <div className="bg-app-bg p-3 rounded-xl border border-app-border font-mono text-[10px] space-y-1">
+                  <span className="text-app-muted block font-semibold">PRECISION RATE</span>
                   <span className="text-slate-100 font-bold text-base block">{activeModel.precision}%</span>
                 </div>
-                <div className="bg-[#050811] p-3 rounded-xl border border-[#1E293B] font-mono text-[10px] space-y-1">
-                  <span className="text-slate-400 block font-semibold">RECALL RATE</span>
+                <div className="bg-app-bg p-3 rounded-xl border border-app-border font-mono text-[10px] space-y-1">
+                  <span className="text-app-muted block font-semibold">RECALL RATE</span>
                   <span className="text-slate-100 font-bold text-base block">{activeModel.recall}%</span>
                 </div>
-                <div className="bg-[#050811] p-3 rounded-xl border border-[#1E293B] font-mono text-[10px] space-y-1">
-                  <span className="text-slate-400 block font-semibold">ROC-AUC SCORE</span>
+                <div className="bg-app-bg p-3 rounded-xl border border-app-border font-mono text-[10px] space-y-1">
+                  <span className="text-app-muted block font-semibold">ROC-AUC SCORE</span>
                   <span className="text-slate-100 font-bold text-base block">{activeModel.auc}</span>
                 </div>
-                <div className="bg-[#050811] p-3 rounded-xl border border-[#1E293B] font-mono text-[10px] space-y-1">
-                  <span className="text-slate-400 block font-semibold">CONCEPT DRIFT</span>
+                <div className="bg-app-bg p-3 rounded-xl border border-app-border font-mono text-[10px] space-y-1">
+                  <span className="text-app-muted block font-semibold">CONCEPT DRIFT</span>
                   <span className={`font-bold text-base block ${activeModel.drift > 0.02 ? 'text-[#EF4444]' : 'text-[#22C55E]'}`}>
                     {(activeModel.drift * 100).toFixed(1)}%
                   </span>
@@ -418,18 +418,18 @@ export const ResearchPage: React.FC = () => {
 
             {/* SVG based Feature Importance */}
             <div className="space-y-3">
-              <span className="text-xs font-mono text-slate-400 uppercase tracking-wider block border-b border-[#1E293B] pb-2 font-bold">
+              <span className="text-xs font-mono text-app-muted uppercase tracking-wider block border-b border-app-border pb-2 font-bold">
                 SHAP Feature Weights
               </span>
               <div className="space-y-3 font-mono text-xs pt-1">
                 {shapAnalysisData.map((item, index) => (
                   <div key={index} className="space-y-1">
-                    <div className="flex justify-between text-slate-300">
+                    <div className="flex justify-between text-app-text">
                       <span className="uppercase text-[10px]">{item.feature}</span>
-                      <span className="text-[#00E5FF] font-bold">+{item.impact * 100}%</span>
+                      <span className="text-[#3B82F6] font-bold">+{item.impact * 100}%</span>
                     </div>
-                    <div className="w-full bg-[#050811] h-1.5 rounded-full overflow-hidden border border-[#1E293B]">
-                      <div className="h-full bg-[#00E5FF]" style={{ width: `${item.impact * 100}%` }} />
+                    <div className="w-full bg-app-bg h-1.5 rounded-full overflow-hidden border border-app-border">
+                      <div className="h-full bg-[#3B82F6]" style={{ width: `${item.impact * 100}%` }} />
                     </div>
                   </div>
                 ))}
@@ -441,42 +441,42 @@ export const ResearchPage: React.FC = () => {
         {/* Right Hand: Experiment registry list */}
         <div className="lg:col-span-4 space-y-4">
           <AppCard className="p-5 flex flex-col h-full min-h-[460px]">
-            <span className="font-sans font-bold text-xs text-slate-200 uppercase tracking-wider border-b border-[#1E293B] pb-3 mb-4 flex items-center space-x-1.5">
-              <Database className="w-4 h-4 text-[#00E5FF]" />
+            <span className="font-sans font-bold text-xs text-app-text uppercase tracking-wider border-b border-app-border pb-3 mb-4 flex items-center space-x-1.5">
+              <Database className="w-4 h-4 text-[#3B82F6]" />
               <span>IEEE Experiment Runs Log</span>
             </span>
 
             <div className="flex-1 overflow-y-auto space-y-3 pr-1 text-left">
               {experiments.length === 0 && isLoading ? (
-                <div className="flex flex-col items-center justify-center h-48 space-y-2 text-slate-400 font-mono text-xs">
-                  <RefreshCw className="w-4 h-4 animate-spin text-[#00E5FF]" />
+                <div className="flex flex-col items-center justify-center h-48 space-y-2 text-app-muted font-mono text-xs">
+                  <RefreshCw className="w-4 h-4 animate-spin text-[#3B82F6]" />
                   <span>Loading experiment records...</span>
                 </div>
               ) : experiments.length === 0 ? (
-                <div className="text-slate-400 font-mono text-xs text-center py-12">
+                <div className="text-app-muted font-mono text-xs text-center py-12">
                   No active ML experiments registered.
                 </div>
               ) : (
                 experiments.map((exp: any) => (
-                  <div key={exp.experiment_id} className="bg-[#050811] p-3.5 rounded-xl border border-[#1E293B] space-y-2 font-mono text-xs">
+                  <div key={exp.experiment_id} className="bg-app-bg p-3.5 rounded-xl border border-app-border space-y-2 font-mono text-xs">
                     <div className="flex justify-between items-start">
-                      <span className="text-slate-200 font-bold truncate max-w-[130px]">{exp.name}</span>
-                      <span className="text-[9px] bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/20 px-2 py-0.5 rounded font-bold uppercase">
+                      <span className="text-app-text font-bold truncate max-w-[130px]">{exp.name}</span>
+                      <span className="text-[9px] bg-[#3B82F6]/10 text-[#3B82F6] border border-[#3B82F6]/20 px-2 py-0.5 rounded font-bold uppercase">
                         {exp.category.replace('_', ' ').replace('test', 'metrics').toUpperCase()}
                       </span>
                     </div>
-                    <div className="text-xs text-slate-400 space-y-1">
+                    <div className="text-xs text-app-muted space-y-1">
                       <div className="flex justify-between">
                         <span>Accuracy score:</span>
-                        <span className="text-slate-200 font-bold">{(exp.metrics.accuracy * 100).toFixed(1)}%</span>
+                        <span className="text-app-text font-bold">{(exp.metrics.accuracy * 100).toFixed(1)}%</span>
                       </div>
                       <div className="flex justify-between">
                         <span>F1 benchmark:</span>
                         <span className="text-[#22C55E] font-bold">{(exp.metrics.f1_score * 100).toFixed(1)}%</span>
                       </div>
-                      <div className="flex justify-between border-t border-[#1E293B]/60 pt-1 mt-1 text-[10px]">
+                      <div className="flex justify-between border-t border-app-border/60 pt-1 mt-1 text-[10px]">
                         <span>Timestamp:</span>
-                        <span className="text-slate-500">{new Date(exp.created_at).toLocaleDateString()}</span>
+                        <span className="text-app-muted">{new Date(exp.created_at).toLocaleDateString()}</span>
                       </div>
                     </div>
                   </div>
@@ -494,42 +494,42 @@ export const ResearchPage: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#050811]/80 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-app-bg/80 backdrop-blur-sm"
           >
             <motion.div
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
-              className="bg-[#0B1220] border border-[#00E5FF]/40 rounded-2xl p-6 max-w-xl w-full text-left space-y-4 shadow-2xl"
+              className="bg-app-surface border border-[#3B82F6]/40 rounded-2xl p-6 max-w-xl w-full text-left space-y-4 shadow-2xl"
             >
-              <div className="flex justify-between items-center border-b border-[#1E293B] pb-3">
+              <div className="flex justify-between items-center border-b border-app-border pb-3">
                 <h3 className="text-base font-display font-bold text-slate-100 flex items-center space-x-2">
-                  <BookOpen className="w-5 h-5 text-[#00E5FF]" />
+                  <BookOpen className="w-5 h-5 text-[#3B82F6]" />
                   <span>Export IEEE Citation (BibTeX)</span>
                 </h3>
                 <button
                   onClick={() => setShowCitationModal(false)}
-                  className="text-slate-400 hover:text-slate-200 text-xs font-mono font-bold cursor-pointer"
+                  className="text-app-muted hover:text-app-text text-xs font-mono font-bold cursor-pointer"
                 >
                   ✕ Close
                 </button>
               </div>
 
-              <p className="text-xs text-slate-300 font-sans">
+              <p className="text-xs text-app-text font-sans">
                 Cite this work in your IEEE academic research papers or LaTeX document:
               </p>
 
-              <pre className="bg-[#050811] p-4 rounded-xl border border-[#1E293B] text-xs font-mono text-[#00E5FF] overflow-x-auto selection:bg-[#00E5FF]/30">
+              <pre className="bg-app-bg p-4 rounded-xl border border-app-border text-xs font-mono text-[#3B82F6] overflow-x-auto selection:bg-[#3B82F6]/30">
                 {bibtexCitation}
               </pre>
 
               <div className="flex justify-between items-center pt-2">
-                <span className="text-[11px] font-mono text-slate-400">
+                <span className="text-[11px] font-mono text-app-muted">
                   IEEE Format Standard • IEEEtran compatible
                 </span>
                 <button
                   onClick={handleCopyBibtex}
-                  className="bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-slate-900 font-mono font-bold text-xs px-5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 active:scale-95"
+                  className="bg-[#3B82F6] hover:bg-[#3B82F6]/90 text-app-btn-text font-mono font-bold text-xs px-5 py-2 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 active:scale-95"
                 >
                   {copiedBibtex ? (
                     <>

@@ -17,7 +17,7 @@ export const FinalCTA: React.FC = () => {
       </motion.div>
 
       <div className="text-center relative z-10 max-w-3xl">
-        <h2 className="text-5xl md:text-7xl font-bold tracking-tighter mb-8 text-white">
+        <h2 className="text-5xl md:text-7xl font-bold tracking-tighter mb-8 text-app-text">
           Ready to verify?
         </h2>
         <p className="text-xl text-gray-400 mb-12 font-light leading-relaxed">
@@ -26,7 +26,7 @@ export const FinalCTA: React.FC = () => {
 
         <Link 
           to="/console" 
-          className="group relative inline-flex items-center gap-3 px-12 py-6 bg-white text-black rounded-full font-bold uppercase tracking-widest text-sm hover:scale-105 transition-all duration-500 shadow-[0_0_40px_rgba(255,255,255,0.15)] overflow-hidden"
+          className="group relative inline-flex items-center gap-3 px-12 py-6 bg-white text-app-btn-text rounded-full font-bold uppercase tracking-widest text-sm hover:scale-105 transition-all duration-500 shadow-[0_0_40px_rgba(255,255,255,0.15)] overflow-hidden"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
           <ScanLine className="w-5 h-5" />

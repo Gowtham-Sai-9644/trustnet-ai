@@ -108,8 +108,8 @@ const DashboardPage: React.FC = () => {
 
   const quickActions = [
     { title: 'Threat Analyzer', path: '/console/analysis', icon: ShieldAlert, color: 'text-red-400', bg: 'bg-red-500/10' },
-    { title: 'Investigation Room', path: '/console/investigations', icon: FolderOpen, color: 'text-[#00E5FF]', bg: 'bg-[#00E5FF]/10' },
-    { title: 'Report Incident', path: '/console/reports', icon: FileText, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+    { title: 'Investigation Room', path: '/console/investigations', icon: FolderOpen, color: 'text-[#3B82F6]', bg: 'bg-[#3B82F6]/10' },
+    { title: 'Report Incident', path: '/console/reports', icon: FileText, color: 'text-blue-400', bg: 'bg-blue-500/10' },
     { title: 'AI Analyst', path: '/console/assistant', icon: MessageSquareCode, color: 'text-purple-400', bg: 'bg-purple-500/10' },
   ];
 
@@ -126,7 +126,7 @@ const DashboardPage: React.FC = () => {
         title="Mission Control Cockpit" 
         description="Real-time multi-modal scam prevention dashboard and live security threat monitoring."
         rightElement={
-          <div className="flex items-center space-x-2 bg-[#1E293B]/60 px-3 py-1.5 rounded-xl border border-[#1E293B] text-[10px] text-slate-300">
+          <div className="flex items-center space-x-2 bg-[#1E293B]/60 px-3 py-1.5 rounded-xl border border-app-border text-[10px] text-app-text">
             <span className="w-2 h-2 rounded-full bg-[#22C55E] animate-pulse" />
             <span className="font-mono font-semibold">Security Operations / Active</span>
           </div>
@@ -134,9 +134,9 @@ const DashboardPage: React.FC = () => {
       />
 
       {/* Human-Made Central Instant Scam Verification Bar */}
-      <AppCard className="p-4 bg-gradient-to-r from-[#0B1220] via-[#111827] to-[#0B1220] border-[#00E5FF]/30 shadow-lg">
+      <AppCard className="p-4 bg-gradient-to-r from-[#0B1220] via-[#111827] to-[#0B1220] border-[#3B82F6]/30 shadow-lg">
         <form onSubmit={handleQuickScan} className="flex flex-col sm:flex-row items-center gap-3">
-          <div className="flex items-center space-x-2 text-[#00E5FF]">
+          <div className="flex items-center space-x-2 text-[#3B82F6]">
             <Zap className="w-5 h-5" />
             <span className="text-xs font-mono font-bold uppercase tracking-wider hidden sm:inline">Instant Scanner</span>
           </div>
@@ -146,13 +146,13 @@ const DashboardPage: React.FC = () => {
               placeholder="Paste any link, message text, phone number, or UPI handle to check instantly..."
               value={quickScanInput}
               onChange={(e) => setQuickScanInput(e.target.value)}
-              className="w-full bg-[#050811] border border-[#1E293B] rounded-xl pl-9 pr-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-[#00E5FF] focus:ring-1 focus:ring-[#00E5FF]/30 transition-all font-mono"
+              className="w-full bg-app-bg border border-app-border rounded-xl pl-9 pr-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6]/30 transition-all font-mono"
             />
-            <Search className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+            <Search className="w-4 h-4 text-app-muted absolute left-3 top-3" />
           </div>
           <button
             type="submit"
-            className="w-full sm:w-auto bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-slate-900 font-mono font-bold text-xs px-5 py-2.5 rounded-xl transition-all cursor-pointer flex items-center justify-center space-x-1.5 active:scale-95 flex-shrink-0"
+            className="w-full sm:w-auto bg-[#3B82F6] hover:bg-[#3B82F6]/90 text-app-btn-text font-mono font-bold text-xs px-5 py-2.5 rounded-xl transition-all cursor-pointer flex items-center justify-center space-x-1.5 active:scale-95 flex-shrink-0"
           >
             <span>Scan Threat</span>
             <ArrowRight className="w-4 h-4" />
@@ -168,7 +168,7 @@ const DashboardPage: React.FC = () => {
         </div>
         <button 
           onClick={() => navigate('/console/investigations')}
-          className="text-[10px] font-mono font-bold text-[#00E5FF] hover:underline flex-shrink-0 whitespace-nowrap cursor-pointer flex items-center space-x-1"
+          className="text-[10px] font-mono font-bold text-[#3B82F6] hover:underline flex-shrink-0 whitespace-nowrap cursor-pointer flex items-center space-x-1"
         >
           <span>Explore Case Details</span>
           <ChevronRight className="w-3.5 h-3.5" />
@@ -204,7 +204,7 @@ const DashboardPage: React.FC = () => {
           changeType="neutral"
           sparklineType="flat"
           icon={CheckCircle2}
-          iconColor="text-emerald-400"
+          iconColor="text-blue-400"
           insightText="Average SLA: 4.8 minutes"
         />
         <AppMetricCard 
@@ -229,8 +229,8 @@ const DashboardPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Detection trends */}
             <AppCard className="p-4 space-y-2">
-              <span className="font-sans font-bold text-[10px] text-slate-400 uppercase tracking-wider flex items-center space-x-1.5">
-                <Radio className="w-3.5 h-3.5 text-[#00E5FF]" />
+              <span className="font-sans font-bold text-[10px] text-app-muted uppercase tracking-wider flex items-center space-x-1.5">
+                <Radio className="w-3.5 h-3.5 text-[#3B82F6]" />
                 <span>24-Hour Threat Activity Trend</span>
               </span>
               <div className="h-[140px] w-full text-[8px] font-mono">
@@ -238,15 +238,15 @@ const DashboardPage: React.FC = () => {
                   <AreaChart data={trendData} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorFraud" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#00E5FF" stopOpacity={0.2}/>
-                        <stop offset="95%" stopColor="#00E5FF" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.2}/>
+                        <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" opacity={0.4} />
                     <XAxis dataKey="name" stroke="#94A3B8" tick={{ fontSize: 8 }} />
                     <YAxis stroke="#94A3B8" tick={{ fontSize: 8 }} />
                     <Tooltip contentStyle={{ backgroundColor: '#0B1220', borderColor: '#1E293B', fontSize: 9 }} />
-                    <Area type="monotone" dataKey="UPI Scam" stroke="#00E5FF" strokeWidth={1.5} fillOpacity={1} fill="url(#colorFraud)" />
+                    <Area type="monotone" dataKey="UPI Scam" stroke="#3B82F6" strokeWidth={1.5} fillOpacity={1} fill="url(#colorFraud)" />
                     <Area type="monotone" dataKey="Investment Scam" stroke="#F59E0B" strokeWidth={1} fillOpacity={0} />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -255,7 +255,7 @@ const DashboardPage: React.FC = () => {
 
             {/* Accuracies comparison */}
             <AppCard className="p-4 space-y-2">
-              <span className="font-sans font-bold text-[10px] text-slate-400 uppercase tracking-wider flex items-center space-x-1.5">
+              <span className="font-sans font-bold text-[10px] text-app-muted uppercase tracking-wider flex items-center space-x-1.5">
                 <Cpu className="w-3.5 h-3.5 text-purple-400" />
                 <span>Detection Model Accuracies (%)</span>
               </span>
@@ -266,7 +266,7 @@ const DashboardPage: React.FC = () => {
                     <XAxis dataKey="channel" stroke="#94A3B8" tick={{ fontSize: 8 }} />
                     <YAxis stroke="#94A3B8" domain={[80, 100]} tick={{ fontSize: 8 }} />
                     <Tooltip contentStyle={{ backgroundColor: '#0B1220', borderColor: '#1E293B', fontSize: 9 }} />
-                    <Bar dataKey="Accuracy" fill="#00E5FF" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="Accuracy" fill="#3B82F6" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -275,12 +275,12 @@ const DashboardPage: React.FC = () => {
 
           {/* Active Cases Table */}
           <AppCard className="p-4 space-y-3">
-            <div className="flex justify-between items-center border-b border-[#1E293B]/60 pb-2">
-              <span className="font-sans font-bold text-[10px] text-slate-400 uppercase tracking-wider flex items-center space-x-1.5">
+            <div className="flex justify-between items-center border-b border-app-border/60 pb-2">
+              <span className="font-sans font-bold text-[10px] text-app-muted uppercase tracking-wider flex items-center space-x-1.5">
                 <Clock className="w-3.5 h-3.5 text-amber-400" />
                 <span>Live Security Investigations Queue</span>
               </span>
-              <span className="text-[9px] font-mono text-slate-500">Updating Live</span>
+              <span className="text-[9px] font-mono text-app-muted">Updating Live</span>
             </div>
             
             <AppTable 
@@ -288,18 +288,18 @@ const DashboardPage: React.FC = () => {
               columns={[
                 {
                   header: "Case ID",
-                  render: (row) => <span className="font-mono font-bold text-slate-200">{row.id}</span>
+                  render: (row) => <span className="font-mono font-bold text-app-text">{row.id}</span>
                 },
                 {
                   header: "Scam Category",
-                  render: (row) => <span className="font-medium text-slate-300">{row.category}</span>
+                  render: (row) => <span className="font-medium text-app-text">{row.category}</span>
                 },
                 {
                   header: "Threat Level",
                   render: (row) => (
                     <div className="flex items-center space-x-1.5">
-                      <span className={`w-2 h-2 rounded-full ${row.score >= 0.8 ? 'bg-[#EF4444]' : row.score >= 0.5 ? 'bg-[#F59E0B]' : 'bg-[#00E5FF]'}`} />
-                      <span className="font-mono text-slate-300 font-bold">{(row.score * 100).toFixed(0)}%</span>
+                      <span className={`w-2 h-2 rounded-full ${row.score >= 0.8 ? 'bg-[#EF4444]' : row.score >= 0.5 ? 'bg-[#F59E0B]' : 'bg-[#3B82F6]'}`} />
+                      <span className="font-mono text-app-text font-bold">{(row.score * 100).toFixed(0)}%</span>
                     </div>
                   )
                 },
@@ -317,14 +317,14 @@ const DashboardPage: React.FC = () => {
                 },
                 {
                   header: "Assigned Analyst",
-                  render: (row) => <span className="text-slate-400 font-mono text-[10px]">{row.assignee}</span>
+                  render: (row) => <span className="text-app-muted font-mono text-[10px]">{row.assignee}</span>
                 },
                 {
                   header: "Actions",
                   render: (row) => (
                     <button 
                       onClick={() => navigate('/console/investigations')}
-                      className="text-[10px] text-[#00E5FF] font-semibold hover:underline cursor-pointer flex items-center space-x-0.5"
+                      className="text-[10px] text-[#3B82F6] font-semibold hover:underline cursor-pointer flex items-center space-x-0.5"
                     >
                       <span>Investigate</span>
                       <ChevronRight className="w-3.5 h-3.5" />
@@ -341,7 +341,7 @@ const DashboardPage: React.FC = () => {
         <div className="lg:col-span-4 space-y-4">
           {/* Quick Shortcuts */}
           <AppCard className="p-4 space-y-2">
-            <span className="font-sans font-bold text-[10px] text-slate-400 uppercase tracking-wider block border-b border-[#1E293B]/60 pb-2">
+            <span className="font-sans font-bold text-[10px] text-app-muted uppercase tracking-wider block border-b border-app-border/60 pb-2">
               Quick Security Actions
             </span>
             <div className="grid grid-cols-2 gap-2 pt-1">
@@ -349,12 +349,12 @@ const DashboardPage: React.FC = () => {
                 <button
                   key={idx}
                   onClick={() => navigate(action.path)}
-                  className="flex items-center space-x-2 bg-[#0B1220] p-2.5 rounded-xl border border-[#1E293B] hover:border-[#00E5FF]/40 transition-all text-left cursor-pointer active:scale-95"
+                  className="flex items-center space-x-2 bg-app-surface p-2.5 rounded-xl border border-app-border hover:border-[#3B82F6]/40 transition-all text-left cursor-pointer active:scale-95"
                 >
                   <div className={`${action.bg} p-1.5 rounded-lg`}>
                     <action.icon className={`w-3.5 h-3.5 ${action.color}`} />
                   </div>
-                  <span className="text-[10px] font-bold text-slate-200 truncate">{action.title}</span>
+                  <span className="text-[10px] font-bold text-app-text truncate">{action.title}</span>
                 </button>
               ))}
             </div>
@@ -362,26 +362,26 @@ const DashboardPage: React.FC = () => {
 
           {/* System Health */}
           <AppCard className="p-4 space-y-2.5">
-            <span className="font-sans font-bold text-[10px] text-slate-400 uppercase tracking-wider block border-b border-[#1E293B]/60 pb-2">
+            <span className="font-sans font-bold text-[10px] text-app-muted uppercase tracking-wider block border-b border-app-border/60 pb-2">
               Engine Health & Clusters
             </span>
             <div className="space-y-2 pt-1 font-mono text-[9px]">
-              <div className="flex justify-between items-center bg-[#0B1220] p-2 rounded-xl border border-[#1E293B]">
-                <span className="text-slate-400">PostgreSQL Database</span>
+              <div className="flex justify-between items-center bg-app-surface p-2 rounded-xl border border-app-border">
+                <span className="text-app-muted">PostgreSQL Database</span>
                 <span className="text-[#22C55E] font-bold flex items-center space-x-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E]" />
                   <span>ONLINE</span>
                 </span>
               </div>
-              <div className="flex justify-between items-center bg-[#0B1220] p-2 rounded-xl border border-[#1E293B]">
-                <span className="text-slate-400">Neo4j Fraud Graph</span>
+              <div className="flex justify-between items-center bg-app-surface p-2 rounded-xl border border-app-border">
+                <span className="text-app-muted">Neo4j Fraud Graph</span>
                 <span className="text-[#22C55E] font-bold flex items-center space-x-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E]" />
                   <span>STABLE</span>
                 </span>
               </div>
-              <div className="flex justify-between items-center bg-[#0B1220] p-2 rounded-xl border border-[#1E293B]">
-                <span className="text-slate-400">ML Inference Engine</span>
+              <div className="flex justify-between items-center bg-app-surface p-2 rounded-xl border border-app-border">
+                <span className="text-app-muted">ML Inference Engine</span>
                 <span className="text-[#22C55E] font-bold flex items-center space-x-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E]" />
                   <span>READY</span>
@@ -392,17 +392,17 @@ const DashboardPage: React.FC = () => {
 
           {/* Integration Status */}
           <AppCard className="p-4 space-y-3">
-            <span className="font-sans font-bold text-[10px] text-slate-400 uppercase tracking-wider block border-b border-[#1E293B]/60 pb-2">
+            <span className="font-sans font-bold text-[10px] text-app-muted uppercase tracking-wider block border-b border-app-border/60 pb-2">
               Intelligence Database Records
             </span>
             <div className="grid grid-cols-2 gap-3 text-center">
-              <div className="bg-[#0B1220] border border-[#1E293B] rounded-xl p-2.5">
-                <span className="text-[8px] text-slate-500 uppercase block font-mono">Total Entity Nodes</span>
-                <span className="text-xs font-bold font-mono text-slate-200">{dbStats?.node_count ?? 12480}</span>
+              <div className="bg-app-surface border border-app-border rounded-xl p-2.5">
+                <span className="text-[8px] text-app-muted uppercase block font-mono">Total Entity Nodes</span>
+                <span className="text-xs font-bold font-mono text-app-text">{dbStats?.node_count ?? 12480}</span>
               </div>
-              <div className="bg-[#0B1220] border border-[#1E293B] rounded-xl p-2.5">
-                <span className="text-[8px] text-slate-500 uppercase block font-mono">Graph Relationships</span>
-                <span className="text-xs font-bold font-mono text-slate-200">{dbStats?.edge_count ?? 18451}</span>
+              <div className="bg-app-surface border border-app-border rounded-xl p-2.5">
+                <span className="text-[8px] text-app-muted uppercase block font-mono">Graph Relationships</span>
+                <span className="text-xs font-bold font-mono text-app-text">{dbStats?.edge_count ?? 18451}</span>
               </div>
             </div>
           </AppCard>

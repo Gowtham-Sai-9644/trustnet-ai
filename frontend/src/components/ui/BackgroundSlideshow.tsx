@@ -23,7 +23,7 @@ const BackgroundSlideshow: React.FC<BackgroundSlideshowProps> = ({
   const currentImage = BACKGROUND_IMAGES[activeScene] || BACKGROUND_IMAGES[1];
 
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden bg-[#050811]">
+    <div className="fixed inset-0 -z-10 overflow-hidden bg-app-bg">
       <AnimatePresence mode="popLayout">
         <motion.div
           key={activeScene}
