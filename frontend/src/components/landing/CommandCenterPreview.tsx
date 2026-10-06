@@ -1,12 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { LayoutDashboard, Shield, Activity, Share2, Search, ArrowRight } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Database, Network } from 'lucide-react';
 
 export const CommandCenterPreview: React.FC = () => {
   return (
-    <section className="relative w-full py-40 overflow-hidden">
-      <div className="text-center relative z-20 mb-20">
+    <section className="relative w-full py-40 overflow-hidden flex flex-col items-center">
+      <div className="text-center relative z-20 mb-16">
         <h2 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 text-white">
           <span className="block text-gray-500 font-light text-4xl mb-2">FROM DETECTION</span>
           TO INVESTIGATION.
@@ -17,85 +17,101 @@ export const CommandCenterPreview: React.FC = () => {
         
         <Link 
           to="/console" 
-          className="group inline-flex items-center gap-3 px-8 py-4 rounded-full border border-teal-500/50 bg-teal-500/10 text-sm font-bold uppercase tracking-widest text-teal-400 hover:bg-teal-500 hover:text-black transition-colors backdrop-blur-md"
+          className="group inline-flex items-center gap-3 px-8 py-4 rounded-full border border-teal-500/50 bg-teal-500/10 text-sm font-bold uppercase tracking-widest text-teal-400 hover:bg-teal-500 hover:text-black transition-colors backdrop-blur-md z-30 relative"
         >
           ENTER COMMAND CENTER <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </Link>
       </div>
 
-      {/* Console Mockup */}
-      <motion.div 
-        initial={{ y: 100, opacity: 0 }}
-        whileInView={{ y: 0, opacity: 1 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-        viewport={{ margin: "-10%" }}
-        className="relative max-w-6xl mx-auto px-6 z-10"
-      >
-        <div className="w-full rounded-t-3xl border-t border-l border-r border-white/10 bg-[#0a0a0a] shadow-[0_-20px_80px_rgba(45,212,191,0.15)] flex flex-col overflow-hidden h-[500px]">
-          
-          {/* Header */}
-          <div className="h-14 border-b border-white/5 flex items-center justify-between px-6 bg-white/[0.02]">
-            <div className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-teal-500" />
-              <span className="text-xs font-bold tracking-widest text-white">TRUSTNET CONSOLE</span>
-            </div>
-            <div className="flex gap-4 text-xs font-mono text-gray-500">
-              <span className="flex items-center gap-1"><Activity className="w-3 h-3"/> MONITOR</span>
-              <span className="flex items-center gap-1"><Share2 className="w-3 h-3"/> GRAPH</span>
-              <span className="flex items-center gap-1"><Search className="w-3 h-3"/> ANALYSIS</span>
-            </div>
-          </div>
-
-          {/* Body */}
-          <div className="flex-1 flex p-6 gap-6 relative">
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5 mix-blend-overlay" />
-            
-            {/* Sidebar */}
-            <div className="w-48 hidden md:flex flex-col gap-2 border-r border-white/5 pr-6">
-              {[1, 2, 3, 4, 5].map(i => (
-                <div key={i} className={`h-8 rounded ${i === 1 ? 'bg-teal-500/10 border border-teal-500/20' : 'bg-white/5'} w-full`} />
-              ))}
-            </div>
-
-            {/* Main Content Area */}
-            <div className="flex-1 flex flex-col gap-6">
-              <div className="h-40 w-full rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/5 flex items-center justify-between p-8">
-                <div className="space-y-2">
-                  <div className="h-4 w-24 bg-white/10 rounded" />
-                  <div className="h-8 w-64 bg-white/20 rounded" />
-                </div>
-                <div className="w-24 h-24 rounded-full border-[6px] border-teal-500/20 border-t-teal-500" />
-              </div>
-
-              <div className="flex-1 grid grid-cols-3 gap-6">
-                <div className="col-span-2 rounded-2xl bg-white/5 border border-white/5 relative overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <svg className="w-full h-full opacity-30" viewBox="0 0 100 100">
-                      <line x1="20" y1="20" x2="80" y2="80" stroke="#2dd4bf" strokeWidth="0.5" />
-                      <line x1="80" y1="20" x2="20" y2="80" stroke="#2dd4bf" strokeWidth="0.5" />
-                      <circle cx="20" cy="20" r="2" fill="#2dd4bf" />
-                      <circle cx="80" cy="80" r="3" fill="#2dd4bf" />
-                      <circle cx="80" cy="20" r="2" fill="#ef4444" />
-                      <circle cx="20" cy="80" r="2" fill="#2dd4bf" />
-                      <circle cx="50" cy="50" r="4" fill="#ef4444" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="col-span-1 rounded-2xl bg-white/5 border border-white/5 p-4 flex flex-col gap-3">
-                  <div className="h-3 w-1/2 bg-white/10 rounded" />
-                  <div className="h-2 w-full bg-white/5 rounded" />
-                  <div className="h-2 w-full bg-white/5 rounded" />
-                  <div className="h-2 w-3/4 bg-white/5 rounded" />
-                </div>
-              </div>
-            </div>
-
-          </div>
+      {/* Animated Feature Replacing the Floating Card */}
+      <div className="relative w-full max-w-5xl h-[400px] flex items-center justify-center mt-10 perspective-1000">
+        
+        {/* Background Grid */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-20 z-0">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#2dd4bf_1px,transparent_1px),linear-gradient(to_bottom,#2dd4bf_1px,transparent_1px)] bg-[size:4rem_4rem]" />
         </div>
-      </motion.div>
-      
-      {/* Fade at bottom so it looks like it's emerging */}
-      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent z-20" />
+
+        {/* Central Animated Core */}
+        <motion.div 
+          style={{ transformStyle: "preserve-3d", rotateX: 60 }} 
+          className="relative w-[300px] h-[300px] flex items-center justify-center z-10"
+        >
+          {/* Rotating Rings */}
+          {[1, 2, 3].map((ring) => (
+            <motion.div
+              key={ring}
+              className="absolute rounded-full border-2 border-teal-500/30"
+              style={{ width: `${ring * 100}px`, height: `${ring * 100}px` }}
+              animate={{ rotateZ: 360 }}
+              transition={{ duration: 10 + ring * 5, repeat: Infinity, ease: "linear", direction: ring % 2 === 0 ? "reverse" : "normal" }}
+            >
+              {/* Ring Nodes */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-teal-400 rounded-full shadow-[0_0_10px_#2dd4bf]" />
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-2 h-2 bg-blue-500 rounded-full shadow-[0_0_10px_#3b82f6]" />
+            </motion.div>
+          ))}
+          
+          {/* Central Pulsing Sphere */}
+          <motion.div 
+            animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute w-16 h-16 bg-gradient-to-br from-teal-400 to-blue-600 rounded-full blur-[10px]"
+          />
+          <div className="absolute w-12 h-12 bg-black rounded-full border border-teal-500 shadow-[0_0_30px_#2dd4bf] flex items-center justify-center">
+             <ShieldCheck className="w-5 h-5 text-teal-400" />
+          </div>
+        </motion.div>
+
+        {/* Floating Data Packets feeding into the core */}
+        <div className="absolute inset-0 pointer-events-none z-10">
+          {[...Array(6)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-32 h-[1px] bg-gradient-to-r from-transparent via-teal-400 to-transparent"
+              style={{
+                top: `${20 + Math.random() * 60}%`,
+                left: i % 2 === 0 ? '-10%' : '110%',
+              }}
+              animate={{
+                x: i % 2 === 0 ? [0, 800] : [0, -800],
+                opacity: [0, 1, 0]
+              }}
+              transition={{
+                duration: 2 + Math.random() * 2,
+                repeat: Infinity,
+                delay: Math.random() * 2,
+                ease: "linear"
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Connecting Lines / HUD Elements */}
+        <div className="absolute w-full h-full pointer-events-none z-20 flex justify-between items-center px-10 md:px-32">
+           <motion.div 
+             initial={{ opacity: 0, x: -20 }}
+             whileInView={{ opacity: 1, x: 0 }}
+             className="flex flex-col gap-2 items-center"
+           >
+             <div className="w-12 h-12 rounded-full border border-white/10 bg-black/50 backdrop-blur-md flex items-center justify-center">
+               <Database className="w-5 h-5 text-gray-400" />
+             </div>
+             <span className="text-[10px] font-mono text-gray-500 tracking-widest">KNOWLEDGE GRAPH</span>
+           </motion.div>
+
+           <motion.div 
+             initial={{ opacity: 0, x: 20 }}
+             whileInView={{ opacity: 1, x: 0 }}
+             className="flex flex-col gap-2 items-center"
+           >
+             <div className="w-12 h-12 rounded-full border border-white/10 bg-black/50 backdrop-blur-md flex items-center justify-center">
+               <Network className="w-5 h-5 text-gray-400" />
+             </div>
+             <span className="text-[10px] font-mono text-gray-500 tracking-widest">THREAT TELEMETRY</span>
+           </motion.div>
+        </div>
+
+      </div>
     </section>
   );
 };
