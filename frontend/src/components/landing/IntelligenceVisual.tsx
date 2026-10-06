@@ -75,7 +75,7 @@ export const IntelligenceVisual: React.FC = () => {
         <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center">
           
           <div className="w-32 h-px bg-gradient-to-r from-teal-500/50 to-white/20 relative">
-             <motion.div animate={{ x: [0, 128] }} transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }} className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-[0_0_15px_white]" />
+             <motion.div animate={{ x: [0, 128] }} transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }} className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-[#3B82F6] rounded-full shadow-[0_0_15px_white]" />
           </div>
 
           <div className="flex gap-8 relative z-10">

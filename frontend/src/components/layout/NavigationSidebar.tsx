@@ -52,7 +52,7 @@ const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ isOpen, onClose, 
           ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
         `}
         style={{
-          background: 'linear-gradient(180deg, #071225 0%, #050B18 100%)', boxShadow: 'inset -2px 0 20px rgba(37,99,235,0.05)', borderRight: '2px solid rgba(59,130,246,0.18)'
+          background: 'var(--theme-surface)', borderRight: '1px solid var(--theme-border)'
         }}
       >
         {/* Branding Header */}
@@ -93,7 +93,7 @@ const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ isOpen, onClose, 
             <button 
               onClick={onToggleCollapse}
               className="hidden md:flex p-1.5 rounded-lg transition-all flex-shrink-0"
-              style={{ color: 'var(--theme-text-muted)' }}
+              style={{ color: '#6F829A' }}
               title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
               onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--theme-border)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--theme-text)'; }}
               onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--theme-text-muted)'; }}
@@ -114,7 +114,7 @@ const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ isOpen, onClose, 
         {/* Navigation Label */}
         {!isCollapsed && (
           <div className="px-5 pt-4 pb-1">
-            <span className="text-[9px] font-mono uppercase tracking-[0.2em] font-bold" style={{ color: 'var(--theme-text-muted)' }}>
+            <span className="text-[9px] font-mono uppercase tracking-[0.2em] font-bold" style={{ color: '#6F829A' }}>
               Navigation
             </span>
           </div>
@@ -139,8 +139,7 @@ const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ isOpen, onClose, 
                 borderLeft: isCollapsed ? 'none' : `2px solid var(--theme-accent-start)`,
                 boxShadow: `inset 0 0 20px color-mix(in srgb, var(--theme-accent-start) 5%, transparent)`,
               } : {
-                color: 'var(--theme-text-muted)',
-                borderLeft: isCollapsed ? 'none' : '2px solid transparent'
+                color: '#9AAEC4', borderLeft: isCollapsed ? 'none' : '2px solid transparent'
               }}
             >
               {({ isActive }) => (
@@ -153,7 +152,7 @@ const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ isOpen, onClose, 
                     <div className="flex flex-col min-w-0">
                       <span className="truncate leading-tight">{item.name}</span>
                       {isActive && (
-                        <span className="text-[9px] font-mono truncate" style={{ color: 'var(--theme-text-muted)' }}>
+                        <span className="text-[9px] font-mono truncate" style={{ color: '#6F829A' }}>
                           {item.desc}
                         </span>
                       )}
@@ -172,7 +171,7 @@ const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ isOpen, onClose, 
         {!isCollapsed && (
           <div
             className="p-4 font-mono text-[9px] space-y-2 flex-shrink-0 overflow-hidden"
-            style={{ color: 'var(--theme-text-muted)' }}
+            style={{ color: '#6F829A' }}
           >
             <div className="text-[8px] uppercase tracking-widest font-bold mb-2" style={{ color: 'var(--theme-text-muted)', opacity: 0.6 }}>Live System Status</div>
             {[
@@ -182,11 +181,11 @@ const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ isOpen, onClose, 
             ].map(({ icon: Icon, label, status, ok }) => (
               <div key={label}
                 className="flex items-center justify-between px-2 py-1.5 rounded-lg"
-                style={{ background: 'color-mix(in srgb, var(--theme-border) 40%, transparent)', border: '1px solid var(--theme-border)' }}
+                style={{ background: '#050B14', border: '1px solid rgba(148,163,184,0.10)' }}
               >
                 <div className="flex items-center space-x-1.5">
-                  <Icon className="w-3 h-3 flex-shrink-0" style={{ color: 'var(--theme-text-muted)' }} />
-                  <span className="truncate">{label}</span>
+                  <Icon className="w-3 h-3 flex-shrink-0" style={{ color: '#6F829A' }} />
+                  <span className="truncate text-[#E8F0FA]">{label}</span>
                 </div>
                 <span className={`font-bold ${ok ? 'text-[#22C55E]' : 'text-[#EF4444]'}`}>{status}</span>
               </div>
@@ -215,4 +214,7 @@ const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ isOpen, onClose, 
 };
 
 export default NavigationSidebar;
+
+
+
 

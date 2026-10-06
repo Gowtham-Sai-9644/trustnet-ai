@@ -30,6 +30,38 @@
 
   /* Sapphire — Royal Indigo */
     /* Navy SecOps Command Center Theme */
+    /* Professional Enterprise SOC Theme */
+  [data-theme="soc"] {
+    --theme-bg: #050B14;
+    --theme-surface: #06101C;
+    --theme-main: #081321;
+    --theme-card: #0A1728;
+    --theme-input: #050D18;
+    
+    --theme-text: #E8F0FA;
+    --theme-text-secondary: #A8B8CC;
+    --theme-text-muted: #6F829A;
+    --theme-text-tech: #8EA4BD;
+    
+    --theme-border: rgba(148,163,184,0.10);
+    --theme-border-active: rgba(59,130,246,0.35);
+    --theme-border-focus: rgba(59,130,246,0.65);
+    
+    --theme-accent-primary: #2563EB;
+    --theme-accent-secondary: #3B82F6;
+    --theme-accent-bright: #60A5FA;
+    --theme-accent-subtle: #1D4ED8;
+    --theme-cyan: #22D3EE;
+    
+    --theme-btn-bg: #2563EB;
+    --theme-btn-text: #FFFFFF;
+    
+    --status-ok: #22C55E;
+    --status-warn: #F59E0B;
+    --status-crit: #EF4444;
+    --status-info: #38BDF8;
+  }
+
   [data-theme="navy"] {
     --theme-bg: #050B18;
     --theme-surface: rgba(8, 20, 40, 0.82);
@@ -231,5 +263,6 @@
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 ::selection { background: rgba(0,229,255,0.2); color: #F1F5F9; }
+
 
 

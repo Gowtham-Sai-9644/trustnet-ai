@@ -35,7 +35,7 @@ export const SpaceBackground: React.FC = () => {
       {stars.map((star) => (
         <motion.div
           key={star.id}
-          className="absolute bg-white rounded-full"
+          className="absolute bg-[#3B82F6] rounded-full"
           style={{
             left: `${star.x}%`,
             top: `${star.y}%`,

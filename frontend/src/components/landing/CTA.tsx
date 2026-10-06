@@ -51,7 +51,7 @@ export const CTA: React.FC = () => {
         <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
           <Link 
             to="/console" 
-            className="group w-full sm:w-auto bg-white text-app-btn-text px-10 py-5 rounded-full text-sm uppercase tracking-widest font-bold transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-105 flex items-center justify-center space-x-3 overflow-hidden relative"
+            className="group w-full sm:w-auto bg-[#3B82F6] text-white px-10 py-5 rounded-full text-sm uppercase tracking-widest font-bold transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-105 flex items-center justify-center space-x-3 overflow-hidden relative"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
             <span>Start Analysis</span>

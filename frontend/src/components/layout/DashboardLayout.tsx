@@ -192,7 +192,7 @@ const DashboardLayout: React.FC = () => {
   return (
     <div
       className="flex h-screen w-screen overflow-hidden font-sans relative"
-      style={{ background: 'var(--theme-bg)', color: 'var(--theme-text)' }}
+      style={{ background: '#07111F', color: 'var(--theme-text)' }}
     >
 
       {/* ── Left Sidebar ── */}
@@ -211,7 +211,7 @@ const DashboardLayout: React.FC = () => {
           className="h-14 px-4 md:px-6 flex items-center justify-between z-10 flex-shrink-0"
           style={{ backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', 
             background: 'var(--theme-surface)',
-            borderBottom: '1px solid var(--theme-border)',
+            borderBottom: '1px solid rgba(148,163,184,0.10)',
             boxShadow: '0 1px 0 0 var(--theme-border)'
           }}
         >
@@ -249,9 +249,9 @@ const DashboardLayout: React.FC = () => {
                 style={{ color: 'var(--theme-text-muted)' }}
               />
               <div
-                className="w-full rounded-xl pl-9 pr-12 py-2 text-[10px] text-left transition-all font-sans select-none"
+                className="w-full rounded-[8px] pl-9 pr-12 py-2 text-[10px] text-left transition-all font-sans select-none"
                 style={{
-                  background: 'var(--theme-bg)',
+                  background: '#07111F',
                   border: '1px solid var(--theme-border)',
                   color: 'var(--theme-text-muted)'
                 }}
@@ -274,7 +274,7 @@ const DashboardLayout: React.FC = () => {
 
             {/* Health Status Pills */}
             <div
-              className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl font-mono text-[9px] select-none"
+              className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-[8px] font-mono text-[9px] select-none"
               style={{ backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',  background: 'var(--theme-card)', border: '1px solid var(--theme-border)', color: 'var(--theme-text-muted)' }}
             >
               <span className="text-[8px] uppercase tracking-wider font-bold" style={{ opacity: 0.6 }}>Health</span>
@@ -293,7 +293,7 @@ const DashboardLayout: React.FC = () => {
             {/* Telemetry Toggle */}
             <button
               onClick={() => setShowTelemetry(prev => !prev)}
-              className="p-1.5 rounded-xl border transition-all flex items-center justify-center cursor-pointer flex-shrink-0"
+              className="p-1.5 rounded-[8px] border transition-all flex items-center justify-center cursor-pointer flex-shrink-0"
               title="Toggle Live Signal Feed"
               style={showTelemetry ? {
                 background: 'color-mix(in srgb, var(--theme-accent-start) 12%, transparent)',
@@ -313,7 +313,7 @@ const DashboardLayout: React.FC = () => {
         </header>
 
         {/* ── Main Content Wrapper ── */}
-        <div className="flex-1 relative overflow-hidden bg-transparent">
+        <div className="flex-1 relative overflow-hidden" style={{ background: "var(--theme-main)" }}>
           <BackgroundSlider themeContext={theme} />
           {/* ── Dynamic Background (Local to Main) ── */}
           
@@ -322,16 +322,6 @@ const DashboardLayout: React.FC = () => {
             className="absolute inset-0 overflow-y-auto p-6"
             style={{ background: 'transparent' }}
           >
-            {/* Ambient gradient glows */}
-            <div
-              className="pointer-events-none fixed inset-0 z-0"
-              style={{
-                background: `
-                  radial-gradient(ellipse 55% 38% at 25% 15%, color-mix(in srgb, var(--theme-accent-start) 6%, transparent), transparent),
-                  radial-gradient(ellipse 45% 32% at 82% 85%, color-mix(in srgb, var(--theme-accent-end) 5%, transparent), transparent)
-                `
-              }}
-            />
             <div className="max-w-[1440px] mx-auto w-full relative z-10">
               <Outlet />
             </div>
@@ -348,12 +338,12 @@ const DashboardLayout: React.FC = () => {
             exit={{ width: 0, opacity: 0 }}
             transition={{ duration: 0.25, ease: 'easeInOut' }}
             className="hidden xl:flex flex-col w-72 h-screen overflow-hidden relative z-20 flex-shrink-0"
-            style={{ background: 'linear-gradient(180deg, #071225 0%, #050B18 100%)', boxShadow: 'inset 2px 0 20px rgba(37,99,235,0.05)', borderLeft: '2px solid rgba(59,130,246,0.18)' }}
+            style={{ background: 'var(--theme-surface)', borderLeft: '1px solid var(--theme-border)' }}
           >
             {/* Header */}
             <div
               className="p-4 flex items-center justify-between flex-shrink-0"
-              style={{ borderBottom: '1px solid var(--theme-border)' }}
+              style={{ borderBottom: '1px solid rgba(148,163,184,0.10)' }}
             >
               <span className="text-[10px] font-sans font-bold uppercase tracking-wider flex items-center gap-2" style={{ color: 'var(--theme-text)' }}>
                 <Activity className="w-3.5 h-3.5" style={{ color: 'var(--theme-accent-start)' }} />
@@ -370,7 +360,7 @@ const DashboardLayout: React.FC = () => {
             {/* Stats Grid */}
             <div
               className="p-4 grid grid-cols-2 gap-2 flex-shrink-0"
-              style={{ borderBottom: '1px solid var(--theme-border)' }}
+              style={{ borderBottom: '1px solid rgba(148,163,184,0.10)' }}
             >
               {[
                 { label: 'Total Scans', value: telemetryStats.scannedCount.toLocaleString(), accent: 'var(--theme-accent-start)' },
@@ -378,7 +368,7 @@ const DashboardLayout: React.FC = () => {
               ].map(({ label, value, accent }) => (
                 <div
                   key={label}
-                  className="p-2.5 rounded-xl"
+                  className="p-2.5 rounded-[8px]"
                   style={{ backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',  background: 'var(--theme-card)', border: '1px solid var(--theme-border)' }}
                 >
                   <span className="text-[7px] font-mono uppercase block mb-1" style={{ color: 'var(--theme-text-muted)' }}>{label}</span>
@@ -390,14 +380,14 @@ const DashboardLayout: React.FC = () => {
             {/* Waveform */}
             <div
               className="p-4 flex flex-col items-center flex-shrink-0"
-              style={{ borderBottom: '1px solid var(--theme-border)' }}
+              style={{ borderBottom: '1px solid rgba(148,163,184,0.10)' }}
             >
               <span className="text-[7px] font-mono uppercase tracking-widest block mb-2 w-full" style={{ color: 'var(--theme-text-muted)' }}>
                 Threat Frequency Amplitude
               </span>
               <div
-                className="w-full rounded-xl overflow-hidden"
-                style={{ background: 'var(--theme-bg)', border: '1px solid var(--theme-border)' }}
+                className="w-full rounded-[8px] overflow-hidden"
+                style={{ background: '#07111F', border: '1px solid var(--theme-border)' }}
               >
                 <canvas ref={canvasRef} className="w-full h-20" />
               </div>
@@ -406,7 +396,7 @@ const DashboardLayout: React.FC = () => {
             {/* Resource Overhead */}
             <div
               className="p-4 space-y-2 flex-shrink-0"
-              style={{ borderBottom: '1px solid var(--theme-border)' }}
+              style={{ borderBottom: '1px solid rgba(148,163,184,0.10)' }}
             >
               <span className="text-[8px] font-sans font-bold uppercase tracking-wide block" style={{ color: 'var(--theme-text-muted)', opacity: 0.7 }}>Resource Overhead</span>
               {[
@@ -471,7 +461,7 @@ const DashboardLayout: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0 }}
                         onClick={() => handleLogClick(ev)}
-                        className="pb-2 text-[9px] font-mono leading-relaxed cursor-pointer p-2 rounded-xl transition-all block"
+                        className="pb-2 text-[9px] font-mono leading-relaxed cursor-pointer p-2 rounded-[8px] transition-all block"
                         style={{ borderBottom: '1px solid color-mix(in srgb, var(--theme-border) 40%, transparent)' }}
                         onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'color-mix(in srgb, var(--theme-border) 50%, transparent)'}
                         onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'transparent'}
@@ -511,4 +501,7 @@ const DashboardLayout: React.FC = () => {
 };
 
 export default DashboardLayout;
+
+
+
 

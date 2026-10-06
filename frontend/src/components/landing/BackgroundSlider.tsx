@@ -10,7 +10,7 @@ const backgrounds = [
   '/ai_investigation_center.png'
 ];
 
-export const BackgroundSlider: React.FC<{ themeContext?: 'landing' | 'navy' | 'light' | 'blue' | 'radiant' | 'sapphire' | 'velvet' | 'dark' | 'emerald' }> = ({ themeContext = 'landing' }) => {
+export const BackgroundSlider: React.FC<{ themeContext?: 'landing' | 'soc' | 'navy' | 'light' | 'blue' | 'radiant' | 'sapphire' | 'velvet' | 'dark' | 'emerald' }> = ({ themeContext = 'landing' }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export const BackgroundSlider: React.FC<{ themeContext?: 'landing' | 'navy' | 'l
             <motion.div
               key={idx}
               initial={{ opacity: 0, scale: 1.05, y: 0 }}
-              animate={{ opacity: 0.15, scale: 1.15, y: -20 }}
+              animate={{ opacity: 0.04, scale: 1.15, y: -20 }}
               exit={{ opacity: 0 }}
               transition={{ 
                 opacity: { duration: 4, ease: "easeInOut" },
@@ -49,7 +49,7 @@ export const BackgroundSlider: React.FC<{ themeContext?: 'landing' | 'navy' | 'l
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(circle at center, rgba(5, 11, 24, 0.75) 0%, rgba(5, 11, 24, 0.95) 100%)'
+          background: 'transparent'
         }}
       />
 
@@ -65,3 +65,4 @@ export const BackgroundSlider: React.FC<{ themeContext?: 'landing' | 'navy' | 'l
     </div>
   );
 };
+

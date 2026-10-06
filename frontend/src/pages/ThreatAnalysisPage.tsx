@@ -96,7 +96,7 @@ const ThreatAnalysisPage: React.FC = () => {
     };
   }, [showResults, currentResult, score]);
 
-  const inputStyle = "w-full bg-app-bg border border-app-border rounded-xl px-3.5 py-2.5 text-xs text-app-text placeholder-slate-500 focus:outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6]/30 transition-all font-sans";
+  const inputStyle = "w-full bg-[#050D18] border border-[rgba(148,163,184,0.13)] rounded-[8px] px-3.5 py-2.5 text-xs text-[#E8F0FA] placeholder-[#647890] focus:outline-none focus:border-[#3B82F6] focus:shadow-[0_0_0_2px_rgba(59,130,246,0.10)] transition-all font-sans";
 
   return (
     <div className="space-y-4 text-left font-sans">
@@ -125,7 +125,7 @@ const ThreatAnalysisPage: React.FC = () => {
             </div>
 
             {/* Tabs Selector */}
-            <div className="flex space-x-1 bg-app-bg p-1 rounded-xl border border-app-border text-xs font-mono font-bold">
+            <div className="flex space-x-1 bg-app-bg p-1 rounded-[8px] border border-app-border text-xs font-mono font-bold">
               {[
                 { id: 'url', label: 'Domain Link' },
                 { id: 'upi', label: 'UPI Handle' },
@@ -138,7 +138,7 @@ const ThreatAnalysisPage: React.FC = () => {
                     setActiveTab(tab.id as any);
                     setShowResults(false);
                   }}
-                  className={`flex-1 py-2 rounded-lg font-bold transition-all cursor-pointer ${
+                  className={`flex-1 py-2 rounded-[6px] font-bold transition-all cursor-pointer ${
                     activeTab === tab.id
                       ? 'bg-[#3B82F6] text-app-btn-text shadow'
                       : 'text-app-muted hover:text-app-text'
@@ -221,7 +221,7 @@ const ThreatAnalysisPage: React.FC = () => {
             </div>
 
             {error && (
-              <div className="bg-[#EF4444]/10 border border-[#EF4444]/30 p-3 rounded-xl flex items-start space-x-2 text-xs text-[#EF4444] font-mono">
+              <div className="bg-[#EF4444]/10 border border-[#EF4444]/30 p-3 rounded-[8px] flex items-start space-x-2 text-xs text-[#EF4444] font-mono">
                 <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <span>{error}</span>
               </div>
@@ -232,7 +232,7 @@ const ThreatAnalysisPage: React.FC = () => {
               <button
                 onClick={executeAnalysis}
                 disabled={isLoading || isScanning}
-                className="flex-1 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.6)] py-2.5 rounded-xl text-xs font-mono font-bold flex items-center justify-center space-x-2 transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer border border-blue-400/30"
+                className="flex-1 bg-[#2563EB] hover:bg-[#3B82F6] active:bg-[#1D4ED8] text-[#FFFFFF] shadow-[0_4px_14px_rgba(37,99,235,0.20)] py-2.5 rounded-[7px] text-xs font-mono font-bold flex items-center justify-center space-x-2 transition-all disabled:opacity-50 cursor-pointer border-none"
               >
                 {isScanning ? (
                   <>
@@ -253,7 +253,7 @@ const ThreatAnalysisPage: React.FC = () => {
                   setIsScanning(false);
                   setScanStep(0);
                 }}
-                className="bg-app-bg hover:bg-[#1E293B]/80 border border-app-border text-app-text px-5 py-2.5 rounded-xl text-xs font-mono font-medium flex items-center space-x-1.5 transition-all cursor-pointer"
+                className="bg-[#081321] hover:bg-[#0D1B2D] border border-[rgba(148,163,184,0.12)] text-[#A8B8CC] hover:text-[#E8F0FA] px-5 py-2.5 rounded-[7px] text-xs font-mono font-medium flex items-center space-x-1.5 transition-all cursor-pointer"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>Reset</span>
@@ -353,7 +353,7 @@ const ThreatAnalysisPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="bg-app-bg p-3 rounded-xl border border-app-border/60 text-[10px] text-app-text w-full leading-normal text-left font-sans">
+                  <div className="bg-app-bg p-3 rounded-[8px] border border-app-border/60 text-[10px] text-app-text w-full leading-normal text-left font-sans">
                     <p className="font-semibold text-app-text mb-1">
                       Category: <span className="text-[#3B82F6] font-mono">{currentResult.scam_category}</span>
                     </p>
@@ -395,7 +395,7 @@ const ThreatAnalysisPage: React.FC = () => {
                     </span>
                     <div className="space-y-1.5 pt-1">
                       {currentResult.detection_evidence.evidence_trace.map((hop: string, idx: number) => (
-                        <div key={idx} className="bg-app-bg p-2 rounded-lg border border-app-border text-app-text font-mono">
+                        <div key={idx} className="bg-app-bg p-2 rounded-[6px] border border-app-border text-app-text font-mono">
                           {hop}
                         </div>
                       ))}
@@ -404,13 +404,13 @@ const ThreatAnalysisPage: React.FC = () => {
                 )}
               </motion.div>
             ) : (
-                              <AppCard className="relative p-6 flex flex-col items-center justify-center text-center space-y-4 min-h-[420px] text-app-muted overflow-hidden bg-gradient-to-b from-[#071225] to-[#050B18]">
+                              <AppCard className="relative p-6 flex flex-col items-center justify-center text-center space-y-4 min-h-[420px] text-app-muted overflow-hidden bg-[#091625]">
                   <div className="absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.05)_1px,transparent_1px)] bg-[size:30px_30px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_30%,transparent_100%)] opacity-30 pointer-events-none" />
                   
                   <div className="relative flex items-center justify-center w-20 h-20 mb-2">
-                    <div className="absolute inset-0 rounded-full border border-blue-500/20 animate-[ping_3s_ease-in-out_infinite]" />
-                    <div className="absolute inset-2 rounded-full border border-blue-500/40 animate-[ping_2s_ease-in-out_infinite_0.5s]" />
-                    <div className="w-14 h-14 bg-[#091A33] rounded-full border border-blue-500/30 flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.2)] z-10">
+                    
+                    
+                    <div className="w-14 h-14 bg-[#091A33] rounded-full border border-blue-500/30 flex items-center justify-center shadow-none z-10">
                       <ShieldCheck className="w-6 h-6 text-blue-400 opacity-90" />
                     </div>
                   </div>

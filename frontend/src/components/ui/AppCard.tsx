@@ -24,23 +24,17 @@ export const AppCard: React.FC<AppCardProps> = ({
         hoverable ? 'cursor-pointer' : ''
       } ${onClick ? 'cursor-pointer' : ''} ${className}`}
       style={{
-        background: glassEffect
-          ? 'rgba(19, 28, 46, 0.65)'
-          : 'var(--theme-card, #131C2E)',
-        backdropFilter: glassEffect ? 'blur(16px)' : undefined,
-        WebkitBackdropFilter: glassEffect ? 'blur(16px)' : undefined,
-        border: `1px solid ${accentColor ? accentColor + '28' : 'var(--theme-border, #1E293B)'}`,
-        borderRadius: '16px',
-        boxShadow: hoverable
-          ? '0 1px 3px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.15)'
-          : undefined,
+        background: 'var(--theme-card, #0A1728)',
+        border: `1px solid ${accentColor ? accentColor + '28' : 'var(--theme-border, #132338)'}`,
+        borderRadius: '10px',
+        boxShadow: 'none',
       }}
       onMouseEnter={
         hoverable
           ? e => {
               const el = e.currentTarget as HTMLElement;
-              el.style.transform = 'translateY(-2px)';
-              el.style.boxShadow = `0 8px 24px rgba(0,0,0,0.35), 0 0 0 1px ${accentColor ?? 'var(--theme-accent-start)'}28`;
+              el.style.transform = '';
+              el.style.boxShadow = 'none';
               if (accentColor) el.style.borderColor = accentColor + '45';
             }
           : undefined
@@ -50,8 +44,8 @@ export const AppCard: React.FC<AppCardProps> = ({
           ? e => {
               const el = e.currentTarget as HTMLElement;
               el.style.transform = '';
-              el.style.boxShadow = '0 1px 3px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.15)';
-              el.style.borderColor = accentColor ? accentColor + '28' : 'var(--theme-border, #1E293B)';
+              el.style.boxShadow = 'none';
+              el.style.borderColor = accentColor ? accentColor + '28' : 'var(--theme-border, #132338)';
             }
           : undefined
       }
@@ -59,7 +53,7 @@ export const AppCard: React.FC<AppCardProps> = ({
       {/* Optional top accent bar */}
       {accentColor && (
         <div
-          className="absolute top-0 left-0 right-0 h-[2px] rounded-t-2xl"
+          className="absolute top-0 left-0 right-0 h-[2px] rounded-t-[10px]"
           style={{ background: `linear-gradient(90deg, ${accentColor}, transparent)` }}
         />
       )}

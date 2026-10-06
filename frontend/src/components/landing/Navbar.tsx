@@ -54,7 +54,7 @@ export const Navbar: React.FC = () => {
           </a>
           <Link
             to="/console"
-            className="px-6 py-2.5 rounded-full text-xs uppercase tracking-widest font-bold transition-all bg-white text-app-btn-text hover:bg-gray-200 hover:scale-105 active:scale-95"
+            className="px-6 py-2.5 rounded-full text-xs uppercase tracking-widest font-bold transition-all bg-[#3B82F6] text-white hover:bg-gray-200 hover:scale-105 active:scale-95"
           >
             Launch Console
           </Link>
@@ -83,7 +83,7 @@ export const Navbar: React.FC = () => {
             <a href="#rag" className="font-bold text-lg text-app-text" onClick={() => setMobileOpen(false)}>Intelligence</a>
             <Link
               to="/console"
-              className="text-center py-4 rounded-xl font-bold bg-white text-app-btn-text"
+              className="text-center py-4 rounded-xl font-bold bg-[#3B82F6] text-white"
               onClick={() => setMobileOpen(false)}
             >
               Launch Console
@@ -94,3 +94,4 @@ export const Navbar: React.FC = () => {
     </header>
   );
 };
+
