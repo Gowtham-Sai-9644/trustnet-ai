@@ -348,7 +348,7 @@ const DashboardLayout: React.FC = () => {
             exit={{ width: 0, opacity: 0 }}
             transition={{ duration: 0.25, ease: 'easeInOut' }}
             className="hidden xl:flex flex-col w-72 h-screen overflow-hidden relative z-20 flex-shrink-0"
-            style={{ backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',  background: 'var(--theme-surface)', borderLeft: '1px solid var(--theme-border)' }}
+            style={{ background: 'linear-gradient(180deg, #071225 0%, #050B18 100%)', boxShadow: 'inset 2px 0 20px rgba(37,99,235,0.05)', borderLeft: '2px solid rgba(59,130,246,0.18)' }}
           >
             {/* Header */}
             <div
@@ -511,3 +511,4 @@ const DashboardLayout: React.FC = () => {
 };
 
 export default DashboardLayout;
+

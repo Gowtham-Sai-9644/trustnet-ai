@@ -52,10 +52,7 @@ const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ isOpen, onClose, 
           ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
         `}
         style={{
-          background: 'var(--theme-surface, #0E1726)',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          borderRight: '1px solid var(--theme-border, #1E293B)'
+          background: 'linear-gradient(180deg, #071225 0%, #050B18 100%)', boxShadow: 'inset -2px 0 20px rgba(37,99,235,0.05)', borderRight: '2px solid rgba(59,130,246,0.18)'
         }}
       >
         {/* Branding Header */}
@@ -218,3 +215,4 @@ const NavigationSidebar: React.FC<NavigationSidebarProps> = ({ isOpen, onClose, 
 };
 
 export default NavigationSidebar;
+

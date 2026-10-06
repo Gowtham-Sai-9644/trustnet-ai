@@ -232,7 +232,7 @@ const ThreatAnalysisPage: React.FC = () => {
               <button
                 onClick={executeAnalysis}
                 disabled={isLoading || isScanning}
-                className="flex-1 bg-[#3B82F6] hover:bg-[#3B82F6]/90 text-app-btn-text py-2.5 rounded-xl text-xs font-mono font-bold flex items-center justify-center space-x-2 transition-all active:scale-[0.99] disabled:opacity-50 cursor-pointer shadow-md"
+                className="flex-1 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.6)] py-2.5 rounded-xl text-xs font-mono font-bold flex items-center justify-center space-x-2 transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer border border-blue-400/30"
               >
                 {isScanning ? (
                   <>
@@ -404,15 +404,24 @@ const ThreatAnalysisPage: React.FC = () => {
                 )}
               </motion.div>
             ) : (
-              <AppCard className="p-6 flex flex-col items-center justify-center text-center space-y-3 min-h-[420px] text-app-muted">
-                <ShieldCheck className="w-12 h-12 text-slate-600 opacity-40" />
-                <h4 className="text-xs font-mono font-bold text-app-text uppercase">
-                  Awaiting Threat Ingestion
-                </h4>
-                <p className="text-[10px] text-app-muted max-w-xs leading-relaxed font-sans">
-                  Enter a URL domain, UPI handle, phone number, or message lure on the left panel and click "Run Multi-Modal Scam Scan".
-                </p>
-              </AppCard>
+                              <AppCard className="relative p-6 flex flex-col items-center justify-center text-center space-y-4 min-h-[420px] text-app-muted overflow-hidden bg-gradient-to-b from-[#071225] to-[#050B18]">
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.05)_1px,transparent_1px)] bg-[size:30px_30px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_30%,transparent_100%)] opacity-30 pointer-events-none" />
+                  
+                  <div className="relative flex items-center justify-center w-20 h-20 mb-2">
+                    <div className="absolute inset-0 rounded-full border border-blue-500/20 animate-[ping_3s_ease-in-out_infinite]" />
+                    <div className="absolute inset-2 rounded-full border border-blue-500/40 animate-[ping_2s_ease-in-out_infinite_0.5s]" />
+                    <div className="w-14 h-14 bg-[#091A33] rounded-full border border-blue-500/30 flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.2)] z-10">
+                      <ShieldCheck className="w-6 h-6 text-blue-400 opacity-90" />
+                    </div>
+                  </div>
+                  
+                  <h4 className="text-xs font-mono font-bold text-blue-100 uppercase tracking-widest z-10 drop-shadow-[0_0_5px_rgba(59,130,246,0.5)]">
+                    Awaiting Threat Ingestion
+                  </h4>
+                  <p className="text-[10px] text-blue-200/50 max-w-xs leading-relaxed font-sans z-10">
+                    Enter a URL domain, UPI handle, phone number, or message lure on the left panel and click "Run Multi-Modal Scam Scan".
+                  </p>
+                </AppCard>
             )}
           </AnimatePresence>
         </div>
@@ -422,3 +431,6 @@ const ThreatAnalysisPage: React.FC = () => {
 };
 
 export default ThreatAnalysisPage;
+
+
+

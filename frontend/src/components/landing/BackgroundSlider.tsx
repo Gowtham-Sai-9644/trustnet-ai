@@ -1,75 +1,66 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Rich set of vibrant background images available in public folder
+// Use more abstract/network backgrounds
 const backgrounds = [
-  '/landing-bg.jpg',
   '/cyber_mesh_bg.png',
   '/scene1_threat_landscape.png',
-  '/digital_world_telemetry.png',
   '/scam_nodes_bg.png',
-  '/ai_investigation_center.png',
-  '/scene2_ingestion_scanner.png',
-  '/fraud_network.png',
-  '/scene3_relationship_forensics.png'
+  '/digital_world_telemetry.png',
+  '/ai_investigation_center.png'
 ];
 
-export const BackgroundSlider: React.FC<{ themeContext?: 'landing' | 'blue' | 'radiant' }> = ({ themeContext = 'landing' }) => {
+export const BackgroundSlider: React.FC<{ themeContext?: 'landing' | 'navy' | 'light' | 'blue' | 'radiant' | 'sapphire' | 'velvet' | 'dark' | 'emerald' }> = ({ themeContext = 'landing' }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
-    // Shift every 2 seconds as requested by the user
+    // 30 second transitions for slow, subtle movement
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % backgrounds.length);
-    }, 2000);
+    }, 30000);
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <div className={`${themeContext === 'landing' ? 'fixed' : 'absolute'} inset-0 z-0 overflow-hidden`} style={{ background: '#0A1128' }}>
+    <div className="absolute inset-0 z-0 overflow-hidden bg-[#050B18]">
       <AnimatePresence mode="popLayout">
         {backgrounds.map((bg, idx) => {
           if (idx !== currentSlide) return null;
           return (
             <motion.div
               key={idx}
-              initial={{ opacity: 0, scale: 1.06 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, scale: 1.05, y: 0 }}
+              animate={{ opacity: 0.15, scale: 1.15, y: -20 }}
               exit={{ opacity: 0 }}
-              transition={{ opacity: { duration: 0.6 }, scale: { duration: 2.2, ease: 'linear' } }}
+              transition={{ 
+                opacity: { duration: 4, ease: "easeInOut" },
+                scale: { duration: 40, ease: "linear" },
+                y: { duration: 40, ease: "linear" }
+              }}
               className="absolute inset-0"
             >
-              <img src={bg} alt="Vibrant Background" className="w-full h-full object-cover saturate-150 contrast-110" />
+              <img src={bg} alt="Intelligence Background" className="w-full h-full object-cover mix-blend-screen" />
             </motion.div>
           );
         })}
       </AnimatePresence>
 
-      {/* Balanced overlay based on themeContext prop */}
+      {/* Navy Command Center Overlay to push opacity down to 0.04 - 0.12 visually */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          background: themeContext === 'blue' 
-            ? 'radial-gradient(ellipse at center, rgba(4, 15, 10, 0.80) 0%, rgba(4, 15, 10, 0.92) 100%)' // Emerald dark tint
-            : themeContext === 'light'
-            ? 'radial-gradient(ellipse at center, rgba(248, 250, 252, 0.90) 0%, rgba(241, 245, 249, 0.95) 100%)' // Radiant light blue/white tint
-            : 'radial-gradient(ellipse at center, rgba(255, 252, 245, 0.75) 0%, rgba(255, 248, 235, 0.90) 100%)',
+          background: 'radial-gradient(circle at center, rgba(5, 11, 24, 0.75) 0%, rgba(5, 11, 24, 0.95) 100%)'
         }}
       />
 
-      {/* Subtle tech circuit texture */}
-      <svg className="absolute inset-0 w-full h-full opacity-[0.06] pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+      {/* Subtle Data Grid overlay */}
+      <svg className="absolute inset-0 w-full h-full opacity-[0.03] pointer-events-none" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <pattern id="circuit" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 40 30 M 40 50 L 40 80 M 0 40 L 30 40 M 50 40 L 80 40" stroke={themeContext === 'blue' ? "#10B981" : themeContext === 'light' ? "#0EA5E9" : "#7C5C2E"} strokeWidth="1" fill="none"/>
-            <circle cx="40" cy="40" r="4" fill="none" stroke={themeContext === 'blue' ? "#10B981" : themeContext === 'light' ? "#0EA5E9" : "#7C5C2E"} strokeWidth="1"/>
-            <circle cx="40" cy="0" r="2" fill={themeContext === 'blue' ? "#10B981" : themeContext === 'light' ? "#0EA5E9" : "#7C5C2E"}/>
-            <circle cx="40" cy="80" r="2" fill={themeContext === 'blue' ? "#10B981" : themeContext === 'light' ? "#0EA5E9" : "#7C5C2E"}/>
-            <circle cx="0" cy="40" r="2" fill={themeContext === 'blue' ? "#10B981" : themeContext === 'light' ? "#0EA5E9" : "#7C5C2E"}/>
-            <circle cx="80" cy="40" r="2" fill={themeContext === 'blue' ? "#10B981" : themeContext === 'light' ? "#0EA5E9" : "#7C5C2E"}/>
+          <pattern id="secops-grid" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+            <path d="M 100 0 L 0 0 0 100" fill="none" stroke="#60A5FA" strokeWidth="1" />
           </pattern>
         </defs>
-        <rect width="100%" height="100%" fill="url(#circuit)"/>
+        <rect width="100%" height="100%" fill="url(#secops-grid)"/>
       </svg>
     </div>
   );

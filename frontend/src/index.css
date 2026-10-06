@@ -29,6 +29,21 @@
   }
 
   /* Sapphire — Royal Indigo */
+    /* Navy SecOps Command Center Theme */
+  [data-theme="navy"] {
+    --theme-bg: #050B18;
+    --theme-surface: rgba(8, 20, 40, 0.82);
+    --theme-card: #0B1F3A;
+    --theme-text: #EAF2FF;
+    --theme-text-muted: #9DB0CA;
+    --theme-border: rgba(59, 130, 246, 0.25);
+    --theme-accent-start: #3B82F6;
+    --theme-accent-end: #38BDF8;
+    --theme-btn-bg: linear-gradient(135deg, #2563EB, #3B82F6);
+    --theme-btn-text: #FFFFFF;
+    --theme-nav-bg: #071225;
+  }
+
   [data-theme="sapphire"] {
     --theme-bg: #080E1F;
     --theme-surface: #0D1630;
@@ -216,4 +231,5 @@
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 ::selection { background: rgba(0,229,255,0.2); color: #F1F5F9; }
+
 
