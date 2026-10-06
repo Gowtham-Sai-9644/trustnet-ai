@@ -1,3 +1,4 @@
+import { BackgroundSlider } from '../landing/BackgroundSlider';
 import React, { useEffect, useState, useRef } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import NavigationSidebar from './NavigationSidebar';
@@ -313,6 +314,7 @@ const DashboardLayout: React.FC = () => {
 
         {/* ── Main Content Wrapper ── */}
         <div className="flex-1 relative overflow-hidden bg-transparent">
+          <BackgroundSlider themeContext={theme} />
           {/* ── Dynamic Background (Local to Main) ── */}
           
           

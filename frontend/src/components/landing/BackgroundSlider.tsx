@@ -51,8 +51,8 @@ export const BackgroundSlider: React.FC<{ themeContext?: 'landing' | 'blue' | 'r
         style={{
           background: themeContext === 'blue' 
             ? 'radial-gradient(ellipse at center, rgba(4, 15, 10, 0.80) 0%, rgba(4, 15, 10, 0.92) 100%)' // Emerald dark tint
-            : themeContext === 'radiant'
-            ? 'radial-gradient(ellipse at center, rgba(248, 250, 252, 0.40) 0%, rgba(241, 245, 249, 0.60) 100%)' // Radiant light blue/white tint
+            : themeContext === 'light'
+            ? 'radial-gradient(ellipse at center, rgba(248, 250, 252, 0.90) 0%, rgba(241, 245, 249, 0.95) 100%)' // Radiant light blue/white tint
             : 'radial-gradient(ellipse at center, rgba(255, 252, 245, 0.75) 0%, rgba(255, 248, 235, 0.90) 100%)',
         }}
       />
@@ -61,12 +61,12 @@ export const BackgroundSlider: React.FC<{ themeContext?: 'landing' | 'blue' | 'r
       <svg className="absolute inset-0 w-full h-full opacity-[0.06] pointer-events-none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <pattern id="circuit" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 40 30 M 40 50 L 40 80 M 0 40 L 30 40 M 50 40 L 80 40" stroke={themeContext === 'blue' ? "#10B981" : themeContext === 'radiant' ? "#0EA5E9" : "#7C5C2E"} strokeWidth="1" fill="none"/>
-            <circle cx="40" cy="40" r="4" fill="none" stroke={themeContext === 'blue' ? "#10B981" : themeContext === 'radiant' ? "#0EA5E9" : "#7C5C2E"} strokeWidth="1"/>
-            <circle cx="40" cy="0" r="2" fill={themeContext === 'blue' ? "#10B981" : themeContext === 'radiant' ? "#0EA5E9" : "#7C5C2E"}/>
-            <circle cx="40" cy="80" r="2" fill={themeContext === 'blue' ? "#10B981" : themeContext === 'radiant' ? "#0EA5E9" : "#7C5C2E"}/>
-            <circle cx="0" cy="40" r="2" fill={themeContext === 'blue' ? "#10B981" : themeContext === 'radiant' ? "#0EA5E9" : "#7C5C2E"}/>
-            <circle cx="80" cy="40" r="2" fill={themeContext === 'blue' ? "#10B981" : themeContext === 'radiant' ? "#0EA5E9" : "#7C5C2E"}/>
+            <path d="M 40 0 L 40 30 M 40 50 L 40 80 M 0 40 L 30 40 M 50 40 L 80 40" stroke={themeContext === 'blue' ? "#10B981" : themeContext === 'light' ? "#0EA5E9" : "#7C5C2E"} strokeWidth="1" fill="none"/>
+            <circle cx="40" cy="40" r="4" fill="none" stroke={themeContext === 'blue' ? "#10B981" : themeContext === 'light' ? "#0EA5E9" : "#7C5C2E"} strokeWidth="1"/>
+            <circle cx="40" cy="0" r="2" fill={themeContext === 'blue' ? "#10B981" : themeContext === 'light' ? "#0EA5E9" : "#7C5C2E"}/>
+            <circle cx="40" cy="80" r="2" fill={themeContext === 'blue' ? "#10B981" : themeContext === 'light' ? "#0EA5E9" : "#7C5C2E"}/>
+            <circle cx="0" cy="40" r="2" fill={themeContext === 'blue' ? "#10B981" : themeContext === 'light' ? "#0EA5E9" : "#7C5C2E"}/>
+            <circle cx="80" cy="40" r="2" fill={themeContext === 'blue' ? "#10B981" : themeContext === 'light' ? "#0EA5E9" : "#7C5C2E"}/>
           </pattern>
         </defs>
         <rect width="100%" height="100%" fill="url(#circuit)"/>
